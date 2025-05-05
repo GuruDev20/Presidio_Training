@@ -1,0 +1,37 @@
+StoreMaster
+    id,storeName,phoneNumber
+
+MemberTypeMaster
+    id,typeName (Golden,Bronze)
+
+MovieFormatMaster
+    id,formatName (VHS,VCD,DVD)
+
+MovieCategoryMaster
+    id,categoryName (Action,Comedy,etc)
+
+
+
+MovieDetails
+    movieNumber,title,formatId,categoryId
+
+MemberDetails
+    id,name,phoneNumber,email,storeId,typeId,favCategoryId
+
+MemberCreditCard
+    id,memberId,cardNumber,ExpDate
+
+Dependent
+    id,name,memberId
+
+Rentals
+    rentalId,memberId,rentalDate,amount,paymentStatus
+
+RentalDetails
+    id,rentalId,movieNumber,quantity,price
+
+DependentRental
+    id,dependentId,movieNumber,rentalDate
+
+PaymentDetails
+    id,rentalId,amount,paymentType,paymentStatus
