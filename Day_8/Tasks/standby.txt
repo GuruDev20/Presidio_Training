@@ -1,0 +1,28 @@
+SELECT * FROM rental_log ORDER BY log_id DESC LIMIT 1;
+
+
+CREATE TABLE rental_log_updates (
+    update_id SERIAL PRIMARY KEY,
+    log_id INT,
+    old_amount NUMERIC,
+    new_amount NUMERIC,
+    updated_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE OR REPLACE FUNCTION log_rental_update()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO rental_log_updates (log_id, old_amount, new_amount)
+    VALUES (OLD.log_id, OLD.amount, NEW.amount);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER trg_log_rental_update
+AFTER UPDATE ON rental_log
+FOR EACH ROW
+WHEN (OLD.amount IS DISTINCT FROM NEW.amount)
+EXECUTE FUNCTION log_rental_update();
+
+
