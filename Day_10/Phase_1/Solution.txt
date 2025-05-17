@@ -1,0 +1,64 @@
+-- Table: students
+-- Stores details about students registering on the platform.
+CREATE TABLE students (
+    student_id SERIAL PRIMARY KEY,              -- Unique student identifier
+    first_name VARCHAR(50) NOT NULL,            -- Student's first name
+    last_name VARCHAR(50) NOT NULL,             -- Student's last name
+    email VARCHAR(100) UNIQUE NOT NULL,         -- Student email, must be unique
+    phone VARCHAR(20) UNIQUE,                    -- Contact phone number
+);
+
+-- Table: trainers
+-- Holds data about trainers teaching courses.
+CREATE TABLE trainers (
+    trainer_id SERIAL PRIMARY KEY,               -- Unique trainer identifier
+    first_name VARCHAR(50) NOT NULL,             -- Trainer's first name
+    last_name VARCHAR(50) NOT NULL,              -- Trainer's last name
+    email VARCHAR(100) UNIQUE NOT NULL,          -- Trainer email, unique
+    expertise TEXT                               -- Trainer's area(s) of expertise or bio
+);
+
+-- Table: category
+-- Stores categories or domains of courses offered.
+CREATE TABLE categories (
+    category_id SERIAL PRIMARY KEY,              -- Unique category identifier
+    category_name VARCHAR(100) NOT NULL UNIQUE,  -- Name of the category/domain
+    description TEXT                             -- Description of the category
+);
+
+-- Table: courses
+-- Courses offered by the platform.
+CREATE TABLE courses (
+    course_id SERIAL PRIMARY KEY,                 -- Unique course identifier
+    course_name VARCHAR(150) NOT NULL UNIQUE,     -- Course title, must be unique
+    category_id INT NOT NULL,                      -- Foreign key to categories table
+    description TEXT,                             -- Course description
+    duration_days INT CHECK (duration_days > 0), -- Course duration in days
+    price DECIMAL(10,2) CHECK (price >= 0),      -- Price of the course
+    trainer_id INT NOT NULL,                       -- Foreign key to trainer leading the course
+
+    CONSTRAINT fk_courses_category FOREIGN KEY (category_id) REFERENCES category(category_id),
+    CONSTRAINT fk_courses_trainer FOREIGN KEY (trainer_id) REFERENCES trainers(trainer_id)
+);
+
+-- Table: enrollments
+-- Tracks student enrollment in courses with progress and grades.
+CREATE TABLE enrollments (
+    enrollment_id SERIAL PRIMARY KEY,             -- Unique enrollment record
+    student_id INT NOT NULL,                       -- FK to students
+    course_id INT NOT NULL,                        -- FK to courses
+    enroll_date DATE NOT NULL DEFAULT CURRENT_DATE, -- Date of enrollment
+    CONSTRAINT fk_enrollments_student FOREIGN KEY (student_id) REFERENCES students(student_id),
+    CONSTRAINT fk_enrollments_course FOREIGN KEY (course_id) REFERENCES courses(course_id),
+);
+
+-- Table: certificates
+-- Certificates issued upon course completion.
+CREATE TABLE certificates (
+    certificate_id SERIAL PRIMARY KEY,             -- Unique certificate ID
+    enrollment_id INT NOT NULL UNIQUE,             -- FK to enrollments, one certificate per enrollment
+    serial_no VARCHAR(50) NOT NULL UNIQUE,         -- Unique certificate serial number
+    issue_date DATE NOT NULL DEFAULT CURRENT_DATE, -- Date certificate issued
+
+    CONSTRAINT fk_certificates_enrollment FOREIGN KEY (enrollment_id) REFERENCES enrollments(enrollment_id)
+);
