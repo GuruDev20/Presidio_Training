@@ -7,9 +7,9 @@ using CardioClinicApp.Models;
 
 namespace CardioClinicApp.Interfaces
 {
-    public interface IAppointmentRepository
+    public interface IAppointmentService
     {
-        int Add(Appointment appointment);
-        List<Appointment> Search(AppointmentSearchModel searchModel);
+        int AddAppointment(Appointment appointment);
+        List<Appointment>? SearchAppointments(AppointmentSearchModel searchModel);
     }
 }
