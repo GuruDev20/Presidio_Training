@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CardioClinicApp.Exception;
 using CardioClinicApp.Interfaces;
 using CardioClinicApp.Models;
 
@@ -23,7 +24,7 @@ namespace CardioClinicApp.Repositories
             }
             catch
             {
-                throw new Exception("Failed to add appointment.");
+                throw new AppointmentAddException("Failed to add appointment.");
             }
         }
 
