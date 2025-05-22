@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CardioClinicApp.Exception;
 using CardioClinicApp.Models;
 using CardioClinicApp.Services;
 
@@ -109,14 +105,12 @@ namespace CardioClinicApp.UI
                     }
                     else
                     {
-                        Console.WriteLine("Invalid age range format. Please use format like 25-35.");
-                        return;
+                        throw new InvalidAgeRangeException("Invalid age range format. Use format like 25-35.");
                     }
                 }
                 else
                 {
-                    Console.WriteLine("Invalid age range format. Please use format like 25-35.");
-                    return; 
+                    throw new InvalidAgeRangeException("Invalid age range format. Use format like 25-35.");
                 }
             }
 
