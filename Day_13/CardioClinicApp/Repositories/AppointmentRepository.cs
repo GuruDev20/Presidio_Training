@@ -9,46 +9,42 @@ using CardioClinicApp.Models;
 
 namespace CardioClinicApp.Repositories
 {
-    public class AppointmentRepository:IAppointmentRepository
+    public class AppointmentRepository : Repository<int, Appointment>
     {
-        private readonly List<Appointment> _appointments = new List<Appointment>();
-        private int _nextId = 1;
-
-        public int Add(Appointment appointment)
+        public AppointmentRepository() : base()
         {
-            try
+        }
+
+        protected override int GenerateID()
+        {
+            if (_items.Count == 0)
             {
-                appointment.Id = _nextId++;
-                _appointments.Add(appointment);
-                return appointment.Id;
+                return 101;
             }
-            catch
+            else
             {
                 throw new AppointmentAddException("Failed to add appointment.");
             }
         }
 
-        public List<Appointment> Search(AppointmentSearchModel searchModel)
+        public override ICollection<Appointment> GetAll()
         {
-            List<Appointment> filtered = new List<Appointment>(_appointments);
-
-            if (!string.IsNullOrWhiteSpace(searchModel.PatientName))
+            if (_items.Count == 0)
             {
-                filtered = filtered.Where(a => a.PatientName.Contains(searchModel.PatientName, StringComparison.OrdinalIgnoreCase)).ToList();
+                throw new CollectionEmptyException("No appointments found in the collection.");
             }
-
-            if (searchModel.AppointmentDate.HasValue)
-            {
-                filtered = filtered.Where(a => a.AppointmentDate.Date == searchModel.AppointmentDate.Value.Date).ToList();
-            }
-
-            if (searchModel.AgeRange.HasValue)
-            {
-                filtered = filtered.Where(a => a.PatientAge >= searchModel.AgeRange.Value.Min &&a.PatientAge <= searchModel.AgeRange.Value.Max).ToList();
-            }
-
-            return filtered;
+            return _items;
         }
 
+        public override Appointment GetById(int id)
+        {
+            var appointment = _items.FirstOrDefault(a => a.Id == id);
+            if (appointment == null)
+            {
+                throw new KeyNotFoundException($"Appointment with ID {id} not found.");
+
+            }
+            return appointment;
+        }
     }
 }

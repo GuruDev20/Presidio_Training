@@ -6,9 +6,9 @@ namespace CardioClinicApp.UI
 {
     public class Menu
     {
-        private readonly AppointmentService _service;
+        private readonly IAppointmentService _service;
 
-        public Menu(AppointmentService service)
+        public Menu(IAppointmentService service)
         {
             _service = service;
         }
@@ -64,10 +64,16 @@ namespace CardioClinicApp.UI
 
             Console.Write("Enter reason: ");
             var reason = Console.ReadLine();
-
+            var appointment = new Appointment
+            {
+                PatientName = name!,
+                PatientAge = age,
+                AppointmentDate = date,
+                Reason = reason!
+            };
             try
             {
-                var id = _service.AddAppointment(name!, age, date, reason!);
+                var id = _service.AddAppointment(appointment);
                 Console.WriteLine($"Appointment added. ID: {id}");
             }
             catch (Exception ex)
