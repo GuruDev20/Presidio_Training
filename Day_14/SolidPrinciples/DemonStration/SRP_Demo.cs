@@ -13,7 +13,7 @@ namespace SolidPrinciples.DemonStration
         public static void Run()
         {
             ReportService reportService=new ReportService();
-            var report = reportService.CreateReport("SRP", "Single Responsibility Principle in action");
+            var report = reportService.CreateReport("SRP", "Single Responsibility Principle");
             
             FileLogger logger = new FileLogger();
             logger.Save(report);
