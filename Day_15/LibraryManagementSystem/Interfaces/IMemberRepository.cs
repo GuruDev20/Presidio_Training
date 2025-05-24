@@ -5,8 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace LibraryManagementSystem.Interfaces
-{
-    internal interface IMemberRepository
+{ 
+    using LibraryManagementSystem.Models;
+
+    public interface IMemberRepository
     {
+        void Add(Member member);
+        Member GetById(int id);
+        IEnumerable<Member> GetAll();
     }
 }

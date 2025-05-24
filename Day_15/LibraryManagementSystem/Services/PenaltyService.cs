@@ -5,8 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace LibraryManagementSystem.Services
-{
-    internal class PenaltyService
+{ 
+    using LibraryManagementSystem.Interfaces;
+
+    public class StandardPenaltyCalculator : IPenaltyCalculator
     {
+        public double CalculatePenalty(DateTime dueDate, DateTime returnDate)
+        {
+            if (returnDate <= dueDate) return 0;
+            return (returnDate - dueDate).Days * 1.5;
+        }
     }
 }

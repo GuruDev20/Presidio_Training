@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibraryManagementSystem.Interfaces
+namespace Design_Pattern.Patterns.FlyWeight
 {
-    public interface ILogger
+    public interface IShape
     {
-        void Log(string message);
+        void Draw(string color);
     }
 }

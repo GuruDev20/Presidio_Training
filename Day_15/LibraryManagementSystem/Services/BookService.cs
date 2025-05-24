@@ -6,7 +6,23 @@ using System.Threading.Tasks;
 
 namespace LibraryManagementSystem.Services
 {
-    internal class BookService
+    using LibraryManagementSystem.Interfaces;
+    using LibraryManagementSystem.Models;
+
+    public class BookService
     {
+        private readonly IBookRepository _repository;
+        private readonly ILogger _logger;
+        public BookService(IBookRepository repository, ILogger logger)
+        {
+            _repository = repository;
+            _logger = logger;
+        }
+
+        public void AddBook(Book book)
+        {
+            _repository.Add(book);
+            _logger.Log($"Book added: {book.Title}");
+        }
     }
 }
