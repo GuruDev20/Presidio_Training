@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibraryManagementSystem.Interfaces
+namespace Design_Pattern.Patterns.Proxy
 {
-    public interface ILogger
+    public interface ISubject
     {
-        void Log(string message);
+        void Operation();
     }
 }

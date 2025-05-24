@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace LibraryManagementSystem.Interfaces
 {
-    internal interface IPenaltyCalculator
+    public interface IPenaltyCalculator
     {
+        double CalculatePenalty(DateTime dueDate, DateTime returnDate);
     }
 }

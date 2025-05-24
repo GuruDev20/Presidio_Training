@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LibraryManagementSystem.Interfaces
+namespace Design_Pattern.Patterns.Adapter
 {
-    public interface ILogger
+    public interface ITarget
     {
-        void Log(string message);
+        void Request();
     }
 }
