@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "NMDV8rcSsmXLXHHLeZ5ef8UiW4aD/99HZQ0DlRyVicQ=",
+  "Source": "BankFAQApi",
+  "BasePath": "_content/BankFAQApi",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
