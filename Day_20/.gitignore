@@ -1,0 +1,10 @@
+**/bin/
+**/obj/
+**/Properties/
+**/.vs/
+
+*.sln
+*App.config
+**/*.csproj
+
+/BankFAQApi/appsettings*.json
