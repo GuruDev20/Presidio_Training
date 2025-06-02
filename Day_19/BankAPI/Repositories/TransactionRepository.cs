@@ -28,6 +28,7 @@ public class TransactionRepository : ITransactionRepository
         }
         return await _context.Transactions
             .Where(t => t.AccountNumber == accountNumber)
+            .Include(t => t.Account)
             .OrderByDescending(t => t.TransactionDate)
             .ToListAsync();
     }
