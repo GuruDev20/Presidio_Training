@@ -21,6 +21,8 @@ dotnet add package Microsoft.Extensions.Logging.Log4Net.AspNetCore --version 8.0
 
 dotnet add package Microsoft.AspNetCore.Authentication.Google --version 9.0.0
 
+dotnet add package Microsoft.AspNetCore.SignalR --version 1.2.0
+
 # Unit Testing:
 
 dotnet new xunit -n [ProjectName].Tests

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SignalR Notifications</title>
+</head>
+<body>
+    <h2>HR Document Notifications</h2>
+    <div id="notifications"></div>
+    <script src="https://cdn.jsdelivr.net/npm/@microsoft/signalr@8.0.7/dist/browser/signalr.min.js"></script>
+    <script>
+        const notificationsDiv = document.getElementById("notifications");
+        let notifications = [];
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("http://127.0.0.1:5208/notify", {
+                withCredentials: true,
+            })
+            .withAutomaticReconnect()
+            .build();
+
+        connection.on("DocumentUploaded", function (doc) {
+            const mainMsg = `New document uploaded by ${doc.user}`;
+            const subMsg = `Filename: ${doc.filename}`;
+            notifications.push(`
+                <p>
+                    <strong>${mainMsg}</strong><br/>
+                    <small>${subMsg}</small>
+                </p>
+            `);
+            notificationsDiv.innerHTML = notifications.join('');
+            console.log(mainMsg, subMsg);
+        });
+
+        connection.start()
+            .then(() => console.log("Connected to SignalR Hub."))
+            .catch(err => console.error("Connection error:", err));
+    </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<script src="https://cdn.jsdelivr.net/npm/@microsoft/signalr@8.0.7/dist/browser/signalr.min.js"></script>
+<script>
+    const connection=new signalR.HubConnectionBuilder()
+        .withUrl("/notificationsHub")
+        .build();
+
+    connection.on("ReceiveMessage", (user,message)=>{
+        console.log("Received message from " + user + ": " + message);
+    });
+
+    connection.start()
+        .then(() => {connection.invoke("ReceiveMessage", "Dev", "Hello World");})
+        .catch(err => console.error("Error while starting connection: " + err));
+    
+</script>
