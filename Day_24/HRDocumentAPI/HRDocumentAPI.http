@@ -1,0 +1,6 @@
+@HRDocumentAPI_HostAddress = http://localhost:5208
+
+GET {{HRDocumentAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
