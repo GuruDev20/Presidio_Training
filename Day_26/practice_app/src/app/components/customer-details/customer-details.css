@@ -1,0 +1,103 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* min-height: 100vh; */
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+
+.main-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    max-width: 400px;
+    width: 100%;
+}
+
+.customer-info {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.customer-info h3 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.info-item {
+    margin-bottom: 12px;
+    font-size: 16px;
+    color: #555;
+}
+
+.info-item strong {
+    color: #333;
+    margin-right: 8px;
+}
+
+.reaction-card {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+}
+
+.reaction-card h4 {
+    color: #333;
+    margin-bottom: 15px;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.reaction-icons {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+}
+
+.reaction-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.reaction-icons i {
+    cursor: pointer;
+    font-size: 28px;
+    transition: all 0.3s ease;
+    padding: 10px;
+    border-radius: 50%;
+}
+
+.bi-hand-thumbs-up {
+    color: #28a745;
+}
+
+.bi-hand-thumbs-up:hover {
+    background-color: #28a745;
+    color: white;
+    transform: scale(1.1);
+}
+
+.bi-hand-thumbs-down {
+    color: #dc3545;
+}
+
+.bi-hand-thumbs-down:hover {
+    background-color: #dc3545;
+    color: white;
+    transform: scale(1.1);
+}
+
+.count {
+    font-weight: bold;
+    font-size: 16px;
+    color: #333;
+    min-width: 20px;
+}
