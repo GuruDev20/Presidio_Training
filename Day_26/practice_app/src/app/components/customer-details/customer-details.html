@@ -1,0 +1,27 @@
+<div class="container">
+    <div class="main-card">
+        <div class="customer-info">
+            <h3>Customer Details</h3>
+            <div class="info-item">
+                <strong>Name:</strong> {{ customerName }}
+            </div>
+            <div class="info-item">
+                <strong>Email:</strong> {{ customerEmail }}
+            </div>
+        </div>
+        
+        <div class="reaction-card">
+            <h4>Rate this Customer</h4>
+            <div class="reaction-icons">
+                <div class="reaction-item">
+                    <i class="bi bi-hand-thumbs-up" (click)="like()"></i>
+                    <span class="count">{{ likeCount }}</span>
+                </div>
+                <div class="reaction-item">
+                    <i class="bi bi-hand-thumbs-down" (click)="dislike()"></i>
+                    <span class="count">{{ dislikeCount }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
