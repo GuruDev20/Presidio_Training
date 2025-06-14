@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>User Fetcher</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <div class="btn-group">
+            <button onclick="toggleUsers('callback')">Get Users (Callback)</button>
+            <button onclick="toggleUsers('promise')">Get Users (Promise)</button>
+            <button onclick="toggleUsers('async')">Get Users (Async/Await)</button>
+        </div>
+
+        <div id="callback-users" class="user-list"></div>
+        <div id="promise-users" class="user-list"></div>
+        <div id="async-users" class="user-list"></div>
+
+        <script src="script.js"></script>
+    </body>
+</html>
