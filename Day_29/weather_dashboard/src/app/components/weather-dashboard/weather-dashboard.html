@@ -1,0 +1,7 @@
+<app-city-search></app-city-search>
+
+<div *ngIf="error$ | async as error" class="error">
+    {{ error }}
+</div>
+
+<app-weather-card *ngIf="weather$ | async as weather" [data]="weather"></app-weather-card>
