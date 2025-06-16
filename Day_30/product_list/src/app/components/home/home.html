@@ -1,0 +1,15 @@
+<div class="search-bar">
+    <input type="text" (input)="onSearch($event)" placeholder="Search products..." />
+</div>
+
+<div class="products">
+    <div class="product-card" *ngFor="let product of products">
+        <img [src]="product.thumbnail" alt="product thumbnail">
+        <h3 [innerHTML]="highlight(product.title, searchTerm)"></h3>
+        <p>${{ product.price }}</p>
+    </div>
+</div>
+
+<div *ngIf="isLoading" class="loader">Loading...</div>
+
+<button class="back-to-top" (click)="scrollToTop()">&uarr;</button>
