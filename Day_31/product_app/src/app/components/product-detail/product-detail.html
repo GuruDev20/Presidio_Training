@@ -1,0 +1,14 @@
+<div *ngIf="isLoading" class="loading">Loading product details...</div>
+
+<div *ngIf="error" class="error">
+    <p>Product not found.</p>
+    <button (click)="goBack()">Go Back</button>
+</div>
+
+<div *ngIf="products && !isLoading" class="product-detail">
+    <img [src]="products.thumbnail" alt="{{ products.title }}" />
+    <h2>{{ products.title }}</h2>
+    <p class="price">$ {{ products.price }}</p>
+    <p>{{ products.description }}</p>
+    <button (click)="goBack()">Back to Products</button>
+</div>

@@ -1,0 +1,24 @@
+<div class="search-container">
+    <input
+        type="text"
+        placeholder="Search products..."
+        (input)="onSearchChange($event)"
+    />
+</div>
+
+<div *ngIf="loading" class="loading">Loading...</div>
+<div *ngIf="!loading && products.length === 0" class="no-results">
+    No results found.
+</div>
+
+<div class="grid-container">
+    <div class="product-card" *ngFor="let product of products">
+        <img [src]="product.thumbnail" alt="{{ product.title }}" />
+        <h3>{{ product.title }}</h3>
+        <p class="price">$ {{ product.price }}</p>
+        <p class="description">{{ product.description }}</p>
+        <a [routerLink]="['/products', product.id]">View Details</a>
+    </div>
+</div>
+
+<div *ngIf="loadingMore" class="loading">Loading more...</div>
