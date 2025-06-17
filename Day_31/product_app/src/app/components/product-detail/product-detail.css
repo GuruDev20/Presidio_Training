@@ -1,0 +1,30 @@
+.product-detail {
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background: #fff;
+    text-align: center;
+}
+
+.product-detail img {
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+    object-fit: cover;
+    margin-bottom: 20px;
+}
+
+.price {
+    font-size: 20px;
+    color: green;
+    margin: 10px 0;
+}
+
+.error, .loading {
+    text-align: center;
+    margin: 40px;
+    font-size: 18px;
+    color: #b00;
+}
