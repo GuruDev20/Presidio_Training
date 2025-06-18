@@ -1,0 +1,64 @@
+<div class="dashboard-container">
+    <div class="main-content">
+        <div class="card-row">
+            <div class="stat-card">Total Users:{{totalActiveUsers}}</div>
+            <div class="stat-card">Total Admins:{{totalAdmins}}</div>
+            <div class="stat-card">Total Users:{{totalUsers}}</div>
+        </div>
+
+        <div class="chart-row small-chart">
+            <canvas baseChart [data]="pieChartData" [type]="'pie'"></canvas>
+        </div>
+
+        <div class="chart-row small-bar-chart">
+            <canvas baseChart [data]="barChartData" [type]="'bar'"></canvas>
+        </div>
+
+        <div class="chart-row">
+            <div id="usMap">
+                US Map Placeholder
+            </div>
+        </div>
+    </div>
+
+    <div class="filter-panel">
+        <h3>Filter Users</h3>
+        <label>Gender</label>
+        <div class="custom-select">
+            <select [(ngModel)]="filters.gender" (change)="applyFilters()">
+                <option value="">All</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
+        </div>
+        <label>Role</label>
+        <input type="text" [(ngModel)]="filters.role" (input)="applyFilters()" placeholder="Role" />
+        <label>Country</label>
+        <input type="text" [(ngModel)]="filters.country" (input)="applyFilters()" placeholder="Country" />
+    </div>
+</div>
+
+<div class="user-table">
+    <table>
+        <thead>
+            <tr>
+                <th>First Name</th><th>Last Name</th><th>Gender</th><th>Role</th><th>Country</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let user of paginatedUsers">
+                <td>{{ user.firstName }}</td>
+                <td>{{ user.lastName }}</td>
+                <td>{{ user.gender }}</td>
+                <td>{{ user.role }}</td>
+                <td>{{ user.address.state }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        <button (click)="prevPage()" [disabled]="currentPage === 1">Previous</button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+    </div>
+</div>
