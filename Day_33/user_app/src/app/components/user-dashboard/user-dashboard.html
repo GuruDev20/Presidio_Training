@@ -1,0 +1,48 @@
+<div class="form-container">
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+        <input type="text" placeholder="Username" formControlName="username" />
+        <div *ngIf="userForm.get('username')?.touched && userForm.get('username')?.invalid">
+            <div class="error-message" *ngIf="userForm.get('username')?.hasError('required')">Username is required.</div>
+            <div class="error-message" *ngIf="userForm.get('username')?.hasError('bannedWords')">This username is not allowed.</div>
+        </div>
+        <input type="email" placeholder="Email" formControlName="email" />
+        <div *ngIf="userForm.get('email')?.touched && userForm.get('email')?.invalid">
+            <div class="error-message" *ngIf="userForm.get('email')?.hasError('required')">Email is required.</div>
+            <div class="error-message" *ngIf="userForm.get('email')?.hasError('email')">Enter a valid email address.</div>
+        </div>
+        <input type="password" placeholder="Password" formControlName="password" />
+        <div *ngIf="userForm.get('password')?.touched && userForm.get('password')?.invalid">
+            <div class="error-message" *ngIf="userForm.get('password')?.hasError('required')">Password is required.</div>
+            <div class="error-message" *ngIf="userForm.get('password')?.hasError('weakPassword')">
+                Password must be at least 8 characters and contain a number and a symbol.
+            </div>
+        </div>
+        <input type="password" placeholder="Confirm Password" formControlName="confirmPassword" />
+        <div class="error-message" *ngIf="userForm.get('confirmPassword')?.touched && userForm.hasError('passwordMisMatch')">
+            Passwords do not match.
+        </div>
+        <select formControlName="role">
+            <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+        </select>
+        <button type="submit" [disabled]="userForm.invalid">Add User</button>
+    </form>
+</div>
+
+
+<div class="filter-bar">
+    <input #searchInput type="text" placeholder="Search user or role..." />
+    <select [(ngModel)]="selectedRole" (change)="setupSearchFilter()">
+        <option value="All">All</option>
+        <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
+    </select>
+</div>
+
+<ul class="user-list">
+    <li *ngFor="let user of filteredUsers$ | async">
+        {{ user.username }} ({{ user.role }}) - {{ user.email }}
+    </li>
+</ul>
+
+<div class="toast" *ngIf="showToast">
+    User added successfully!
+</div>
