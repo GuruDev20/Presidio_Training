@@ -37,6 +37,7 @@ namespace Customer_Support_Chatbot.Services
 
         public async Task<ApiResponse<AuthResponseDto>> LoginAsync(LoginRequestDto request)
         {
+            Console.WriteLine(request.Email + " " + request.Password);
             var user = await _authRepository.GetUserByEmailAsync(request.Email);
             if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             {
