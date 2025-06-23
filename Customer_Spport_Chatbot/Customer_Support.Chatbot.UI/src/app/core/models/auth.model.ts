@@ -13,7 +13,13 @@ export interface AuthResponse{
     accessToken:string;
     refreshToken:string;
     userId:string;
-    username:string;
-    email:string;
     role:'Admin' | 'User' |'Agent';
+    expiresMinutes:string;
+}
+
+export interface ApiResponse<T> {
+    success: boolean;
+    message: string;
+    data: T;
+    errors: any;
 }

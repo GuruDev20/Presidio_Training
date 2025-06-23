@@ -4,6 +4,8 @@ import { AuthService } from "../../../core/services/auth.service";
 import { Router, RouterLink } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { validUsername } from "../../../shared/misc/username.validator";
+import { passwordMatcher } from "../../../shared/misc/passwordMatcher.validator";
+import { ToastService } from "../../../core/services/toast.service";
 
 @Component({
     selector: 'app-register',
@@ -15,22 +17,30 @@ export class Register implements OnInit{
     
     form!:FormGroup;
 
-    constructor(private fb:FormBuilder,private auth:AuthService,private router:Router){}
+    constructor(private fb:FormBuilder,private auth:AuthService,private router:Router,private toastService:ToastService){}
 
     ngOnInit(): void {
         this.form = this.fb.group({
             username:['',[Validators.required, Validators.minLength(3),validUsername()]],
             email:['',[Validators.required, Validators.email]],
-            password:['',[Validators.required, Validators.minLength(6)]]
-        })
+            password:['',[Validators.required, Validators.minLength(6)]],
+            confirmPassword:['',Validators.required]
+        }, { validators: passwordMatcher() })
     }
 
     get formValue(){
         return{
             username: this.form.value.username || '',
             email: this.form.value.email || '',
-            password: this.form.value.password || ''
+            password: this.form.value.password || '',
+            confirmPassword: this.form.value.confirmPassword || ''
         };
+    }
+
+
+    get passwordMismatch() {
+        return this.form.errors?.['passwordMismatch'] &&
+        this.form.get('confirmPassword')?.touched;
     }
     submit(){
         if(this.form.invalid){
@@ -38,7 +48,8 @@ export class Register implements OnInit{
         }
         this.auth.register(this.formValue).subscribe({
             next:()=>{
-                this.router.navigate(['/dashboard']);
+                this.toastService.show('Registration successful!', 'success');
+                this.router.navigate(['/user/dashboard']);
             },
             error:(err)=>{
                 console.error('Login failed', err);

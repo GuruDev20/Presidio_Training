@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angula
 import { AuthService } from "../../../core/services/auth.service";
 import { Router, RouterLink, RouterOutlet } from "@angular/router";
 import { CommonModule } from "@angular/common";
+import { ToastService } from "../../../core/services/toast.service";
 
 @Component({
     selector: 'app-login',
@@ -14,7 +15,7 @@ export class Login implements OnInit{
     
     form!:FormGroup;
 
-    constructor(private fb:FormBuilder,private auth:AuthService,private router:Router){}
+    constructor(private fb:FormBuilder,private auth:AuthService,private router:Router,private toastService:ToastService){}
 
     ngOnInit(): void {
         this.form = this.fb.group({
@@ -37,6 +38,7 @@ export class Login implements OnInit{
         this.auth.login(this.formValue).subscribe({
             next:()=>{
                 const role = this.auth.getRole();
+                this.toastService.show('Login successful', 'success');
                 switch(role){
                     case 'User':
                         this.router.navigate(['/user/dashboard']);
@@ -53,6 +55,7 @@ export class Login implements OnInit{
             },
             error:(err)=>{
                 console.error('Login failed', err);
+                this.toastService.show('Login failed. Please check your credentials.', 'error');
             }
         })
     }
