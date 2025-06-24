@@ -1,11 +1,11 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { AuthService } from "../../../core/services/auth.service";
+import { AuthService } from "../../../services/auth.service";
 import { Router, RouterLink } from "@angular/router";
 import { CommonModule } from "@angular/common";
-import { validUsername } from "../../../shared/misc/username.validator";
-import { passwordMatcher } from "../../../shared/misc/passwordMatcher.validator";
-import { ToastService } from "../../../core/services/toast.service";
+import { validUsername } from "../../../misc/username.validator";
+import { passwordMatcher } from "../../../misc/passwordMatcher.validator";
+import { ToastService } from "../../../services/toast.service";
 
 @Component({
     selector: 'app-register',
