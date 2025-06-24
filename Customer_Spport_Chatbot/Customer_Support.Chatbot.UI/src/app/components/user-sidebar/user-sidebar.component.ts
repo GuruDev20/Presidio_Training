@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component } from "@angular/core";
+import { Component, EventEmitter, Output } from "@angular/core";
 import { RouterLink, RouterLinkActive } from "@angular/router";
 
 @Component({
@@ -8,4 +8,10 @@ import { RouterLink, RouterLinkActive } from "@angular/router";
     standalone: true,
     imports:[CommonModule, RouterLink,RouterLinkActive],
 })
-export class Sidebar{}
+export class Sidebar{
+    @Output() navClicked=new EventEmitter<void>();
+
+    onNavClick(){
+        this.navClicked.emit();
+    }
+}

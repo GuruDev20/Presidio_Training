@@ -1,11 +1,16 @@
 <nav class="flex justify-between items-center px-4 py-4 shadw-sm bg-[#f8f9fa] text-black border-b border-[#dee2e6]">
-    <div></div>
+    <div class="flex items-center gap-3">
+        <button class="md:hidden text-xl" (click)="openSidebar.emit()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <span class="text-xl font-bold hidden md:inline">ZapChat</span>
+    </div>
     <div class="flex items-center gap-4">
         <button class="text-xl" (click)="toggleTheme()">
             <i *ngIf="!isDark" class="fa-regular fa-sun"></i>
             <i *ngIf="isDark" class="fa-solid fa-moon"></i>
         </button>
-        <button class="cursor-pointer text-sm bg-[#778da9] text-white px-6 py-2 rounded" (click)="logout()">Logout</button>
-        <div class="w-10 h-10 rounded-full bg-blue-400 text-white flex items-center justify-center cursor-pointer">U</div>
+        <button class="cursor-pointer text-sm bg-[#778da9] text-white px-6 py-2 rounded hidden md:block" (click)="logout()">Logout</button>
+        <div class="w-10 h-10 rounded-full bg-blue-400 text-white flex items-center justify-center cursor-pointer" (click)="openProfileDrawer.emit()">U</div>
     </div>
 </nav>
