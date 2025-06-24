@@ -41,7 +41,7 @@ export class Login implements OnInit{
                 this.toastService.show('Login successful', 'success');
                 switch(role){
                     case 'User':
-                        this.router.navigate(['/user/dashboard']);
+                        this.router.navigate(['/user/dashboard/overview']);
                         break;
                     case 'Admin':
                         this.router.navigate(['/admin/dashboard']);

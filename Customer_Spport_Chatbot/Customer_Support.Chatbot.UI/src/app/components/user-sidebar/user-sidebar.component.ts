@@ -12,6 +12,8 @@ export class Sidebar{
     @Output() navClicked=new EventEmitter<void>();
 
     onNavClick(){
-        this.navClicked.emit();
+        if (window.innerWidth < 768) {
+            this.navClicked.emit();
+        }
     }
 }
