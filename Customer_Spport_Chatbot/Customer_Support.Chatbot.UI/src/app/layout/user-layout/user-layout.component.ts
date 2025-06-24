@@ -10,4 +10,20 @@ import { CommonModule } from '@angular/common';
     imports: [CommonModule, Sidebar, Navbar, RouterOutlet],
     templateUrl:'./user-layout.component.html',
 })
-export class UserLayout {}
+export class UserLayout {
+    showSidebar=false;
+    showProfileDrawer=false;
+
+    toggleSidebar() {
+        this.showSidebar = !this.showSidebar;
+    }
+
+    toggleProfileDrawer() {
+        this.showProfileDrawer = !this.showProfileDrawer;
+    }
+
+    closeDrawers() {
+        this.showProfileDrawer = false;
+        this.showSidebar = false;
+    }
+}

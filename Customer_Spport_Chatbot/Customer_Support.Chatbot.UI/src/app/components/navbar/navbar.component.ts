@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnInit } from "@angular/core";
+import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 
 @Component({
     selector: 'app-navbar',
@@ -7,21 +7,20 @@ import { Component, OnInit } from "@angular/core";
     standalone: true,
     imports: [CommonModule],
 })
-export class Navbar implements OnInit{
+export class Navbar{
+
+    @Output() openSidebar=new EventEmitter<void>();
+    @Output() openProfileDrawer=new EventEmitter<void>();
 
     isDark=false;
-    ngOnInit(): void {
-        this.isDark= document.documentElement.classList.contains('dark');
-    }
 
     toggleTheme(){
-        this.isDark=!this.isDark;
-        const html= document.documentElement;
-        html.classList.toggle('dark', this.isDark);
-        localStorage.setItem('theme', this.isDark ? 'dark' : 'light');
+        this.isDark = !this.isDark;
+        document.documentElement.classList.toggle('dark', this.isDark);
     }
+
     logout(){
         localStorage.clear();
-        location.href = '/auth/login';
+        location.href='/auth/login';
     }
 }

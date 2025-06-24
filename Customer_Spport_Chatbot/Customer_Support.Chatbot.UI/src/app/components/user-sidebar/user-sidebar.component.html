@@ -1,18 +1,18 @@
-<section class="w-72 bg-[#f8f9fa] text-black h-full p-4 border-r border-[#dee2e6]">
+<section class="w-full md:w-72 text-black h-full">
     <h2 class="text-2xl font-bold mb-8 ml-4 mt-4 flex flex-row items-center gap-3">
         <i class="fa-brands fa-uncharted"></i>
-        <p class="">ZapChat</p>
+        <p>ZapChat</p>
     </h2>
-    <ul class="space-y-4">
-        <li class="flex flex-row items-center gap-2 px-2 rounded" routerLinkActive="bg-[#dee2e6]">
+    <ul class="space-y-4 px-2">
+        <li class="flex flex-row items-center gap-2 px-2 rounded" routerLinkActive="bg-[#dee2e6]" (click)="onNavClick()">
             <i class="fa-solid fa-chart-simple"></i>
             <a routerLink="/user/dashboard/overview" class="block p-2 rounded">Overview</a>
         </li>
-        <li class="flex flex-row items-center gap-2 px-2 rounded" routerLinkActive="bg-[#dee2e6]">
+        <li class="flex flex-row items-center gap-2 px-2 rounded" routerLinkActive="bg-[#dee2e6]" (click)="onNavClick()">
             <i class="fa-solid fa-code-compare"></i>
             <a routerLink="/user/dashboard/tickets" class="block p-2 rounded">Tickets</a>
         </li>
-        <li class="flex flex-row items-center gap-2 px-2 rounded" routerLinkActive="bg-[#dee2e6]">
+        <li class="flex flex-row items-center gap-2 px-2 rounded" routerLinkActive="bg-[#dee2e6]" (click)="onNavClick()">
             <i class="fa-solid fa-clock-rotate-left"></i>
             <a routerLink="/user/dashboard/history" class="block p-2 rounded">History</a>
         </li>
