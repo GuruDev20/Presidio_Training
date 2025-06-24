@@ -20,10 +20,10 @@
 
 <div class="space-y-4">
     <div *ngFor="let item of paginatedHistory; let i=index" class="flex justify-between items-center p-4 bg-white rounded shadow-md">
-        <p class="font-medium">{{item.title}}</p>
+        <p class="font-medium">{{item.name}}</p>
         <div class="flex items-center gap-4">
             <span class="text-xs font-bold px-6 py-1 rounded-full" [ngClass]="{
-                'bg-green-200 text-green-800': item.status === 'Active',
+                'bg-green-200 text-green-800': item.status === 'Open',
                 'bg-red-200 text-red-800': item.status === 'Closed',
                 'bg-yellow-200 text-yellow-800': item.status === 'Pending'
                 }">

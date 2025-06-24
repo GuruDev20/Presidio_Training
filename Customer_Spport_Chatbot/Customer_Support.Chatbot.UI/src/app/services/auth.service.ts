@@ -39,10 +39,17 @@ export class AuthService{
     }
 
     getToken(){
-        return localStorage.getItem('accessToken');
+        const token = localStorage.getItem('accessToken');
+        return token || '';
     }
 
     getRole(){
-        return localStorage.getItem('userRole');
+        const role = localStorage.getItem('userRole');
+        return role || '';
+    }
+
+    getUserId(){
+        const userId = localStorage.getItem('userId');
+        return userId || '';
     }
 }
