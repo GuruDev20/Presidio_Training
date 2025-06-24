@@ -1,20 +1,20 @@
-<section class="w-full md:w-72 text-black h-full">
-    <h2 class="text-2xl font-bold mb-8 ml-4 mt-4 flex flex-row items-center gap-3">
+<section class="w-full md:w-72 text-black h-full border-r border-[#dee2e6] bg-[#f8f9fa]">
+    <h2 class="text-2xl font-bold mb-8 ml-4 pt-4 flex flex-row items-center gap-3">
         <i class="fa-brands fa-uncharted"></i>
         <p>ZapChat</p>
     </h2>
     <ul class="space-y-4 px-2">
-        <li class="flex flex-row items-center gap-2 px-2 rounded" routerLinkActive="bg-[#dee2e6]" (click)="onNavClick()">
+        <li class="flex flex-row items-center gap-2 px-2 rounded" routerLinkActive="bg-[#dee2e6]">
             <i class="fa-solid fa-chart-simple"></i>
-            <a routerLink="/user/dashboard/overview" class="block p-2 rounded">Overview</a>
+            <a routerLink="/user/dashboard/overview" class="block p-2 rounded" (click)="onNavClick()">Overview</a>
         </li>
-        <li class="flex flex-row items-center gap-2 px-2 rounded" routerLinkActive="bg-[#dee2e6]" (click)="onNavClick()">
+        <li class="flex flex-row items-center gap-2 px-2 rounded" routerLinkActive="bg-[#dee2e6]">
             <i class="fa-solid fa-code-compare"></i>
-            <a routerLink="/user/dashboard/tickets" class="block p-2 rounded">Tickets</a>
+            <a routerLink="/user/dashboard/tickets" class="block p-2 rounded" (click)="onNavClick()">Tickets</a>
         </li>
-        <li class="flex flex-row items-center gap-2 px-2 rounded" routerLinkActive="bg-[#dee2e6]" (click)="onNavClick()">
+        <li class="flex flex-row items-center gap-2 px-2 rounded" routerLinkActive="bg-[#dee2e6]">
             <i class="fa-solid fa-clock-rotate-left"></i>
-            <a routerLink="/user/dashboard/history" class="block p-2 rounded">History</a>
+            <a routerLink="/user/dashboard/history" class="block p-2 rounded" (click)="onNavClick()">History</a>
         </li>
     </ul>
 </section>
