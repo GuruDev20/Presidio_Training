@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ToastComponent } from "./shared/components/toast/toast";
-import { ToastService } from './core/services/toast.service';
+import { ToastComponent } from "./components/toast/toast";
+import { ToastService } from './services/toast.service';
 
 @Component({
     selector: 'app-root',
