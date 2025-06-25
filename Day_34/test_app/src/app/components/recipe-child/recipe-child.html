@@ -1,0 +1,10 @@
+<div class="card">
+    <h3>{{ recipe.name }}</h3>
+    <img [src]="recipe.image" alt="{{ recipe.name }}" width="200" />
+    <p><strong>Prep Time:</strong> {{ recipe.prepTimeMinutes }} mins</p>
+    <p><strong>Cook Time:</strong> {{ recipe.cookTimeMinutes }} mins</p>
+    <p><strong>Ingredients:</strong></p>
+    <ul>
+        <li *ngFor="let item of recipe.ingredients">{{ item }}</li>
+    </ul>
+</div>
