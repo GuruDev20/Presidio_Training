@@ -1,0 +1,21 @@
+<aside class="h-full w-64 bg-[#f8f9fa] dark:bg-gradient-to-br dark:from-[#242F40] dark:to-[#3D2645] text-black dark:text-white shadow-lg fixed md:static top-0 left-0 flex flex-col justify-between transition-all duration-300 z-50 border-r border-[#dee2e6] dark:border-none">
+    <div>
+        <div class="flex items-center gap-2 p-6 text-2xl font-bold tracking-tight">
+            <i class="fa-brands fa-uncharted text-indigo-600 dark:text-white"></i>
+            <span>ZapChat</span>
+        </div>
+        <nav class="px-4 space-y-4">
+            <a *ngFor="let item of items" [routerLink]="item.path" (click)="onNavClick()" routerLinkActive="bg-blue-100 dark:bg-white/10"  class="flex items-center gap-3 p-3 rounded-lg text-gray-700 dark:text-white hover:bg-blue-100 dark:hover:bg-white/10 transition">
+                <lucide-icon [name]="item.icon" class="w-5 h-5"></lucide-icon>
+                <span class="text-base">{{ item.label }}</span>
+            </a>
+        </nav>
+    </div>
+    <div class="px-4 py-3 border-t border-gray-200 dark:border-white/10">
+        <a routerLink="/settings" (click)="onNavClick()" class="flex items-center gap-3 p-3 rounded-lg text-gray-700 dark:text-white hover:bg-blue-100 dark:hover:bg-white/10 transition" (click)="onNavClick()">
+            <lucide-icon name="settings" class="w-5 h-5"></lucide-icon>
+            <span>Settings</span>
+        </a>
+    </div>
+</aside>
+

@@ -1,0 +1,15 @@
+<div class="min-w-screen flex flex-col mt-10">
+    <h3 class="text-xl font-bold ml-6">Active Tickets</h3>
+
+    <div class="mt-4 w-full p-6">
+        <ng-container *ngIf="tickets.length > 0; else noTickets">
+            <div *ngFor="let ticket of tickets" class="flex flex-row justify-between items-center bg-white p-4 rounded shadow mb-4">
+                <p class="text-gray-700 font-medium">{{ ticket.title }}</p>
+                <button class="px-6 py-2 bg-cyan-700 text-white rounded">Join Chat</button>
+            </div>
+        </ng-container>
+        <ng-template #noTickets>
+            <p class="text-gray-500">No active tickets available.</p>
+        </ng-template>
+    </div>
+</div>
