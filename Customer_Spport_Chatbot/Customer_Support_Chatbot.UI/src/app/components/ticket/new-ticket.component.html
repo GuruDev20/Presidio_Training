@@ -1,0 +1,14 @@
+<div class="min-w-screen flex flex-col justify-center items-center mt-10">
+    <h2 class="text-2xl font-bold">Create New Ticket</h2>
+    <div class="mt-4 w-full p-6">
+        <form (ngSubmit)="createTicket()">
+            <input type="text" name="title" [(ngModel)]="title" placeholder="Ticket Title" class="w-full p-3 border border-gray-300 rounded mb-4" required>
+            <textarea name="description" [(ngModel)]="description" placeholder="Ticket Description" class="w-full p-3 border border-gray-300 rounded mb-4" required></textarea>
+            <div class="flex justify-center">
+                <button type="submit" class="bg-indigo-500 text-white p-3 px-6 rounded hover:bg-indigo-600">
+                    Create Ticket
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

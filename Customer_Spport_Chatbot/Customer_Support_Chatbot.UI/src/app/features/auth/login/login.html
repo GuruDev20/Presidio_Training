@@ -1,0 +1,29 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
+    <div class="w-full max-w-md bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-xl text-white space-y-6 border border-white/10">
+        <h2 class="text-3xl font-bold text-center">Welcome Back 👋</h2>
+
+        <form (ngSubmit)="submit()" [formGroup]="form" class="space-y-4">
+        <div>
+            <label class="block text-sm font-medium mb-1">Email</label>
+            <input formControlName="email" type="email" placeholder="Enter email" class="w-full px-4 py-2 rounded-lg bg-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-white/50"/>
+            <p class="text-red-400 text-sm mt-1" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">Enter a valid email</p>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium mb-1">Password</label>
+            <input formControlName="password" type="password" placeholder="••••••••" class="w-full px-4 py-2 rounded-lg bg-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-white/50"/>
+            <p class="text-red-400 text-sm mt-1" *ngIf="form.get('password')?.invalid && form.get('password')?.touched">Password is required</p>
+        </div>
+
+        <button type="submit" [disabled]="form.invalid"
+                class="w-full py-2 rounded-lg bg-blue-600 hover:bg-blue-700 transition duration-300 font-semibold">
+            Login
+        </button>
+        </form>
+
+        <div class="text-center text-sm">
+        Don’t have an account?
+        <a routerLink="/auth/register" class="text-blue-400 hover:underline cursor-pointer">Register</a>
+        </div>
+    </div>
+</div>
