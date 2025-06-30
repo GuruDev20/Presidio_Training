@@ -31,7 +31,8 @@ namespace Customer_Support_Chatbot.Services
                 FullName = user.Username,
                 Role = user.Role,
                 IsActive = user.IsActive,
-                CreatedAt = user.CreatedAt
+                CreatedAt = user.CreatedAt,
+                ProfilePictureUrl = user.ProfilePictureUrl
             });
         }
 
@@ -65,7 +66,7 @@ namespace Customer_Support_Chatbot.Services
                 RefreshToken = refreshToken,
                 Role = user.Role,
                 UserId = user.Id,
-                ExpiresMinutes = DateTime.UtcNow.AddMinutes(30)
+                ExpiresMinutes = DateTime.UtcNow.AddMinutes(60)
             });
         }
 
