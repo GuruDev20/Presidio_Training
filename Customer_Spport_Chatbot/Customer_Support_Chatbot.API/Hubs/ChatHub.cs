@@ -1,6 +1,6 @@
+using System.Security.Claims;
 using Customer_Support_Chatbot.Contexts;
-using Customer_Support_Chatbot.DTOs.Chat;
-using Customer_Support_Chatbot.Models;
+using Customer_Support_Chatbot.Services;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Customer_Support_Chatbot.Hubs
@@ -13,64 +13,39 @@ namespace Customer_Support_Chatbot.Hubs
             _context = context;
         }
 
-        public async Task JoinRoom(string ticketId)
+        public override Task OnConnectedAsync()
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, ticketId);
+            // var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return base.OnConnectedAsync();
         }
 
-        public async Task SendMessage(SendMessageDto dto)
+        public async Task JoinChat(Guid ticketId)
         {
-            var ticket=await _context.Tickets.FindAsync(dto.TicketId);
-            if (ticket == null || ticket.Status == "Closed")
-            {
-                return;
-            }
-            var message = new Message
-            {
-                Id = Guid.NewGuid(),
-                TicketId = dto.TicketId,
-                SenderId = dto.SenderId,
-                Content = dto.Content,
-                SentAt = DateTime.UtcNow
-            };
-            _context.Messages.Add(message);
-            await _context.SaveChangesAsync();
-            await Clients.Group(dto.TicketId.ToString()).SendAsync("ReceiveMessage", new MessageDto
-            {
-                Id = message.Id,
-                TicketId = message.TicketId,
-                SenderId = message.SenderId,
-                Content = message.Content,
-                SentAt = message.SentAt
-            });
+
+        }
+        public async Task SendMessage(Guid ticketId,Guid senderId,string content)
+        {
+
         }
 
-        public async Task EndChat(Guid ticketId, Guid AgentId)
+        public async Task EndChat(Guid ticketId)
         {
-            var ticket = await _context.Tickets.FindAsync(ticketId);
-            if (ticket == null || ticket.AgentId != AgentId)
-            {
-                await Clients.Caller.SendAsync("Error", "You are not authorized to end this chat.");
-                return;
-            }
-            ticket.Status = "Closed";
-            await _context.SaveChangesAsync();
-            var agent = await _context.Agents.FindAsync(AgentId);
-            if (agent != null)
-            {
-                agent.Status = "Available";
-                agent.UpdatedAt = DateTime.UtcNow;
-                await _context.SaveChangesAsync();
-            }
 
-            await Clients.Group(ticketId.ToString()).SendAsync("ReceiveMessage", new MessageDto
-            {
-                Id = Guid.NewGuid(),
-                TicketId = ticketId,
-                SenderId = Guid.Empty,
-                Content = "Chat has been ended by the agent.",
-                SentAt = DateTime.UtcNow
-            });
         }
+
+        public async Task NotifyAgentTicketAssigned(Guid agentUserId, Guid ticketId, string title)
+        {
+            await Clients.User(agentUserId.ToString())
+                .SendAsync("ReceiveTicketAssignedNotification", new {
+                    TicketId = ticketId,
+                    Title = title
+                });
+        }
+
+        public async Task LeaveChat(Guid ticktId)
+        {
+
+        }
+
     }
 }

@@ -68,6 +68,7 @@ namespace Customer_Support_Chatbot.Services
                 Username = dto.Username,
                 Email = dto.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                ProfilePictureUrl = dto.ProfilePictureUrl,
                 IsActive = true,
                 IsDeactivated = false,
                 CreatedAt = DateTime.UtcNow

@@ -7,6 +7,7 @@ namespace Customer_Support_Chatbot.Models
         public string Email { get; set; } = string.Empty;
         public string PasswordHash { get; set; } = string.Empty;
         public string Role { get; set; } = "User";
+        public string? ProfilePictureUrl { get; set; }
         public bool IsActive { get; set; } = true;
         public bool IsDeactivated { get; set; } = false;
         public DateTime? DeactivationRequestedAt { get; set; }

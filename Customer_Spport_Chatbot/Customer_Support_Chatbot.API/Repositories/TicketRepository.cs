@@ -37,6 +37,16 @@ namespace Customer_Support_Chatbot.Repositories
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<Ticket?> GetFullTicketAsync(Guid ticketId)
+        {
+            return await _context.Tickets
+                .Include(t => t.User)
+                .Include(t => t.Agent).ThenInclude(a => a!.User)
+                .Include(t => t.Messages)
+                .Include(t => t.Attachments)
+                .FirstOrDefaultAsync(t => t.Id == ticketId);
+        }
+
         public async Task<IEnumerable<Ticket>> GetTicketsHistoryAsync(Guid id, string role, string? keyword, string? timeRange)
         {
             if (string.IsNullOrEmpty(role) || (role != "User" && role != "Agent"))
@@ -54,7 +64,7 @@ namespace Customer_Support_Chatbot.Repositories
             }
             else if (role == "Agent")
             {
-                query = query.Where(t => t.AgentId == id);
+                query = query.Where(t => t.Agent != null && t.Agent.UserId == id);
             }
             if (!string.IsNullOrEmpty(keyword))
             {

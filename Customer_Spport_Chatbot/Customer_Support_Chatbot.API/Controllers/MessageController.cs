@@ -1,5 +1,6 @@
 using Customer_Support_Chatbot.Contexts;
 using Customer_Support_Chatbot.DTOs.Chat;
+using Customer_Support_Chatbot.Interfaces.Services;
 using Customer_Support_Chatbot.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,29 +12,25 @@ namespace Customer_Support_Chatbot.Controllers
     [Route("api/v1/messages")]
     public class MessageController : ControllerBase
     {
-        private readonly AppDbContext _context;
-        public MessageController(AppDbContext context)
+        private readonly IMessageService _messageService;
+        public MessageController(IMessageService messageService)
         {
-            _context = context;
+            _messageService = messageService;
         }
 
         [HttpGet("{ticketId}")]
         [Authorize]
         public async Task<IActionResult> GetMessages(Guid ticketId)
         {
-            var messages = await _context.Messages
-                .Where(m => m.TicketId == ticketId)
-                .OrderBy(m => m.SentAt)
-                .Select(m => new MessageDto
-                {
-                    Id = m.Id,
-                    TicketId = m.TicketId,
-                    SenderId = m.SenderId,
-                    Content = m.Content,
-                    SentAt = m.SentAt
-                })
-                .ToListAsync();
-
+            if (ticketId == Guid.Empty)
+            {
+                return BadRequest("Ticket ID is required.");
+            }
+            var messages = await _messageService.GetMessagesAsync(ticketId);
+            if (messages == null || !messages.Any())
+            {
+                return NotFound("No messages found for this ticket.");
+            }
             return Ok(messages);
         }
 
@@ -46,32 +43,19 @@ namespace Customer_Support_Chatbot.Controllers
                 return BadRequest("Ticket ID, Sender ID, and message content are required.");
             }
 
-            var ticketExists = await _context.Tickets.AnyAsync(t => t.Id == dto.TicketId);
-            if (!ticketExists)
+            try
             {
-                return NotFound("Ticket not found.");
+                var message = await _messageService.SendMessageAsync(dto);
+                if (message == null)
+                {
+                    return BadRequest("Failed to send message.");
+                }
+                return Ok(message);
             }
-
-            var message = new Message
+            catch (Exception ex)
             {
-                Id = Guid.NewGuid(),
-                TicketId = dto.TicketId,
-                SenderId = dto.SenderId,
-                Content = dto.Content,
-                SentAt = DateTime.UtcNow
-            };
-
-            await _context.Messages.AddAsync(message);
-            await _context.SaveChangesAsync();
-
-            return Ok(new
-            {
-                message.Id,
-                message.TicketId,
-                message.SenderId,
-                message.Content,
-                message.SentAt
-            });
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
     }

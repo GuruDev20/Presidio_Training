@@ -1,8 +1,11 @@
+using Customer_Support_Chatbot.DTOs.Chat;
 using Customer_Support_Chatbot.DTOs.Ticket;
+using Customer_Support_Chatbot.Hubs;
 using Customer_Support_Chatbot.Interfaces.Repositories;
 using Customer_Support_Chatbot.Interfaces.Services;
 using Customer_Support_Chatbot.Models;
 using Customer_Support_Chatbot.Wrappers;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Customer_Support_Chatbot.Services
 {
@@ -11,13 +14,16 @@ namespace Customer_Support_Chatbot.Services
         private readonly ITicketRepository _ticketRepository;
         private readonly IUserRepository _userRepository;
         private readonly IAgentRepository _agentRepository;
+        private readonly IHubContext<ChatHub> _hubContext;
         public TicketService(ITicketRepository ticketRepository,
                              IUserRepository userRepository,
-                             IAgentRepository agentRepository)
+                             IAgentRepository agentRepository,
+                             IHubContext<ChatHub> hubContext)
         {
             _userRepository = userRepository;
             _agentRepository = agentRepository;
             _ticketRepository = ticketRepository;
+            _hubContext = hubContext;
         }
 
         public async Task<ApiResponse<object>> CreateTicketAsync(CreateTicketDto dto)
@@ -57,6 +63,7 @@ namespace Customer_Support_Chatbot.Services
             }
             agent.Status = "Busy";
             _agentRepository.Update(agent);
+
             var responseDto = new TicketResponseDto
             {
                 TicketId = ticket.Id,
@@ -64,7 +71,13 @@ namespace Customer_Support_Chatbot.Services
                 Title = ticket.Name!,
                 Description = ticket.Description
             };
-
+            await _hubContext.Clients
+            .User(agent.UserId.ToString())
+            .SendAsync("ReceiveTicketAssignedNotification", new
+            {
+                TicketId = ticket.Id,
+                Title = ticket.Name
+            });
             return ApiResponse<object>.Ok("Ticket created successfully.", responseDto);
         }
 
@@ -105,6 +118,44 @@ namespace Customer_Support_Chatbot.Services
             return ApiResponse<string>.Ok("Ticket has been successfully closed.");
         }
 
+        public async Task<ApiResponse<object>> GetChatSessionAsync(Guid ticketId)
+        {
+            var ticket = await _ticketRepository.GetFullTicketAsync(ticketId);
+            if (ticket == null)
+            {
+                return ApiResponse<object>.Fail("Ticket not found.");
+            }
+            var user = ticket.User;
+            var agent = ticket.Agent;
+            if (user == null || agent == null)
+            {
+                return ApiResponse<object>.Fail("User or Agent not found for this ticket.");
+            }
+            var messages = ticket.Messages?.OrderBy(m => m.SentAt).Select(m => new ChatMessageDto
+            {
+                Content = m.Content,
+                SenderRole = m.SenderId == ticket.UserId ? "User" : "Agent",
+                SentAt = m.SentAt
+            }).ToList() ?? new List<ChatMessageDto>();
+            var attachments = ticket.Attachments?.Select(a => new ChatAttachmentDto
+            {
+                FileName = a.FileName,
+                Url = $"/api/v1/files/{a.FileName}"
+            }).ToList() ?? new List<ChatAttachmentDto>();
+
+            var chatDto = new ChatSessionDto
+            {
+                TicketId = ticket.Id,
+                Title = ticket.Name ?? "Untitled Ticket",
+                Status = ticket.Status,
+                UserName = user?.Username ?? "Unknown User",
+                AgentName = agent?.User?.Username ?? "Unassigned",
+                Messages = messages,
+                Attachments = attachments,
+            };
+            return ApiResponse<object>.Ok("Chat session retrieved successfully.", chatDto);
+        }
+
         public async Task<ApiResponse<object>> GetTicketsHistoryAsync(TicketHistoryFilterDto filterDto)
         {
             if (filterDto == null)
@@ -117,7 +168,9 @@ namespace Customer_Support_Chatbot.Services
                 filterDto.SearchKeyword,
                 filterDto.TimeRange
             );
-            return ApiResponse<object>.Ok("Tickets history retrieved successfully.",data);
+            return ApiResponse<object>.Ok("Tickets history retrieved successfully.", data);
         }
+        
+        
     }
 }

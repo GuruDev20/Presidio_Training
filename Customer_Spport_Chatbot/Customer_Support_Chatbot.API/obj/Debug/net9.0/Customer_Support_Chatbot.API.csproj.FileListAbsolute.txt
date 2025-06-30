@@ -127,3 +127,10 @@
 /Users/dev/Desktop/Presidio_Training/Customer_Spport_Chatbot/Customer_Support_Chatbot.API/obj/Debug/net9.0/Customer_Support_Chatbot.API.pdb
 /Users/dev/Desktop/Presidio_Training/Customer_Spport_Chatbot/Customer_Support_Chatbot.API/obj/Debug/net9.0/Customer_Support_Chatbot.API.genruntimeconfig.cache
 /Users/dev/Desktop/Presidio_Training/Customer_Spport_Chatbot/Customer_Support_Chatbot.API/obj/Debug/net9.0/ref/Customer_Support_Chatbot.API.dll
+/Users/dev/Desktop/Presidio_Training/Customer_Spport_Chatbot/Customer_Support_Chatbot.API/bin/Debug/net9.0/Microsoft.AspNetCore.Connections.Abstractions.dll
+/Users/dev/Desktop/Presidio_Training/Customer_Spport_Chatbot/Customer_Support_Chatbot.API/bin/Debug/net9.0/Microsoft.AspNetCore.SignalR.Common.dll
+/Users/dev/Desktop/Presidio_Training/Customer_Spport_Chatbot/Customer_Support_Chatbot.API/bin/Debug/net9.0/Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson.dll
+/Users/dev/Desktop/Presidio_Training/Customer_Spport_Chatbot/Customer_Support_Chatbot.API/bin/Debug/net9.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll
+/Users/dev/Desktop/Presidio_Training/Customer_Spport_Chatbot/Customer_Support_Chatbot.API/bin/Debug/net9.0/Microsoft.Extensions.Features.dll
+/Users/dev/Desktop/Presidio_Training/Customer_Spport_Chatbot/Customer_Support_Chatbot.API/bin/Debug/net9.0/Microsoft.Extensions.Options.dll
+/Users/dev/Desktop/Presidio_Training/Customer_Spport_Chatbot/Customer_Support_Chatbot.API/bin/Debug/net9.0/Microsoft.Extensions.Primitives.dll

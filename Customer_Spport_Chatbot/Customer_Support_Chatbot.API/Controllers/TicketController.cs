@@ -52,7 +52,7 @@ namespace Customer_Support_Chatbot.Contexts
         [Authorize(Roles = "User,Agent")]
         [HttpGet("history")]
         public async Task<IActionResult> GetTicketsHistory([FromQuery] TicketHistoryFilterDto filterDto)
-        { 
+        {
             if (filterDto == null)
             {
                 return BadRequest("Filter data is required.");
@@ -62,6 +62,23 @@ namespace Customer_Support_Chatbot.Contexts
             if (response.Success)
             {
                 return Ok(response);
+            }
+            return BadRequest(response.Message);
+        }
+
+        [Authorize]
+        [HttpGet("{ticketId}/chat-session")]
+        public async Task<IActionResult> GetChatSession(Guid ticketId)
+        {
+            if (ticketId == Guid.Empty)
+            {
+                return BadRequest("Ticket ID is required.");
+            }
+
+            var response = await _ticketService.GetChatSessionAsync(ticketId);
+            if (response.Success)
+            {
+                return Ok(response.Data);
             }
             return BadRequest(response.Message);
         }
