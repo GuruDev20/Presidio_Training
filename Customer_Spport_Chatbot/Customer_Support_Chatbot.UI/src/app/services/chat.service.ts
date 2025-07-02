@@ -11,7 +11,7 @@ export class ChatService{
 
     constructor(private http:HttpClient){}
 
-    sendMesage(data:{ticketId:string;senderId:string;content:string}):Observable<any>{
+    sendMessage(data:{ticketId:string;senderId:string;content:string}):Observable<any>{
         return this.http.post(`${this.baseUrl}/messages`, data);
     }
 

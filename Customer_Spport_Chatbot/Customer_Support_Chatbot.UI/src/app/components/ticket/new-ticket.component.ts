@@ -38,7 +38,8 @@ export class NewTicketComponent implements OnInit{
             this.ticketService.createTicket(payload).subscribe({
                 next:(res)=>{
                     console.log('Ticket created successfully:', res);
-                    this.router.navigate(['/chat'],{
+                    this.router.navigate(['/user/dashboard/tickets/chat'],{
+                        state: { ticketId: res.data.ticketId },
                         queryParams: { ticketId: res.data.ticketId, new: true }
                     });
                 },

@@ -1,9 +1,11 @@
 import { Routes } from '@angular/router';
 import { SettingsComponent } from './features/settings/settings.component';
+import { HomeComponent } from './features/home/home.component';
 
 export const routes: Routes = [
     
-    {path:'',redirectTo:'auth/login',pathMatch:'full'},
+    {path:'',redirectTo:'home',pathMatch:'full'},
+    {path:'home',component:HomeComponent},
     {
         path:'auth',
         loadChildren:()=>import('./features/auth/auth-module').then(m=>m.AuthModule)
@@ -19,10 +21,6 @@ export const routes: Routes = [
     {
         path:'user',
         loadChildren:()=>import('./features/user/user.routes').then(m=>m.User_Routes)
-    },
-    {
-        path:'chat',
-        loadComponent:()=>import('./components/chat/chat.component').then(m=>m.ChatComponent)
     },
     {path:'settings',component:SettingsComponent}
 ];

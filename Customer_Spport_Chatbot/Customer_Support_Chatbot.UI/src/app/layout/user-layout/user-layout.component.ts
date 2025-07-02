@@ -1,8 +1,9 @@
-import { Component, HostListener, Input, OnInit } from "@angular/core";
+import { Component, HostListener, Input, OnDestroy, OnInit } from "@angular/core";
 import { SidebarComponent } from "../../components/sidebar/sidebar.component";
 import { NavbarComponent } from "../../components/navbar/navbar.component";
 import { ActivatedRoute, RouterModule } from "@angular/router";
 import { CommonModule } from "@angular/common";
+import { SignalRService } from "../../services/signalr.service";
 
 @Component({
     selector: 'app-user-layout',
@@ -10,7 +11,7 @@ import { CommonModule } from "@angular/common";
     standalone: true,
     imports: [SidebarComponent, NavbarComponent, RouterModule, CommonModule]
 })
-export class UserLayoutComponent implements OnInit {
+export class UserLayoutComponent implements OnInit,OnDestroy {
     items: any[] = [];
 
     showSidebar = false;
@@ -20,11 +21,16 @@ export class UserLayoutComponent implements OnInit {
     isTablet = false;
     isDesktop = false;
 
-    constructor(private router: ActivatedRoute) {}
+    constructor(private router: ActivatedRoute,private signalRService:SignalRService) {}
 
     ngOnInit(): void {
+        this.signalRService.startConnection();
         this.checkScreenSize();
         this.items = this.router.snapshot.data['items'] || [];
+    }
+
+    ngOnDestroy(): void {
+        this.signalRService.stopConnection();
     }
 
     @HostListener('window:resize')
