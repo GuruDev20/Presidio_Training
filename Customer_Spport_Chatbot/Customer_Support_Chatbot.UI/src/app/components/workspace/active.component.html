@@ -5,7 +5,7 @@
         <ng-container *ngIf="tickets.length > 0; else noTickets">
             <div *ngFor="let ticket of tickets" class="flex flex-row justify-between items-center bg-white p-4 rounded shadow mb-4">
                 <p class="text-gray-700 font-medium">{{ ticket.title }}</p>
-                <button class="px-6 py-2 bg-cyan-700 text-white rounded">Join Chat</button>
+                <button class="px-6 py-2 bg-cyan-700 text-white rounded" (click)="joinChat(ticket.ticketId)">Join Chat</button>
             </div>
         </ng-container>
         <ng-template #noTickets>

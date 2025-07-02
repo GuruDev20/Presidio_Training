@@ -25,4 +25,8 @@ export class UserService{
         }
         return this.http.get<ApiResponse<TicketHistoryResponse[]>>(`${this.baseurl}/tickets/history`, {params});
     }
+
+    getChatSession(ticketId: string): Observable<ApiResponse<any>> {
+        return this.http.get<ApiResponse<any>>(`${this.baseurl}/tickets/${ticketId}/chat-session`);
+    }
 }

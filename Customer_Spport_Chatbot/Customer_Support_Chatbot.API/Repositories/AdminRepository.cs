@@ -85,14 +85,14 @@ namespace Customer_Support_Chatbot.Repositories
         public async Task<object> GetOverviewAsync()
         {
             var totalUsers = await _context.Users.CountAsync(u => u.Role == "User");
-            var totalAgents = await _context.Users.CountAsync(u => u.Role == "Agent");
-            var activeTickets = await _context.Tickets.CountAsync(t => t.Status == "Open");
+            var activeUsers = await _context.Users.CountAsync(u => u.Role == "User" && !u.IsDeactivated);
+            var activeAgents = await _context.Agents.CountAsync(t => t.Status == "Available");
             var totalTickets = await _context.Tickets.CountAsync();
             return new
             {
                 TotalUsers = totalUsers,
-                TotalAgents = totalAgents,
-                ActiveTickets = activeTickets,
+                ActiveUsers = activeUsers,
+                ActiveAgents = activeAgents,
                 TotalTickets = totalTickets
             };
         }

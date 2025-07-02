@@ -10,8 +10,10 @@ namespace Customer_Support_Chatbot.Contexts
     public class TicketController : ControllerBase
     {
         private readonly ITicketService _ticketService;
-        public TicketController(ITicketService ticketService)
+        private readonly AppDbContext _context;
+        public TicketController(ITicketService ticketService, AppDbContext context)
         {
+            _context = context;
             _ticketService = ticketService;
         }
 
@@ -82,5 +84,6 @@ namespace Customer_Support_Chatbot.Contexts
             }
             return BadRequest(response.Message);
         }
+
     }
 }

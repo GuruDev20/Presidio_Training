@@ -17,6 +17,10 @@ export class TicketService{
     }
 
     endTicket(ticketId:string):Observable<ApiResponse<string>>{
-        return this.http.post<ApiResponse<string>>(`${this.baseUrl}/tickets/end/${ticketId}`, {});
+        return this.http.put<ApiResponse<string>>(`${this.baseUrl}/tickets/end/${ticketId}`, {});
+    }
+
+    getActiveTickets(): Observable<any[]> {
+        return this.http.get<any[]>(`${environment.baseUrl}/tickets/active`);
     }
 }
