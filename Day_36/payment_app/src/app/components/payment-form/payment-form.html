@@ -1,0 +1,38 @@
+<div class="container">
+    <h2>UPI Payment Form</h2>
+    <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+            <label for="amount">Amount (INR)</label>
+            <input type="number" id="amount" formControlName="amount" class="form-control" />
+            <div *ngIf="paymentForm.get('amount')?.invalid && paymentForm.get('amount')?.touched" class="error">
+                Amount is required and must be greater than 0.
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="customerName">Customer Name</label>
+            <input type="text" id="customerName" formControlName="customerName" class="form-control" />
+            <div *ngIf="paymentForm.get('customerName')?.invalid && paymentForm.get('customerName')?.touched" class="error">
+                Customer Name is required.
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" formControlName="email" class="form-control" />
+            <div *ngIf="paymentForm.get('email')?.invalid && paymentForm.get('email')?.touched" class="error">
+                Valid email is required.
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="contactNumber">Contact Number</label>
+            <input type="text" id="contactNumber" formControlName="contactNumber" class="form-control" />
+            <div *ngIf="paymentForm.get('contactNumber')?.invalid && paymentForm.get('contactNumber')?.touched" class="error">
+                Contact Number must be 10 digits.
+            </div>
+        </div>
+        <button type="submit" [disabled]="paymentForm.invalid || isLoading" class="btn btn-primary">
+            {{ isLoading ? 'Processing...' : 'Pay Now' }}
+        </button>
+    </form>
+    <div *ngIf="isLoading" class="spinner">Loading...</div>
+    <app-payment-result *ngIf="paymentResponse" [response]="paymentResponse"></app-payment-result>
+</div>

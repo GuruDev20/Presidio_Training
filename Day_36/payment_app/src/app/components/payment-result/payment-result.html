@@ -1,0 +1,5 @@
+<div class="result" *ngIf="response" [ngClass]="response.status">
+    <h3>Payment {{ response.status | titlecase }}</h3>
+    <p>{{ response.message }}</p>
+    <p *ngIf="response?.paymentId">Payment ID: {{ response.paymentId }}</p>
+</div>
