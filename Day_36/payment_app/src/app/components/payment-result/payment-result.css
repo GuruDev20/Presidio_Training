@@ -1,0 +1,50 @@
+.result {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.result.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.result.failure {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.result.cancelled {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.history {
+    margin-top: 30px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.history-item {
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.history-item.success {
+    background-color: #e6f4ea;
+}
+
+.history-item.failure {
+    background-color: #f8d7da;
+}
+
+.history-item.cancelled {
+    background-color: #fff3cd;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid #eee;
+}
