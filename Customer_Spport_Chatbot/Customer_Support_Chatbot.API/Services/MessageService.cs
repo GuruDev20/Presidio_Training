@@ -47,7 +47,7 @@ namespace Customer_Support_Chatbot.Services
 
             await _context.Messages.AddAsync(message);
 
-            if (ticket.Status == "Active")
+            if (ticket.Status == "Open")
             {
                 ticket.Status = "Pending";
                 _context.Tickets.Update(ticket);

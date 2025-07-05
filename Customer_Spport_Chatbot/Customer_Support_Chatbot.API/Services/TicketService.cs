@@ -140,7 +140,8 @@ namespace Customer_Support_Chatbot.Services
             var attachments = ticket.Attachments?.Select(a => new ChatAttachmentDto
             {
                 FileName = a.FileName,
-                Url = $"/api/v1/files/{a.FileName}"
+                Url = $"/api/v1/files/{a.FileName}",
+                SendAt = a.UploadedAt
             }).ToList() ?? new List<ChatAttachmentDto>();
 
             var chatDto = new ChatSessionDto
