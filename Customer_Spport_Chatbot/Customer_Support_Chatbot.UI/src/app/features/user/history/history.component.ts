@@ -27,7 +27,6 @@ export class UserHistoryComponent implements OnInit {
         this.userService.getTicketsByUser({ userOrAgentId: userId, role })
             .subscribe({
                 next: (res) => {
-                    console.log('Ticket history response:', res.data);
                     this.history = Array.isArray((res.data as any)?.$values)
                         ? (res.data as any).$values
                         : [];
