@@ -7,6 +7,8 @@ export interface ChatMessageDto {
 export interface ChatAttachmentDto {
     fileName: string;
     url: string;
+    senderRole?: string;
+    sentAt?: Date;
 }
 
 export interface ChatSessionDto {

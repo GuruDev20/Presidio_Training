@@ -3,7 +3,8 @@ import { AuthService } from "../../../services/auth.service";
 import { UserService } from "../../../services/user.service";
 import { CommonModule } from "@angular/common";
 import { LucideIconsModule } from "../../../utils/lucide-icons.module";
-import { ChatSessionDto } from "../../../models/chat.model";
+import { ChatSessionDto, ChatMessageDto, ChatAttachmentDto } from "../../../models/chat.model";
+import { environment } from "../../../../environments/environment";
 
 @Component({
     selector: 'app-user-history',
@@ -18,6 +19,8 @@ export class UserHistoryComponent implements OnInit {
     openMenuIndex: number | null = null;
     selectedChatSession: ChatSessionDto | null = null;
     showChatPanel = false;
+    private baseApiUrl = environment.baseUrl;
+    timeline: Array<{ type: 'message', data: ChatMessageDto } | { type: 'attachment', data: ChatAttachmentDto }> = [];
 
     constructor(private authService: AuthService, private userService: UserService) {}
 
@@ -69,16 +72,56 @@ export class UserHistoryComponent implements OnInit {
     viewDetails(ticketId: string) {
         this.userService.getChatSession(ticketId).subscribe({
             next: (res) => {
-                console.log('Chat session response:', res);
-                if (res.success) {
-                    this.selectedChatSession = res.data as ChatSessionDto;
-                    console.log('Selected chat session:', this.selectedChatSession);
-                    this.showChatPanel = true;
-                    this.closeAllMenus();
+                console.log('Chat session details:', res);
+                this.selectedChatSession = res as unknown as ChatSessionDto;
+                // Process messages
+                if (this.selectedChatSession && (this.selectedChatSession.messages as any)?.$values) {
+                    this.selectedChatSession.messages = (this.selectedChatSession.messages as any).$values;
+                } else if (!Array.isArray(this.selectedChatSession?.messages)) {
+                    this.selectedChatSession.messages = [];
                 }
+                // Process attachments
+                if (this.selectedChatSession && (this.selectedChatSession.attachments as any)?.$values) {
+                    this.selectedChatSession.attachments = (this.selectedChatSession.attachments as any).$values.map((attachment: any) => ({
+                        ...attachment,
+                        url: attachment.url.startsWith('http') ? attachment.url : `${this.baseApiUrl}${attachment.url}`,
+                        sentAt: attachment.sendAt ? new Date(attachment.sendAt) : attachment.sentAt ? new Date(attachment.sentAt) : new Date()
+                    }));
+                } else if (!Array.isArray(this.selectedChatSession?.attachments)) {
+                    this.selectedChatSession.attachments = [];
+                }
+                // Create timeline
+                this.timeline = [];
+                let lastSenderRole = 'Agent'; // Default fallback
+                // Add messages to timeline
+                this.selectedChatSession.messages.forEach(message => {
+                    this.timeline.push({ type: 'message', data: message });
+                    lastSenderRole = message.senderRole || lastSenderRole;
+                });
+                // Add attachments to timeline
+                this.selectedChatSession.attachments.forEach(attachment => {
+                    this.timeline.push({
+                        type: 'attachment',
+                        data: {
+                            ...attachment,
+                            senderRole: attachment.senderRole || lastSenderRole
+                        }
+                    });
+                });
+                // Sort timeline by sentAt
+                this.timeline.sort((a, b) => {
+                    const aTime = a.data.sentAt ? new Date(a.data.sentAt).getTime() : Number.MAX_SAFE_INTEGER;
+                    const bTime = b.data.sentAt ? new Date(b.data.sentAt).getTime() : Number.MAX_SAFE_INTEGER;
+                    return aTime - bTime;
+                });
+                this.showChatPanel = true;
+                this.closeAllMenus();
             },
             error: (err) => {
                 console.error('Error fetching chat session:', err);
+                this.selectedChatSession = null;
+                this.showChatPanel = false;
+                this.timeline = [];
             }
         });
     }
@@ -87,9 +130,16 @@ export class UserHistoryComponent implements OnInit {
         this.showChatPanel = false;
         setTimeout(() => {
             this.selectedChatSession = null;
+            this.timeline = [];
         }, 300);
     }
 
     deleteHistory(index: number) {
+        
+    }
+
+    isImage(fileName: string): boolean {
+        const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
+        return imageExtensions.some(ext => fileName.toLowerCase().endsWith(ext));
     }
 }

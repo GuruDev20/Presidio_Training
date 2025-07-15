@@ -11,7 +11,7 @@ export interface TicketHistoryResponse{
     description: string;
     status: string;
     userId: string;
-    agentId: string;
+    agentId: string | null;
     createdAt: string;
     closedAt?: string;
 }
@@ -24,7 +24,13 @@ export interface CreateTicket{
 
 export interface TicketResponse{
     ticketId: string;
-    assignedAgentId: string;
+    assignedAgentId: string | null;
     title: string;
     description: string;
+}
+
+export interface Ticket {
+    id: string;
+    title: string;
+    status: 'Active' | 'Pending' | 'Closed';
 }

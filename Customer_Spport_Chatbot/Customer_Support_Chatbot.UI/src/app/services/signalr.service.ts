@@ -14,12 +14,14 @@ export class SignalRService {
     private agentJoinedSource = new BehaviorSubject<any>(null);
     private chatEndedSource = new BehaviorSubject<any>(null);
     private connectionEstablished = new BehaviorSubject<boolean>(false);
+    private agentAvailabilitySource = new BehaviorSubject<boolean>(false);
 
     ticketNotification$ = this.ticketNotificationSource.asObservable();
     message$ = this.messageSource.asObservable();
     file$ = this.fileSource.asObservable();
     agentJoined$ = this.agentJoinedSource.asObservable();
     chatEnded$ = this.chatEndedSource.asObservable();
+    agentAvailability$ = this.agentAvailabilitySource.asObservable();
 
     private isListenersRegistered = false;
 
@@ -104,6 +106,7 @@ export class SignalRService {
         this.hubConnection.off("ReceiveFile");
         this.hubConnection.off("AgentJoined");
         this.hubConnection.off("ChatEnded");
+        this.hubConnection.off("AgentAvailability");
 
         this.hubConnection.on("ReceiveTicketAssignedNotification", (data) => {
             console.log("Received ticket notification:", data);
@@ -130,6 +133,11 @@ export class SignalRService {
             this.chatEndedSource.next(data);
         });
 
+        this.hubConnection.on("AgentAvailability", (data) => {
+            console.log("Received AgentAvailability:", data);
+            this.agentAvailabilitySource.next(data.available);
+        });
+
         this.isListenersRegistered = true;
     }
 
@@ -147,6 +155,20 @@ export class SignalRService {
         }
     }
 
+    public async notifyAgent(ticketId: string): Promise<void> {
+        if (!ticketId) {
+            throw new Error("Ticket ID is required");
+        }
+        await this.waitForConnection();
+        if (this.hubConnection) {
+            await this.hubConnection.invoke("NotifyAgent", ticketId)
+                .catch(err => {
+                    console.error("Error notifying agent:", err);
+                    throw err;
+                });
+        }
+    }
+    
     public async sendMessage(ticketId: string, senderId: string, content: string): Promise<void> {
         await this.waitForConnection();
         if (this.hubConnection) {

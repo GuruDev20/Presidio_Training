@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { Activity, Bell, ChevronLeft, ChevronRight, Clock, Clock10, LayoutDashboard, LogInIcon, LucideAngularModule, Menu, MessageCircle, MoreVertical, Plus, Settings, TerminalSquare, Ticket } from 'lucide-angular';
+import { Activity, Bell, ChevronLeft, ChevronRight, Clock, Clock10, LayoutDashboard, LogInIcon, LucideAngularModule, Menu, MessageCircle, MoreVertical, Plus, Settings, TerminalSquare, Ticket, X } from 'lucide-angular';
 import { Camera, User, LogIn, LogOut, Sun, Moon } from 'lucide-angular';
 
 @NgModule({
@@ -25,7 +25,8 @@ import { Camera, User, LogIn, LogOut, Sun, Moon } from 'lucide-angular';
             ChevronLeft,
             ChevronRight,
             LogInIcon,
-            MoreVertical
+            MoreVertical,
+            X
         })
     ],
     exports: [LucideAngularModule]

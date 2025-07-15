@@ -27,6 +27,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     botInterval: any;
     senderId: string = '';
     chatEnded = false;
+    waitingForAgent = false;
     private subscriptions: Subscription[] = [];
     private agentJoinedProcessed = new Set<string>(); // Track processed agent joined tickets
     private lastAgentJoinedTime: number = 0; // Track last agent joined event time
@@ -89,6 +90,19 @@ export class ChatComponent implements OnInit, OnDestroy {
                         this.agentJoined = true;
                         this.killBot();
                     } else if (this.newSession) {
+                        if (!this.newSession) {
+                            this.signalRService.notifyAgent(this.ticketId)
+                                .then(() => {
+                                    console.log('[Chat] Agent notified for ticket:', this.ticketId);
+                                    this.waitingForAgent = true; // Assume agent is unavailable until notified
+                                    this.toastr.info('Waiting for an agent to join the chat.', 'Info');
+                                })
+                                .catch(err => {
+                                    console.error('[Chat] Error notifying agent:', err);
+                                    this.toastr.error('Failed to notify agent. Please try again.', 'Error');
+                                    this.router.navigate([this.isAgent ? '/agent/dashboard/workspace/active' : '/user/dashboard/tickets/active']);
+                                });
+                        }
                         this.simulateLoadingAndBot();
                     }
                     this.cdr.detectChanges();
@@ -152,6 +166,7 @@ export class ChatComponent implements OnInit, OnDestroy {
                         this.lastAgentJoinedTime = currentTime;
                         this.agentJoined = true;
                         this.loading = false;
+                        this.waitingForAgent = false; 
                         this.killBot();
                         this.messages.push({
                             sender: data.sender,
@@ -185,6 +200,20 @@ export class ChatComponent implements OnInit, OnDestroy {
                             this.cdr.detectChanges();
                             setTimeout(() => this.leaveChat(), 2000);
                         }
+                    }
+                })
+            );
+
+            this.subscriptions.push(
+                this.signalRService.agentAvailability$.subscribe(available => {
+                    if (!this.isAgent && !this.newSession) {
+                        this.waitingForAgent = !available;
+                        if (!available) {
+                            this.toastr.info('Agent is currently unavailable. Please wait.', 'Info');
+                        } else {
+                            this.toastr.info('Agent is now available.', 'Info');
+                        }
+                        this.cdr.detectChanges();
                     }
                 })
             );
@@ -368,6 +397,7 @@ export class ChatComponent implements OnInit, OnDestroy {
         this.loading = false;
         this.agentJoinedProcessed.clear();
         this.lastAgentJoinedTime = 0;
+        this.waitingForAgent = false;
         this.router.navigate([this.isAgent ? '/agent/dashboard/workspace/active' : '/user/dashboard/tickets/active']);
         this.cdr.detectChanges();
     }

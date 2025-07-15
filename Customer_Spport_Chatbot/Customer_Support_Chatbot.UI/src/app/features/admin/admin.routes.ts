@@ -3,7 +3,6 @@ import { AdminLayoutComponent } from "../../layout/admin-layout/admin-layout.com
 import { AdminDashboard } from "./overview/overview";
 import { Admin_Sidebar_Constants } from "../../constants/admin-sidebar.constant";
 import { AdminWorkspaceComponent } from "./workspace/workspace.component";
-import { NotificationsComponent } from "../shared/notifications/notifications.component";
 
 export const Admin_Routes:Routes=[
     {
@@ -14,7 +13,6 @@ export const Admin_Routes:Routes=[
             {path:'', redirectTo:'overview', pathMatch:'full'},
             {path:'overview',component:AdminDashboard},
             {path:'workspace',component:AdminWorkspaceComponent},
-            {path:'notifications',component:NotificationsComponent}
         ]
     }
 ]
