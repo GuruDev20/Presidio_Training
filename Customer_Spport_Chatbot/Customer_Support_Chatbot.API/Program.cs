@@ -1,4 +1,6 @@
 using System.Text;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using Customer_Support_Chatbot.Contexts;
 using Customer_Support_Chatbot.Helpers;
 using Customer_Support_Chatbot.Hubs;
@@ -12,6 +14,12 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var keyVaultUrl = new Uri("https://customersupportchatbot.vault.azure.net/");
+var secretClient = new SecretClient(keyVaultUrl, new DefaultAzureCredential());
+var dbConnectionString = secretClient.GetSecret("DbConnectionString").Value.Value;
+
+builder.Configuration["ConnectionStrings:DefaultConnection"] = dbConnectionString;
 
 builder.Services.AddControllers()
     .AddJsonOptions(opts =>
@@ -52,7 +60,7 @@ builder.Services.AddSwaggerGen(opt =>
 #region Contexts
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseNpgsql(dbConnectionString);
 });
 #endregion
 
