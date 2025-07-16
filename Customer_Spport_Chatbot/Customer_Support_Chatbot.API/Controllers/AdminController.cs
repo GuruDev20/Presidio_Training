@@ -56,5 +56,12 @@ namespace Customer_Support_Chatbot.Controllers
             }
             return NotFound(response);
         }
+
+        [HttpGet("dashboard/ticket-growth")]
+        public async Task<IActionResult> GetTicketGrowthAsync([FromQuery] string filter)
+        {
+            var response = await _adminService.GetTicketGrowthAsync(filter);
+            return response.Success ? Ok(response) : BadRequest(response);
+        }
     }
 }

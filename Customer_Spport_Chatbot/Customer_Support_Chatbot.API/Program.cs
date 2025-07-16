@@ -15,7 +15,7 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var keyVaultUrl = new Uri("https://customersupportchatbot.vault.azure.net/");
+var keyVaultUrl = new Uri("https://customerchatbot.vault.azure.net/");
 var secretClient = new SecretClient(keyVaultUrl, new DefaultAzureCredential());
 var dbConnectionString = secretClient.GetSecret("DbConnectionString").Value.Value;
 

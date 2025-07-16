@@ -15,7 +15,6 @@ export class NavbarComponent implements OnInit{
     isDark= false;
     userProfile: any;
     @Output() openSidebar=new EventEmitter<void>();
-    @Output() openProfileDrawer=new EventEmitter<void>();
     
     constructor(private authService:AuthService,private router:Router){}
 
@@ -37,8 +36,36 @@ export class NavbarComponent implements OnInit{
     }
 
     logout(){
-        this.authService.logout();
-        this.router.navigate(['/auth/login']);
+        const currentDeviceId = localStorage.getItem('deviceId');
+        if (currentDeviceId) {
+            this.authService.logoutDevice(currentDeviceId).subscribe({
+                next: () => {
+                    this.authService.logout();
+                    this.router.navigate(['/auth/login']);
+                },
+                error: (err) => {
+                    console.error("Error logging out current device:", err);
+                    this.authService.logout();
+                    this.router.navigate(['/auth/login']);
+                }
+            });
+        } 
+        else {
+            this.authService.logout();
+            this.router.navigate(['/auth/login']);
+        }
+    }
+
+    goToProfile() {
+        const role = this.userProfile?.role;
+        let baseRoute = '/user/dashboard';
+        if (role === 'agent') {
+            baseRoute = '/agent/dashboard';
+        } 
+        else if (role === 'admin') {
+            baseRoute = '/admin/dashboard';
+        }
+        this.router.navigate([`${baseRoute}/profile`]);
     }
 
     get profileInitial():string{

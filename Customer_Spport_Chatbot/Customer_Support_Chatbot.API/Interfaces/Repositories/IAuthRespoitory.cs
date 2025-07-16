@@ -8,5 +8,9 @@ namespace Customer_Support_Chatbot.Interfaces.Repositories
         public Task<RefreshToken?> GetRefreshTokenAsync(string token);
         public Task AddRefreshTokenAsync(RefreshToken refreshToken);
         public Task RemoveRefreshTokenAsync(RefreshToken token);
+        public Task AddDeviceAsync(UserDevice device);
+        public Task<List<UserDevice>> GetActiveDevicesAsync(Guid userId);
+        public Task<UserDevice?> GetDeviceByIdAsync(Guid userId, string deviceId);
+        public Task AddDeactivationRequestAsync(DeactivationRequest request);
     }
 }

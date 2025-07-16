@@ -1,13 +1,66 @@
-<div class="min-w-screen min-h-screen">
+<div class="min-w-screen min-h-screen overflow-y-auto">
     <section class="p-6 w-full">
         <h3 class="text-2xl font-bold mb-4">Overview</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             <app-card *ngFor="let card of cards"
                 [title]="card.title"
                 [count]="card.count"
-                [bgColor]="card.bgColor">
+                [bgColor]="card.bgColor"
+                [icon]="card.icon">
             </app-card>
         </div>
     </section>
-    <section class=""></section>
+
+    <section class="p-6 w-full flex md:flex-row flex-col gap-4">
+        <div class="w-full lg:w-1/3 rounded-lg bg-white dark:bg-[#2a3444] shadow-md p-4">
+            <div class="flex justify-between items-center mb-4">
+                <h4 class="text-lg font-semibold text-black dark:text-white">User & Agent Distribution</h4>
+                <div class="relative w-fit">
+                    <select [(ngModel)]="pieFilter" (ngModelChange)="updatePieChartData($event)" class="appearance-none bg-gray-100 dark:bg-gray-700 text-black dark:text-white px-4 py-2 pr-10 rounded-md text-sm focus:outline-none">
+                        <option value="all">All</option>
+                        <option value="users">Users Only</option>
+                        <option value="agents">Agents Only</option>
+                    </select>
+                    <lucide-icon
+                        [name]="chevronDown"
+                        class="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-500"
+                        size="16"
+                    ></lucide-icon>
+                </div>
+
+            </div>
+            <div class="h-64 relative my-4">
+                <canvas baseChart [data]="pieChartData" [options]="pieChartOptions" [type]="pieChartType" style="display:block;width:100%;height:100%;"></canvas>
+            </div>
+        </div>
+
+        <div class="w-full lg:w-1/3 rounded-lg bg-white dark:bg-[#2a3444] shadow-md p-4">
+            <div class="flex justify-between items-center mb-4">
+                <h4 class="text-lg font-semibold text-black dark:text-white">Ticket Growth</h4>
+                <div class="relative w-fit">
+                    <select [(ngModel)]="lineFilter" (ngModelChange)="updateLineChartData($event)" class="appearance-none bg-gray-100 dark:bg-gray-700 text-black dark:text-white px-4 py-2 pr-10 rounded-md text-sm focus:outline-none">
+                        <option value="last24hours">Last 24 Hours</option>
+                        <option value="last7days">Last 7 Days</option>
+                        <option value="last30days">Last 30 Days</option>
+                        <option value="last1year">Last 1 Year</option>
+                    </select>
+                    <lucide-icon
+                        [name]="chevronDown"
+                        class="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none text-gray-500"
+                        size="16"
+                    ></lucide-icon>
+                </div>
+
+            </div>
+            <div class="h-64 relative my-4">
+                <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" [type]="lineChartType" style="display:block;width:100%;height:100%;"></canvas>
+            </div>
+        </div>
+
+    </section>
+
+    <section class="p-6 w-full flex md:flex-row gap-4 flex-col">
+        <div class="w-1/4 rounded-lg bg-slate-200 h-96"></div>
+        <div class="w-3/4 rounded-lg bg-slate-200 h-96"></div>
+    </section>
 </div>

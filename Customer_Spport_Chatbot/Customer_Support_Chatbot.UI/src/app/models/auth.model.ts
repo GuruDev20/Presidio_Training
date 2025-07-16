@@ -16,6 +16,7 @@ export interface AuthResponse{
     userId:string;
     role:'Admin' | 'User' | 'Agent';
     expiresMinutes:string;
+    deviceId:string;
 }
 
 export interface UserProfile{
@@ -23,4 +24,12 @@ export interface UserProfile{
     fullName:string;
     email:string;
     u?: string;
+}
+
+export interface UserDevice {
+    deviceId: string;
+    browser: string;
+    deviceType: string;
+    os: string;
+    lastLogin: string;
 }

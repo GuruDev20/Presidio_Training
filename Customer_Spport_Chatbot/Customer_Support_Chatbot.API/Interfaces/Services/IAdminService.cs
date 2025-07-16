@@ -8,5 +8,6 @@ namespace Customer_Support_Chatbot.Interfaces.Services
         public Task<ApiResponse<object>> AddAgentAsync(CreateAgentDto dto);
         public Task<ApiResponse<string>> DeleteAgentAsync(Guid agentId);
         public Task<ApiResponse<object>> GetDashboardOverviewAsync();
+        public Task<ApiResponse<object>> GetTicketGrowthAsync(string filter);
     }
 }

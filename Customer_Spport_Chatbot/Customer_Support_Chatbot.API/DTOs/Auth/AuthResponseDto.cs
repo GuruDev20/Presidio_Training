@@ -7,5 +7,6 @@ namespace Customer_Support_Chatbot.DTOs.Auth
         public string Role { get; set; } = string.Empty;
         public Guid UserId { get; set; }
         public DateTime ExpiresMinutes { get; set; }
+        public string DeviceId { get; set; } = string.Empty;
     }
 }

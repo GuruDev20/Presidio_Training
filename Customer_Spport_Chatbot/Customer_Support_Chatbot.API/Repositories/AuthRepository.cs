@@ -13,9 +13,32 @@ namespace Customer_Support_Chatbot.Repositories
             _context = context;
         }
 
+        public async Task AddDeactivationRequestAsync(DeactivationRequest request)
+        {
+            await _context.DeactivationRequests.AddAsync(request);
+        }
+
+        public async Task AddDeviceAsync(UserDevice device)
+        {
+            await _context.UserDevices.AddAsync(device);
+        }
+
         public async Task AddRefreshTokenAsync(RefreshToken refreshToken)
         {
             await _context.RefreshTokens.AddAsync(refreshToken);
+        }
+
+        public async Task<List<UserDevice>> GetActiveDevicesAsync(Guid userId)
+        {
+            return await _context.UserDevices
+                .Where(d => d.UserId == userId && d.IsActive)
+                .ToListAsync();
+        }
+
+        public async Task<UserDevice?> GetDeviceByIdAsync(Guid userId, string deviceId)
+        {
+            return await _context.UserDevices
+                .FirstOrDefaultAsync(d => d.UserId == userId && d.DeviceId == deviceId);
         }
 
         public async Task<RefreshToken?> GetRefreshTokenAsync(string token)

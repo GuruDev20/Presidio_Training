@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using Customer_Support_Chatbot.DTOs.User;
 using Customer_Support_Chatbot.Interfaces.Services;
+using Customer_Support_Chatbot.Wrappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -60,6 +62,40 @@ namespace Customer_Support_Chatbot.Controllers
                 return Ok(response);
             }
             return NotFound(response);
+        }
+
+        [Authorize(Roles = "User,Admin")]
+        [HttpPost("profile/picture")]
+        public async Task<IActionResult> UpdateProfilePicture(UpdateProfilePictureResponseDto file)
+        {
+            var userIdStr = User.FindFirstValue("sid");
+            if (!Guid.TryParse(userIdStr, out Guid userId))
+            {
+                return Unauthorized(ApiResponse<string>.Fail("Invalid token"));
+            }
+            var result = await _userService.UpdateProfilePictureAsync(userId, file);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [Authorize(Roles = "User,Admin")]
+        [HttpPut("profile/name")]
+        public async Task<IActionResult> UpdateProfileName([FromBody] UpdateNameRequestDto dto)
+        {
+            var userIdStr = User.FindFirstValue("sid");
+            if (!Guid.TryParse(userIdStr, out Guid userId))
+            {
+                return Unauthorized(ApiResponse<string>.Fail("Invalid token"));
+            }
+            var result = await _userService.UpdateProfileNameAsync(userId, dto.FullName);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
     }
 }

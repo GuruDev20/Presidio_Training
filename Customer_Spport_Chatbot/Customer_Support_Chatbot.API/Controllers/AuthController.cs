@@ -18,9 +18,9 @@ namespace Customer_Support_Chatbot.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequestDto dto)
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto dto, [FromHeader(Name = "User-Agent")] string userAgent)
         {
-            var result = await _authService.LoginAsync(dto);
+            var result = await _authService.LoginAsync(dto, userAgent, Request.HttpContext.Connection.RemoteIpAddress?.ToString());
             if (result.Success)
             {
                 return Ok(result);
@@ -60,6 +60,74 @@ namespace Customer_Support_Chatbot.Controllers
                 return Unauthorized(ApiResponse<string>.Fail("Invalid token"));
             }
             var result = await _authService.GetProfileAsync(userId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [Authorize]
+        [HttpPost("deactivate")]
+        public async Task<IActionResult> RequestDeactivation([FromBody] DeactivationRequestDto dto)
+        {
+            var userIdStr = User.FindFirstValue("sid");
+            if (!Guid.TryParse(userIdStr, out Guid userId))
+            {
+                return Unauthorized(ApiResponse<string>.Fail("Invalid token"));
+            }
+            var result = await _authService.RequestDeactivationAsync(userId, dto.Reason);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [Authorize]
+        [HttpGet("devices")]
+        public async Task<IActionResult> GetUserDevices()
+        {
+            var userIdStr = User.FindFirstValue("sid");
+            if (!Guid.TryParse(userIdStr, out Guid userId))
+            {
+                return Unauthorized(ApiResponse<string>.Fail("Invalid token"));
+            }
+            var result = await _authService.GetUserDevicesAsync(userId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [Authorize]
+        [HttpPost("devices/logout")]
+        public async Task<IActionResult> LogoutDevice([FromBody] DeviceLogoutRequestDto dto)
+        {
+            var userIdStr = User.FindFirstValue("sid");
+            if (!Guid.TryParse(userIdStr, out Guid userId))
+            {
+                return Unauthorized(ApiResponse<string>.Fail("Invalid token"));
+            }
+            var result = await _authService.LogoutDeviceAsync(userId, dto.DeviceId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [Authorize]
+        [HttpGet("devices/{deviceId}/active")]
+        public async Task<IActionResult> IsDeviceActive(string deviceId)
+        {
+            var userIdStr = User.FindFirstValue("sid");
+            if (!Guid.TryParse(userIdStr, out Guid userId))
+            {
+                return Unauthorized(ApiResponse<string>.Fail("Invalid token"));
+            }
+            var result = await _authService.IsDeviceActiveAsync(userId, deviceId);
             if (result.Success)
             {
                 return Ok(result);

@@ -1,16 +1,18 @@
 import { CommonModule } from "@angular/common";
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import { LucideAngularModule } from "lucide-angular";
 
 @Component({
     selector: 'app-card',
     templateUrl: './card.component.html',
     standalone: true,
-    imports: [CommonModule],
+    imports: [CommonModule, LucideAngularModule],
 })
 export class CardComponent implements OnChanges{
     @Input() title:string = '';
     @Input() count:number = 0;
     @Input() bgColor:string = '#ffffff';
+    @Input() icon:any;
 
     animatedCount:number = 0;
 

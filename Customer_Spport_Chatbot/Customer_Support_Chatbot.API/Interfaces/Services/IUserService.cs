@@ -8,5 +8,7 @@ namespace Customer_Support_Chatbot.Interfaces.Services
         public Task<ApiResponse<string>> RegisterUserAsync(RegisterRequestDto dto);
         public Task<ApiResponse<string>> DeactivateAccountAsync(Guid userId);
         public Task<ApiResponse<object>> GetUserTicketsAsync(Guid userId);
+        public Task<ApiResponse<UpdateProfilePictureResponseDto>> UpdateProfilePictureAsync(Guid userId, UpdateProfilePictureResponseDto dto);
+        public Task<ApiResponse<string>> UpdateProfileNameAsync(Guid userId, string fullName);
     }
 }

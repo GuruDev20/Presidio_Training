@@ -29,4 +29,12 @@ export class UserService{
     getChatSession(ticketId: string): Observable<ApiResponse<any>> {
         return this.http.get<ApiResponse<any>>(`${this.baseurl}/tickets/${ticketId}/chat-session`);
     }
+
+    updateProfilePicture(profilePictureUrl: string): Observable<ApiResponse<{ profilePictureUrl: string }>> {
+        return this.http.post<ApiResponse<{ profilePictureUrl: string }>>(`${this.baseurl}/users/profile/picture`, { profilePictureUrl });
+    }
+
+    updateProfileName(fullName: string): Observable<ApiResponse<void>> {
+        return this.http.put<ApiResponse<void>>(`${this.baseurl}/users/profile/name`, { fullName });
+    }
 }

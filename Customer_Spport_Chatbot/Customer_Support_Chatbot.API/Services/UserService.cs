@@ -10,8 +10,10 @@ namespace Customer_Support_Chatbot.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        public UserService(IUserRepository userRepository)
+        private readonly IWebHostEnvironment _environment;
+        public UserService(IUserRepository userRepository, IWebHostEnvironment environment)
         {
+            _environment = environment;
             _userRepository = userRepository;
         }
 
@@ -75,6 +77,39 @@ namespace Customer_Support_Chatbot.Services
             };
             await _userRepository.AddAsync(user);
             return ApiResponse<string>.Ok("User registered successfully.");
+        }
+
+        public async Task<ApiResponse<string>> UpdateProfileNameAsync(Guid userId, string fullName)
+        {
+            if (string.IsNullOrWhiteSpace(fullName))
+            {
+                return ApiResponse<string>.Fail("Name cannot be empty", 400);
+            }
+
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
+            {
+                return ApiResponse<string>.Fail("User not found", 404);
+            }
+
+            user.Username = fullName;
+            await _userRepository.SaveChangesAsync();
+            return ApiResponse<string>.Ok("Name updated successfully");
+        }
+
+        public async Task<ApiResponse<UpdateProfilePictureResponseDto>> UpdateProfilePictureAsync(Guid userId, UpdateProfilePictureResponseDto dto)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
+            {
+                return ApiResponse<UpdateProfilePictureResponseDto>.Fail("User not found", 404);
+            }
+            user.ProfilePictureUrl = dto.ProfilePictureUrl;
+            await _userRepository.SaveChangesAsync();
+            return ApiResponse<UpdateProfilePictureResponseDto>.Ok("Profile picture updated", new UpdateProfilePictureResponseDto
+            {
+                ProfilePictureUrl = user.ProfilePictureUrl
+            });
         }
     }
 }

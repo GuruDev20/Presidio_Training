@@ -15,4 +15,10 @@ export class AdminService{
     getOverview(): Observable<ApiResponse<any>> {
         return this.http.get<ApiResponse<any>>(`${this.baseUrl}/admin/dashboard/overview`);
     }
+
+    getDeactivationRequests(){}
+
+    getTicketGrowth(filter:string):Observable<ApiResponse<any>>{
+        return this.http.get<ApiResponse<any>>(`${this.baseUrl}/admin/dashboard/ticket-growth?filter=${filter}`);
+    }
 }

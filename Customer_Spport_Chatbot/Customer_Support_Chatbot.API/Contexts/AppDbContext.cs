@@ -13,6 +13,8 @@ namespace Customer_Support_Chatbot.Contexts
         public DbSet<Message> Messages { get; set; }
         public DbSet<FileAttachment> FileAttachments { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<UserDevice> UserDevices { get; set; }
+        public DbSet<DeactivationRequest> DeactivationRequests { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -55,7 +57,7 @@ namespace Customer_Support_Chatbot.Contexts
                 .WithMany()
                 .HasForeignKey(m => m.SenderId)
                 .OnDelete(DeleteBehavior.Restrict);
-                
+
             modelBuilder.Entity<Agent>()
                 .HasOne(a => a.User)
                 .WithMany()
