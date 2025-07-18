@@ -16,9 +16,9 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton(x => new BlobServiceClient(builder.Configuration.GetSection("AzureBlobStorage:ConnectionString").Value));
-builder.Services.AddSingleton(x=>builder.Configuration.GetSection("AzureBlobStorage:ChatContainer").Value!);
-builder.Services.AddSingleton(x=>builder.Configuration.GetSection("AzureBlobStorage:ProfileContainer").Value!);
+// builder.Services.AddSingleton(x => new BlobServiceClient(builder.Configuration.GetSection("AzureBlobStorage:ConnectionString").Value));
+// builder.Services.AddSingleton(x=>builder.Configuration.GetSection("AzureBlobStorage:ChatContainer").Value!);
+// builder.Services.AddSingleton(x=>builder.Configuration.GetSection("AzureBlobStorage:ProfileContainer").Value!);
 
 var keyVaultUrl = new Uri("https://customerchatbot.vault.azure.net/");
 var secretClient = new SecretClient(keyVaultUrl, new DefaultAzureCredential());
