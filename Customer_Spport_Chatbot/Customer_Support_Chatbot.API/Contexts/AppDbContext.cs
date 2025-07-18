@@ -17,6 +17,8 @@ namespace Customer_Support_Chatbot.Contexts
         public DbSet<DeactivationRequest> DeactivationRequests { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<NotificationSettings> NotificationSettings { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<Payment> Payments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -66,7 +68,11 @@ namespace Customer_Support_Chatbot.Contexts
                 .HasForeignKey(a => a.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            
+            modelBuilder.Entity<Payment>()
+                .HasOne(p => p.Order)
+                .WithOne(o => o.Payment)
+                .HasForeignKey<Payment>(p => p.OrderId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

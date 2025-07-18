@@ -20,11 +20,9 @@ var builder = WebApplication.CreateBuilder(args);
 // builder.Services.AddSingleton(x=>builder.Configuration.GetSection("AzureBlobStorage:ChatContainer").Value!);
 // builder.Services.AddSingleton(x=>builder.Configuration.GetSection("AzureBlobStorage:ProfileContainer").Value!);
 
-var keyVaultUrl = new Uri("https://customerchatbot.vault.azure.net/");
-var secretClient = new SecretClient(keyVaultUrl, new DefaultAzureCredential());
-var dbConnectionString = secretClient.GetSecret("DbConnectionString").Value.Value;
-
-builder.Configuration["ConnectionStrings:DefaultConnection"] = dbConnectionString;
+// var keyVaultUrl = new Uri("https://customerchatbot.vault.azure.net/");
+// var secretClient = new SecretClient(keyVaultUrl, new DefaultAzureCredential());
+// var dbConnectionString = secretClient.GetSecret("DbConnectionString").Value.Value;
 
 builder.Services.AddControllers()
     .AddJsonOptions(opts =>
@@ -65,7 +63,7 @@ builder.Services.AddSwaggerGen(opt =>
 #region Contexts
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseNpgsql(dbConnectionString);
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 #endregion
 
@@ -76,6 +74,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAgentRepository, AgentRepository>();
 builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 
 #endregion
 
@@ -88,6 +88,11 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IRazorpayService, RazorpayService>();
+
+
 #endregion
 
 #region JWT Authentication
