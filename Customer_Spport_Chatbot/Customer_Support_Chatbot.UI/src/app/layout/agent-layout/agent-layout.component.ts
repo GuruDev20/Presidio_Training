@@ -16,7 +16,6 @@ export class AgentLayoutComponent implements OnInit,OnDestroy{
     items: any[] = [];
 
     showSidebar = false;
-    showProfileDrawer = false;
 
     isMobile = false;
     isTablet = false;
@@ -46,12 +45,7 @@ export class AgentLayoutComponent implements OnInit,OnDestroy{
         this.showSidebar = !this.showSidebar;
     }
 
-    toggleProfileDrawer(): void {
-        this.showProfileDrawer = !this.showProfileDrawer;
-    }
-
     closeDrawers(): void {
         this.showSidebar = false;
-        this.showProfileDrawer = false;
     }
 }

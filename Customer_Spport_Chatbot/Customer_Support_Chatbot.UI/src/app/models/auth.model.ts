@@ -24,6 +24,8 @@ export interface UserProfile{
     fullName:string;
     email:string;
     u?: string;
+    role:'Admin' | 'User' | 'Agent';
+    profilePictureUrl?: string;
 }
 
 export interface UserDevice {

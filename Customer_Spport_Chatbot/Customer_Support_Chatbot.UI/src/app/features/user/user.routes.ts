@@ -4,6 +4,7 @@ import { UserLayoutComponent } from "../../layout/user-layout/user-layout.compon
 import { User_Sidebar_Constants } from "../../constants/user-sidebar.constant";
 import { UserHistoryComponent } from "./history/history.component";
 import { Profile } from "../../components/profile/profile.component";
+import { SettingsComponent } from "../settings/settings.component";
 
 export const User_Routes:Routes=[
     {
@@ -23,7 +24,8 @@ export const User_Routes:Routes=[
                 ]
             },
             {path:'history',component:UserHistoryComponent},
-            {path:'profile',component:Profile}
+            {path:'profile',component:Profile},
+            {path:'settings',component:SettingsComponent}
         ]
     }
 ]

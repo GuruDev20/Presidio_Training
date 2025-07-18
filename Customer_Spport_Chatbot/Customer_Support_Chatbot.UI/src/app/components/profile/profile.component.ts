@@ -20,6 +20,7 @@ export class Profile implements OnInit, OnDestroy {
     isMobileOrTablet = false;
     isEditingName = false;
     newFullName = "";
+    showDeactivationSection = false;
     @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
     constructor(
@@ -54,6 +55,10 @@ export class Profile implements OnInit, OnDestroy {
         this.isMobileOrTablet = width < 763;
     }
 
+    get isAdminOrAgent(): boolean {
+        return this.userProfile?.role === 'Admin' || this.userProfile?.role === 'Agent';
+    }
+
     checkDeviceSession() {
         const deviceId = localStorage.getItem('deviceId');
         if (deviceId) {
@@ -81,6 +86,8 @@ export class Profile implements OnInit, OnDestroy {
             next: (res) => {
                 this.userProfile = res.data;
                 this.newFullName = res.data.fullName;
+                const userRole = res.data.role;
+                this.showDeactivationSection = userRole !== 'Agent' && userRole !== 'Admin';
             },
             error: (err) => {
                 console.error("Error fetching user profile:", err);
@@ -91,7 +98,6 @@ export class Profile implements OnInit, OnDestroy {
 
         this.authService.getUserDevices().subscribe({
             next: (res: { data: { $values: UserDevice[] } }) => {
-                console.log("User devices:", res.data);
                 this.devices = res?.data?.$values || [];
             },
             error: (err) => {

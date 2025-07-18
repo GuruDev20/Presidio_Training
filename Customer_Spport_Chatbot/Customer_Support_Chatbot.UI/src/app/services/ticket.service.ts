@@ -19,4 +19,12 @@ export class TicketService{
     endTicket(ticketId:string):Observable<ApiResponse<string>>{
         return this.http.put<ApiResponse<string>>(`${this.baseUrl}/tickets/end/${ticketId}`, {});
     }
+
+    checkAgentAvailability(agentId: string): Observable<any> {
+        return this.http.get(`${this.baseUrl}/tickets/agent/${agentId}/availability`);
+    }
+
+    assignNewAgent(ticketId: string): Observable<any> {
+        return this.http.post(`${this.baseUrl}/tickets/${ticketId}/assign-agent`, {});
+    }
 }

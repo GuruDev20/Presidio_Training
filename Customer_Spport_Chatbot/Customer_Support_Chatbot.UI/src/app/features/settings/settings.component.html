@@ -1,0 +1,8 @@
+<div class="p-6">
+    <ng-container [ngSwitch]="userRole">
+        <app-user-settings *ngSwitchCase="'User'"></app-user-settings>
+        <app-agent-settings *ngSwitchCase="'Agent'"></app-agent-settings>
+        <app-admin-settings *ngSwitchCase="'Admin'"></app-admin-settings>
+        <div *ngSwitchDefault class="text-red-500">Error: Unknown user role</div>
+    </ng-container>
+</div>

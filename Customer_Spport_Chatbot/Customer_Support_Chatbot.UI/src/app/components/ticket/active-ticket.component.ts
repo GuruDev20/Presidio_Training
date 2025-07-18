@@ -41,10 +41,10 @@ export class ActiveTicketComponent implements OnInit {
             });
     }
 
-    loadChat(ticketId:string){
+    loadChat(ticketId:string,agentId?: string){
         this.router.navigate(['/user/dashboard/tickets/chat'],{
             queryParams: { ticketId,new:false,agent:this.role === 'Agent' },
-            state:{ticketId}
+            state:{ticketId,agentId}
         });
     }
 }

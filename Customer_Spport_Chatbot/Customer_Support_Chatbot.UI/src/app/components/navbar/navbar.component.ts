@@ -59,10 +59,10 @@ export class NavbarComponent implements OnInit{
     goToProfile() {
         const role = this.userProfile?.role;
         let baseRoute = '/user/dashboard';
-        if (role === 'agent') {
+        if (role === 'Agent') {
             baseRoute = '/agent/dashboard';
         } 
-        else if (role === 'admin') {
+        else if (role === 'Admin') {
             baseRoute = '/admin/dashboard';
         }
         this.router.navigate([`${baseRoute}/profile`]);
