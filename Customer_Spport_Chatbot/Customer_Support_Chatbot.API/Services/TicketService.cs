@@ -26,6 +26,67 @@ namespace Customer_Support_Chatbot.Services
             _hubContext = hubContext;
         }
 
+        public async Task<ApiResponse<object>> AssignNewAgentAsync(Guid ticketId)
+        {
+            var ticket = await _ticketRepository.GetByIdAsync(ticketId);
+            if (ticket == null)
+            {
+                return ApiResponse<object>.Fail("Ticket not found.");
+            }
+            var newAgent = await _ticketRepository.GetAvailableAgentAsync();
+            if (newAgent == null)
+            {
+                return ApiResponse<object>.Fail("No available agents at the moment. Please try again later.");
+            }
+            if (ticket.AgentId.HasValue)
+            {
+                var oldAgent = await _agentRepository.GetByIdAsync(ticket.AgentId.Value);
+                if (oldAgent != null)
+                {
+                    oldAgent.Status = "Available";
+                    var oldAgentUser = await _userRepository.GetByIdAsync(oldAgent.UserId);
+                    if (oldAgentUser != null)
+                    {
+                        oldAgentUser.IsActive = true;
+                        _userRepository.Update(oldAgentUser);
+                    }
+                    _agentRepository.Update(oldAgent);
+                }
+            }
+            ticket.AgentId = newAgent.Id;
+            newAgent.Status = "Busy";
+            var newAgentUser = await _userRepository.GetByIdAsync(newAgent.UserId);
+            if (newAgentUser != null)
+            {
+                newAgentUser.IsActive = false;
+                _userRepository.Update(newAgentUser);
+            }
+            _agentRepository.Update(newAgent);
+            _ticketRepository.Update(ticket);
+            await _ticketRepository.SaveChangesAsync();
+
+            await _hubContext.Clients
+                .User(newAgent.UserId.ToString())
+                .SendAsync("ReceiveTicketAssignedNotification", new
+                {
+                    ticketId = ticket.Id,
+                    title = ticket.Name
+                });
+
+            return ApiResponse<object>.Ok("New agent assigned successfully.", new { agentId = newAgent.Id });
+        }
+
+        public async Task<ApiResponse<object>> CheckAgentAvailabilityAsync(Guid agentId)
+        {
+            var agent = await _agentRepository.GetByIdAsync(agentId);
+            if (agent == null)
+            {
+                return ApiResponse<object>.Fail("Agent not found.");
+            }
+            var isAvailable = agent.Status == "Available";
+            return ApiResponse<object>.Ok("Agent availability checked.", new { isAvailable });
+        }
+
         public async Task<ApiResponse<object>> CreateTicketAsync(CreateTicketDto dto)
         {
             if (dto == null)

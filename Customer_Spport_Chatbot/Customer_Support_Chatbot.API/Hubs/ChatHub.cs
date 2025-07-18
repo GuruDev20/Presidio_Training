@@ -69,6 +69,72 @@ namespace Customer_Support_Chatbot.Hubs
             }
         }
 
+        public async Task NotifyAgent(string ticketId)
+        {
+            if (!Guid.TryParse(ticketId, out var parsedTicketId))
+            {
+                _logger.LogError("Invalid ticketId format: {TicketId}", ticketId);
+                throw new HubException("Invalid ticket ID format.");
+            }
+
+            var ticket = await _context.Tickets
+                .Include(t => t.Agent)
+                .ThenInclude(a => a!.User)
+                .FirstOrDefaultAsync(t => t.Id == parsedTicketId);
+            if (ticket == null)
+            {
+                _logger.LogError("Ticket not found: {TicketId}", ticketId);
+                throw new HubException("Ticket not found.");
+            }
+
+            if (ticket.AgentId.HasValue && ticket.Agent?.UserId != null)
+            {
+                _logger.LogInformation("Notifying agent {AgentUserId} for ticket {TicketId}: {Title}", ticket.Agent.UserId, ticketId, ticket.Name);
+                await Clients.User(ticket.Agent.UserId.ToString()).SendAsync("ReceiveTicketAssignedNotification", new
+                {
+                    ticketId = ticketId,
+                    title = ticket.Name
+                });
+            }
+            else
+            {
+                _logger.LogWarning("No agent assigned to ticket {TicketId}", ticketId);
+                throw new HubException("No agent assigned to ticket.");
+            }
+        }
+
+        public async Task NotifySpecificAgent(string ticketId, string agentId)
+        {
+            if (!Guid.TryParse(ticketId, out var parsedTicketId) || !Guid.TryParse(agentId, out var parsedAgentId))
+            {
+                _logger.LogError("Invalid ticketId or agentId format: {TicketId}, {AgentId}", ticketId, agentId);
+                throw new HubException("Invalid ticket ID or agent ID format.");
+            }
+
+            var ticket = await _context.Tickets.FirstOrDefaultAsync(t => t.Id == parsedTicketId);
+            if (ticket == null)
+            {
+                _logger.LogError("Ticket not found: {TicketId}", ticketId);
+                throw new HubException("Ticket not found.");
+            }
+
+            var agent = await _context.Agents
+                .Include(a => a.User)
+                .FirstOrDefaultAsync(a => a.Id == parsedAgentId);
+            if (agent == null || Guid.Empty.Equals(agent.UserId))
+            {
+                _logger.LogError("Agent not found: {AgentId}", agentId);
+                throw new HubException("Agent not found.");
+            }
+
+            _logger.LogInformation("Notifying specific agent {AgentUserId} for ticket {TicketId}: {Title}", agent.UserId, ticketId, ticket.Name);
+            await Clients.User(agent.UserId.ToString()).SendAsync("ReceiveTicketAssignedNotification", new
+            {
+                ticketId = ticketId,
+                title = ticket.Name
+            });
+        }
+
         public async Task SendMessage(string ticketId, string senderId, string content)
         {
             if (!Guid.TryParse(ticketId, out var parsedTicketId) || !Guid.TryParse(senderId, out var parsedSenderId))
@@ -149,28 +215,28 @@ namespace Customer_Support_Chatbot.Hubs
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, ticketId);
         }
 
-        public async Task NotifyAgentTicketAssigned(string agentUserId, string ticketId, string title)
-        {
-            if (!Guid.TryParse(agentUserId, out var parsedAgentUserId) || !Guid.TryParse(ticketId, out var parsedTicketId))
-            {
-                _logger.LogError("Invalid agentUserId or ticketId format: {AgentUserId}, {TicketId}", agentUserId, ticketId);
-                throw new HubException("Invalid agent user ID or ticket ID format.");
-            }
+        // public async Task NotifyAgentTicketAssigned(string agentUserId, string ticketId, string title)
+        // {
+        //     if (!Guid.TryParse(agentUserId, out var parsedAgentUserId) || !Guid.TryParse(ticketId, out var parsedTicketId))
+        //     {
+        //         _logger.LogError("Invalid agentUserId or ticketId format: {AgentUserId}, {TicketId}", agentUserId, ticketId);
+        //         throw new HubException("Invalid agent user ID or ticket ID format.");
+        //     }
 
-            var ticketExists = await _context.Tickets.AnyAsync(t => t.Id == parsedTicketId);
-            if (!ticketExists)
-            {
-                _logger.LogError("Ticket not found: {TicketId}", ticketId);
-                throw new HubException("Ticket not found.");
-            }
+        //     var ticketExists = await _context.Tickets.AnyAsync(t => t.Id == parsedTicketId);
+        //     if (!ticketExists)
+        //     {
+        //         _logger.LogError("Ticket not found: {TicketId}", ticketId);
+        //         throw new HubException("Ticket not found.");
+        //     }
 
-            _logger.LogInformation("Notifying agent {AgentUserId} for ticket {TicketId}: {Title}", agentUserId, ticketId, title);
-            await Clients.User(agentUserId).SendAsync("ReceiveTicketAssignedNotification", new
-            {
-                ticketId = ticketId,
-                title = title
-            });
-        }
+        //     _logger.LogInformation("Notifying agent {AgentUserId} for ticket {TicketId}: {Title}", agentUserId, ticketId, title);
+        //     await Clients.User(agentUserId).SendAsync("ReceiveTicketAssignedNotification", new
+        //     {
+        //         ticketId = ticketId,
+        //         title = title
+        //     });
+        // }
 
         public async Task LeaveChat(string ticketId)
         {

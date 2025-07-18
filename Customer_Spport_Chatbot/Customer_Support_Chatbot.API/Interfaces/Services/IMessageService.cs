@@ -4,7 +4,7 @@ namespace Customer_Support_Chatbot.Interfaces.Services
 {
     public interface IMessageService
     {
-        Task<List<MessageDto>> GetMessagesAsync(Guid ticketId);
+        Task<List<UnifiedMessageDto>> GetMessagesAsync(Guid ticketId);
         Task<MessageDto> SendMessageAsync(SendMessageDto dto);
     }
 }

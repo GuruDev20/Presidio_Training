@@ -14,20 +14,57 @@ namespace Customer_Support_Chatbot.Services
             _context = context;
         }
 
-        public async Task<List<MessageDto>> GetMessagesAsync(Guid ticketId)
+        public async Task<List<UnifiedMessageDto>> GetMessagesAsync(Guid ticketId)
         {
-            return await _context.Messages
+            Console.WriteLine($"Fetching messages and attachments for Ticket ID: {ticketId}");
+
+            // Fetch ticket to get UserId and AgentId
+            var ticket = await _context.Tickets
+                .Include(t => t.User)
+                .Include(t => t.Agent)
+                .FirstOrDefaultAsync(t => t.Id == ticketId);
+
+            if (ticket == null)
+            {
+                throw new Exception("Ticket not found.");
+            }
+
+            // Fetch messages
+            var messages = await _context.Messages
                 .Where(m => m.TicketId == ticketId)
-                .OrderBy(m => m.SentAt)
-                .Select(m => new MessageDto
+                .Select(m => new UnifiedMessageDto
                 {
-                    Id = m.Id,
-                    TicketId = m.TicketId,
-                    SenderId = m.SenderId,
-                    Content = m.Content,
-                    SentAt = m.SentAt
+                    Sender = m.SenderId == ticket.UserId ? "user" : "agent",
+                    Text = m.Content,
+                    FileUrl = null,
+                    IsImage = false,
+                    Timestamp = m.SentAt.ToString("o")
                 })
                 .ToListAsync();
+
+            // Fetch attachments
+            var attachments = await _context.FileAttachments
+                .Where(a => a.TicketId == ticketId)
+                .Select(a => new UnifiedMessageDto
+                {
+                    Sender = "user", // Adjust based on your logic if attachments can be sent by agents
+                    Text = null,
+                    FileUrl = $"/api/v1/files/{a.FileName}",
+                    IsImage = a.FileName.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ||
+                              a.FileName.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase) ||
+                              a.FileName.EndsWith(".png", StringComparison.OrdinalIgnoreCase) ||
+                              a.FileName.EndsWith(".gif", StringComparison.OrdinalIgnoreCase),
+                    Timestamp = a.UploadedAt.ToString("o")
+                })
+                .ToListAsync();
+
+            // Combine and sort by timestamp
+            var unifiedMessages = messages.Concat(attachments)
+                .OrderBy(m => DateTime.Parse(m.Timestamp))
+                .ToList();
+
+            Console.WriteLine($"Fetched {unifiedMessages.Count} messages and attachments for Ticket ID: {ticketId}");
+            return unifiedMessages;
         }
 
         public async Task<MessageDto> SendMessageAsync(SendMessageDto dto)

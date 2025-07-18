@@ -85,5 +85,38 @@ namespace Customer_Support_Chatbot.Contexts
             return BadRequest(response.Message);
         }
 
+        [Authorize]
+        [HttpGet("agent/{agentId}/availability")]
+        public async Task<IActionResult> CheckAgentAvailability(Guid agentId)
+        {
+            if (agentId == Guid.Empty)
+            {
+                return BadRequest("Agent ID is required.");
+            }
+
+            var response = await _ticketService.CheckAgentAvailabilityAsync(agentId);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+            return BadRequest(response.Message);
+        }
+
+        [Authorize]
+        [HttpPost("{ticketId}/assign-agent")]
+        public async Task<IActionResult> AssignNewAgent(Guid ticketId)
+        {
+            if (ticketId == Guid.Empty)
+            {
+                return BadRequest("Ticket ID is required.");
+            }
+
+            var response = await _ticketService.AssignNewAgentAsync(ticketId);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+            return BadRequest(response.Message);
+        }
     }
 }

@@ -22,16 +22,27 @@ namespace Customer_Support_Chatbot.Controllers
         [Authorize]
         public async Task<IActionResult> GetMessages(Guid ticketId)
         {
+            Console.WriteLine($"Request to get messages for Ticket ID: {ticketId}");
             if (ticketId == Guid.Empty)
             {
                 return BadRequest("Ticket ID is required.");
             }
-            var messages = await _messageService.GetMessagesAsync(ticketId);
-            if (messages == null || !messages.Any())
+
+            try
             {
-                return NotFound("No messages found for this ticket.");
+                var messages = await _messageService.GetMessagesAsync(ticketId);
+                if (messages == null || !messages.Any())
+                {
+                    return NotFound("No messages or attachments found for this ticket.");
+                }
+                Console.WriteLine($"Returning {messages.Count} messages and attachments for Ticket ID: {ticketId}");
+                return Ok(messages);
             }
-            return Ok(messages);
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching messages for Ticket ID: {ticketId}, Error: {ex.Message}");
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         [HttpPost]

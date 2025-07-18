@@ -64,7 +64,7 @@ namespace Customer_Support_Chatbot.Controllers
             return NotFound(response);
         }
 
-        [Authorize(Roles = "User,Admin")]
+        [Authorize(Roles = "User,Admin,Agent")]
         [HttpPost("profile/picture")]
         public async Task<IActionResult> UpdateProfilePicture(UpdateProfilePictureResponseDto file)
         {
@@ -81,7 +81,7 @@ namespace Customer_Support_Chatbot.Controllers
             return BadRequest(result);
         }
 
-        [Authorize(Roles = "User,Admin")]
+        [Authorize(Roles = "User,Admin,Agent")]
         [HttpPut("profile/name")]
         public async Task<IActionResult> UpdateProfileName([FromBody] UpdateNameRequestDto dto)
         {

@@ -1,6 +1,7 @@
 using System.Text;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using Azure.Storage.Blobs;
 using Customer_Support_Chatbot.Contexts;
 using Customer_Support_Chatbot.Helpers;
 using Customer_Support_Chatbot.Hubs;
@@ -14,6 +15,10 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSingleton(x => new BlobServiceClient(builder.Configuration.GetSection("AzureBlobStorage:ConnectionString").Value));
+builder.Services.AddSingleton(x=>builder.Configuration.GetSection("AzureBlobStorage:ChatContainer").Value!);
+builder.Services.AddSingleton(x=>builder.Configuration.GetSection("AzureBlobStorage:ProfileContainer").Value!);
 
 var keyVaultUrl = new Uri("https://customerchatbot.vault.azure.net/");
 var secretClient = new SecretClient(keyVaultUrl, new DefaultAzureCredential());

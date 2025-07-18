@@ -15,6 +15,8 @@ namespace Customer_Support_Chatbot.Contexts
         public DbSet<RefreshToken> RefreshTokens { get; set; }
         public DbSet<UserDevice> UserDevices { get; set; }
         public DbSet<DeactivationRequest> DeactivationRequests { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<NotificationSettings> NotificationSettings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -63,6 +65,8 @@ namespace Customer_Support_Chatbot.Contexts
                 .WithMany()
                 .HasForeignKey(a => a.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            
         }
     }
 }
