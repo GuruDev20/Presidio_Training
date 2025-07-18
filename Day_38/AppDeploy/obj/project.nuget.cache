@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "uj14Yok9s+c=",
+  "success": true,
+  "projectFilePath": "/Users/dev/Desktop/Presidio_Training/Day_38/AppDeploy/AppDeploy.csproj",
+  "expectedPackageFiles": [
+    "/Users/dev/.nuget/packages/microsoft.aspnetcore.openapi/8.0.5/microsoft.aspnetcore.openapi.8.0.5.nupkg.sha512",
+    "/Users/dev/.nuget/packages/microsoft.openapi/1.4.3/microsoft.openapi.1.4.3.nupkg.sha512"
+  ],
+  "logs": []
+}

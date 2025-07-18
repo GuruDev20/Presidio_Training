@@ -1,0 +1,9 @@
+/Users/dev/Desktop/Presidio_Training/Day_38/AppDeploy/publish/AppDeploy
+/Users/dev/Desktop/Presidio_Training/Day_38/AppDeploy/publish/appsettings.Development.json
+/Users/dev/Desktop/Presidio_Training/Day_38/AppDeploy/publish/appsettings.json
+/Users/dev/Desktop/Presidio_Training/Day_38/AppDeploy/publish/AppDeploy.dll
+/Users/dev/Desktop/Presidio_Training/Day_38/AppDeploy/publish/AppDeploy.deps.json
+/Users/dev/Desktop/Presidio_Training/Day_38/AppDeploy/publish/AppDeploy.runtimeconfig.json
+/Users/dev/Desktop/Presidio_Training/Day_38/AppDeploy/publish/AppDeploy.pdb
+/Users/dev/Desktop/Presidio_Training/Day_38/AppDeploy/publish/Microsoft.AspNetCore.OpenApi.dll
+/Users/dev/Desktop/Presidio_Training/Day_38/AppDeploy/publish/Microsoft.OpenApi.dll
