@@ -1,0 +1,9 @@
+# macOS
+.DS_Store
+
+# .NET build files
+bin/
+obj/
+
+# VS Code config
+.vscode/
