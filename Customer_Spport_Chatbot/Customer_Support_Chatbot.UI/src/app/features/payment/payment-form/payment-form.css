@@ -1,0 +1,95 @@
+.payment-form {
+  max-width: 520px;
+  margin: 30px auto;
+  padding: 2rem 2.3rem;
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid gray;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 1.2rem;
+}
+
+label {
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.6rem;
+  color: #444;
+  font-size: 1rem;
+}
+
+input {
+  width: 100%;
+  padding: 0.9rem 1.1rem;
+  font-size: 1rem;
+  border: 1.5px solid #d6d6d6;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  transition: border-color 0.25s ease;
+  font: 400 1rem "Space Mono", monospace;
+}
+
+input:focus {
+  border-color: #6c63ff;
+  background-color: #fff;
+  outline: none;
+}
+
+.error-message {
+  color: #e63946;
+  font-size: 0.9rem;
+  margin-top: 0.4rem;
+  font-weight: 500;
+}
+
+button {
+  width: 100%;
+  padding: 1rem 0;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #6c63ff, #9a8c98);
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(108, 99, 255, 0.2);
+  transition: all 0.25s ease-in-out;
+  font: 400 1rem "Space Mono", monospace;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(108, 99, 255, 0.3);
+}
+
+button:disabled {
+  background: #d3d3d3;
+  color: #999;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+@media (max-width: 576px) {
+  .payment-form {
+    padding: 2rem 1.5rem;
+    margin: 2rem 1rem;
+  }
+
+  h2 {
+    font-size: 1.8rem;
+  }
+
+  button {
+    font-size: 1rem;
+  }
+}
