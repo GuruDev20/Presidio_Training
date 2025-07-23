@@ -38,6 +38,44 @@
         </div>
     </div>
 
+    <div class="bg-white shadow-lg rounded-lg p-6 mb-6">
+        <h3 class="text-xl font-semibold mb-4">Subscription Details</h3>
+        <div *ngIf="subscription; else noSubscription" class="border-b py-4">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="flex items-center justify-center w-16 h-16 rounded-full"
+                     [ngClass]="{
+                        'bg-orange-400': subscription.tier === 'Basic',
+                        'bg-gray-400': subscription.tier === 'Standard',
+                        'bg-yellow-400': subscription.tier === 'Premium'
+                     }">
+                    <span class="text-white text-xl font-bold">{{ subscription.tier }}</span>
+                </div>
+                <div>
+                    <p class="text-lg font-semibold">Tier: {{ subscription.tier }}</p>
+                    <p class="text-sm text-gray-600">Status: 
+                        <span [ngClass]="{
+                            'text-green-600': subscription.status === 'Active',
+                            'text-red-600': subscription.status === 'Expired',
+                            'text-yellow-600': subscription.status === 'Pending'
+                        }">{{ subscription.status }}</span>
+                    </p>
+                </div>
+            </div>
+            <div class="mb-4">
+                <p class="text-sm text-gray-600">Start Date: {{ subscription.startDate | date:'medium' }}</p>
+                <p class="text-sm text-gray-600">End Date: {{ subscription.endDate | date:'medium' }}</p>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-4 mb-2">
+                <div class="bg-blue-500 h-4 rounded-full transition-all"
+                     [style.width.%]="subscriptionProgress"></div>
+            </div>
+            <p class="text-xs text-gray-500">Progress: {{ subscriptionProgress | number:'1.0-0' }}%</p>
+        </div>
+        <ng-template #noSubscription>
+            <p class="text-gray-600">No active subscription found.</p>
+        </ng-template>
+    </div>
+
     <div class="bg-white shadow-lg rounded-lg p-6 mb-6" *ngIf="showDeactivationSection">
         <h3 class="text-xl font-semibold mb-4">Account Deactivation</h3>
         <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 w-full" *ngIf="!showDeactivationForm" (click)="showDeactivationForm = true">

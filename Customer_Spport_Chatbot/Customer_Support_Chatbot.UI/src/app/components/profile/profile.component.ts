@@ -5,6 +5,7 @@ import { UserDevice, UserProfile } from "../../models/auth.model";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
+import { SubscriptionModel } from "../../models/subscription.model";
 
 @Component({
     selector: "app-profile",
@@ -21,6 +22,22 @@ export class Profile implements OnInit, OnDestroy {
     isEditingName = false;
     newFullName = "";
     showDeactivationSection = false;
+
+    subscription: SubscriptionModel | null = {
+        id: "2321334",
+        payment: {
+            id: "123456",
+            amount: 19,
+            currency: "INR",
+            status: "Success",
+            razorpayPaymentId: "rzp_test_123456789",
+        },
+        tier: "Basic",
+        startDate: new Date("2024-07-23"),
+        endDate: new Date("2026-07-23"),
+        status: 'Active'
+    };
+
     @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
     constructor(
@@ -191,5 +208,18 @@ export class Profile implements OnInit, OnDestroy {
                 }
             });
         }
+    }
+
+    get subscriptionProgress(): number {
+        if (!this.subscription) return 0;
+        const now = new Date();
+        const start = new Date(this.subscription.startDate);
+        const end = new Date(this.subscription.endDate);
+        if (end <= start) return 100;
+        if (now <= start) return 0;
+        if (now >= end) return 100;
+        const total = end.getTime() - start.getTime();
+        const elapsed = now.getTime() - start.getTime();
+        return Math.round((elapsed / total) * 100);
     }
 }
