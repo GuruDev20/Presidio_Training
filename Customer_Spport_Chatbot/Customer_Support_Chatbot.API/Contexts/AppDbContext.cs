@@ -26,6 +26,7 @@ namespace Customer_Support_Chatbot.Contexts
                 .HasIndex(u => u.Email)
                 .IsUnique();
 
+
             modelBuilder.Entity<Ticket>()
                 .HasOne(t => t.Agent)
                 .WithMany(a => a.AssignedTickets)
@@ -72,6 +73,18 @@ namespace Customer_Support_Chatbot.Contexts
                 .HasOne(p => p.Order)
                 .WithOne(o => o.Payment)
                 .HasForeignKey<Payment>(p => p.OrderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Subscription>()
+                .HasOne(s => s.User)
+                .WithMany(u => u.Subscriptions)
+                .HasForeignKey(s => s.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Subscription>()
+                .HasOne(s => s.Payment)
+                .WithOne(p => p.Subscription)
+                .HasForeignKey<Subscription>(s => s.PaymentId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }

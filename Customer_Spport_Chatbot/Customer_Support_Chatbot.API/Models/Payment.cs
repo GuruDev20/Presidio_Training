@@ -9,5 +9,7 @@ namespace Customer_Support_Chatbot.Models
         public string RazorpayPaymentId { get; set; } = string.Empty;
         public Order? Order { get; set; }
         public Guid OrderId { get; set; }
+        public Subscription? Subscription { get; set; }
+        public Guid? SubscriptionId { get; set; }
     }
 }
