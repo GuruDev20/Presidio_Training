@@ -1,17 +1,17 @@
 
 using Customer_Support_Chatbot.Models;
-using Customer_Support_Chatbot.Models.DTOs.Subscription;
+using Customer_Support_Chatbot.Models.DTOs.UserSubscription;
 using Customer_Support_Chatbot.Wrappers;
 
 namespace Customer_Support_Chatbot.Interfaces.Services
 {
-    public interface ISubscriptionService
+    public interface IUserSubscriptionService
     {
-        public Task<ApiResponse<Subscription>> CreateSubscriptionAsync(SubscriptionDto subscriptionDto);
-        public Task<ApiResponse<Subscription>> GetSubscriptionByIdAsync(Guid id);
-        public Task<ApiResponse<IEnumerable<Subscription>>> GetAllSubscriptionsByUserIdAsync(Guid userId);
-        public Task<ApiResponse<IEnumerable<Subscription>>> GetAllSubscriptionsAsync();
-        public Task<ApiResponse<Subscription>> DeactivateSubscriptionAsync(Guid subscriptionId);
+        public Task<ApiResponse<UserSubscription>> CreateUserSubscriptionAsync(UserSubscriptionDto UserSubscriptionDto);
+        public Task<ApiResponse<UserSubscription>> GetUserSubscriptionByIdAsync(Guid id);
+        public Task<ApiResponse<IEnumerable<UserSubscription>>> GetAllUserSubscriptionsByUserIdAsync(Guid userId);
+        public Task<ApiResponse<IEnumerable<UserSubscription>>> GetAllUserSubscriptionsAsync();
+        public Task<ApiResponse<UserSubscription>> DeactivateUserSubscriptionAsync(Guid UserSubscriptionId);
 
     }
 }

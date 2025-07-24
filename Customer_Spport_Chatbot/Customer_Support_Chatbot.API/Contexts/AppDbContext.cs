@@ -17,6 +17,8 @@ namespace Customer_Support_Chatbot.Contexts
         public DbSet<DeactivationRequest> DeactivationRequests { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<NotificationSettings> NotificationSettings { get; set; }
+        public DbSet<SubscriptionPlan> SubscriptionPlans { get; set; }
+        public DbSet<UserSubscription> UserSubscriptions { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Payment> Payments { get; set; }
 
@@ -75,17 +77,23 @@ namespace Customer_Support_Chatbot.Contexts
                 .HasForeignKey<Payment>(p => p.OrderId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Subscription>()
+            modelBuilder.Entity<UserSubscription>()
                 .HasOne(s => s.User)
                 .WithMany(u => u.Subscriptions)
                 .HasForeignKey(s => s.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Subscription>()
+            modelBuilder.Entity<UserSubscription>()
                 .HasOne(s => s.Payment)
-                .WithOne(p => p.Subscription)
-                .HasForeignKey<Subscription>(s => s.PaymentId)
+                .WithOne(p => p.UserSubscription)
+                .HasForeignKey<UserSubscription>(s => s.PaymentId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UserSubscription>()
+                .HasOne(s => s.Plan)
+                .WithMany(p => p.UserSubscriptions)
+                .HasForeignKey(s => s.PlanId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
