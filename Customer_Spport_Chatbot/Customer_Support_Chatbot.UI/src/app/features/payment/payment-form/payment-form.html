@@ -1,72 +1,112 @@
-<form [formGroup]="paymentForm" (ngSubmit)="pay()" class="payment-form">
-  <h2>💳 Secure Payment</h2>
+<ng-container *ngIf="subscriptionPlan">
+  <form [formGroup]="paymentForm" (ngSubmit)="pay()" class="payment-form">
+    <h2>💳 Secure Payment</h2>
 
-  <div class="form-group">
-    <label for="amount">Amount (₹)</label>
-    <input id="amount" type="number" [value]="this.amount" />
-  </div>
+    <button
 
-  <div class="form-group">
-    <label for="customerName">Full Name</label>
-    <input
-      id="customerName"
-      type="text"
-      formControlName="customerName"
-      placeholder="Ex: Mark Grayson"
-    />
-    @if(customerName?.invalid && (customerName?.touched || customerName?.dirty))
-    {
-    <div class="error-message">
-      @if(customerName?.errors?.['required']) {
-      <div>Name is required.</div>
-      } @if(customerName?.errors?.['minlength']) {
-      <div>Minimum 3 characters required.</div>
+        class="absolute top-2 right-3 text-gray-500 hover:text-gray-700 text-xl "
+        (click)="close.emit()"
+        aria-label="Close"
+      >
+        &times;
+      </button>
+
+    <div class="form-group">
+      <label for="customerName">Full Name</label>
+      <input
+        id="customerName"
+        type="text"
+        formControlName="customerName"
+        placeholder="Ex: Mark Grayson"
+      />
+      @if(customerName?.invalid && (customerName?.touched || customerName?.dirty))
+      {
+      <div class="error-message">
+        @if(customerName?.errors?.['required']) {
+        <div>Name is required.</div>
+        } @if(customerName?.errors?.['minlength']) {
+        <div>Minimum 3 characters required.</div>
+        }
+      </div>
       }
     </div>
-    }
-  </div>
 
-  <div class="form-group">
-    <label for="email">Email Address</label>
-    <input
-      id="email"
-      type="email"
-      formControlName="email"
-      placeholder="Ex: user@gmail.com"
-    />
-    @if(email?.invalid && (email?.touched || email?.dirty)) {
-    <div class="error-message">
-      @if(email?.errors?.['required']) {
-      <div>Email is required.</div>
-      } @if(email?.errors?.['email']) {
-      <div>Enter a valid email address.</div>
+    <div class="form-group">
+      <label for="email">Email Address</label>
+      <input
+        id="email"
+        type="email"
+        formControlName="email"
+        placeholder="Ex: user@gmail.com"
+      />
+      @if(email?.invalid && (email?.touched || email?.dirty)) {
+      <div class="error-message">
+        @if(email?.errors?.['required']) {
+        <div>Email is required.</div>
+        } @if(email?.errors?.['email']) {
+        <div>Enter a valid email address.</div>
+        }
+      </div>
       }
     </div>
-    }
-  </div>
 
-  <div class="form-group">
-    <label for="contactNumber">Contact Number</label>
-    <input
-      id="contactNumber"
-      type="text"
-      formControlName="contactNumber"
-      placeholder="Ex: 9876543210"
-    />
-    @if(contactNumber?.invalid && (contactNumber?.touched ||
-    contactNumber?.dirty)) {
-    <div class="error-message">
-      @if(contactNumber?.errors?.['required']) {
-      <div>Contact number is required.</div>
-      } @if(contactNumber?.errors?.['pattern']) {
-      <div>Enter a valid 10-digit number.</div>
+    <div class="form-group">
+      <label for="contactNumber">Contact Number</label>
+      <input
+        id="contactNumber"
+        type="text"
+        formControlName="contactNumber"
+        placeholder="Ex: 9876543210"
+      />
+      @if(contactNumber?.invalid && (contactNumber?.touched ||
+      contactNumber?.dirty)) {
+      <div class="error-message">
+        @if(contactNumber?.errors?.['required']) {
+        <div>Contact number is required.</div>
+        } @if(contactNumber?.errors?.['pattern']) {
+        <div>Enter a valid 10-digit number.</div>
+        }
+      </div>
       }
     </div>
-    }
-  </div>
 
-  <button type="submit" [disabled]="isLoading || paymentForm.invalid">
-    {{ isLoading ? 'Processing...' : 'Pay ₹' + this.amount
-    }}
-  </button>
-</form>
+    <div class="form-group">
+      <label for="startDate">Subscription Start Date</label>
+      <input
+        id="startDate"
+        type="date"
+        formControlName="startDate"
+      />
+      @if(paymentForm.get('startDate')?.invalid && (paymentForm.get('startDate')?.touched || paymentForm.get('startDate')?.dirty)) {
+        <div class="error-message">
+          @if(paymentForm.get('startDate')?.errors?.['required']) {
+            <div>Start date is required.</div>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="endDate">Subscription End Date</label>
+      <input
+        id="endDate"
+        type="date"
+        formControlName="endDate"
+      />
+      @if(paymentForm.get('endDate')?.invalid && (paymentForm.get('endDate')?.touched || paymentForm.get('endDate')?.dirty)) {
+        <div class="error-message">
+          @if(paymentForm.get('endDate')?.errors?.['required']) {
+            <div>End date is required.</div>
+          }
+        </div>
+      }
+    </div>
+
+    <button type="submit" class="submit-btn" [disabled]="isLoading || paymentForm.invalid">
+      {{ isLoading ? 'Processing...' : 'Pay ₹' + this.subscriptionPlan.price }}
+    </button>
+  </form>
+</ng-container>
+<ng-container *ngIf="!subscriptionPlan">
+  <div class="text-red-500 text-center p-4">No subscription plan selected.</div>
+</ng-container>
