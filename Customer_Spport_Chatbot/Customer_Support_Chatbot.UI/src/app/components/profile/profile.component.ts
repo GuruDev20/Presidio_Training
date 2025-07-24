@@ -32,9 +32,20 @@ export class Profile implements OnInit, OnDestroy {
             status: "Success",
             razorpayPaymentId: "rzp_test_123456789",
         },
-        tier: "Basic",
-        startDate: new Date("2024-07-23"),
-        endDate: new Date("2026-07-23"),
+        subscriptionPlan: {
+            id: "plan_123",
+            name: "Basic",
+            price: 19,
+            description: "Basic subscription plan",
+            durationInDays: 30,
+            features: [
+                'Standard support for text chat',
+                'Standard agent assignment speed',
+                'Standard agent relevance',
+            ]
+        },
+        startDate: new Date("2025-07-01"),
+        endDate: new Date("2025-07-31"),
         status: 'Active'
     };
 
@@ -221,5 +232,13 @@ export class Profile implements OnInit, OnDestroy {
         const total = end.getTime() - start.getTime();
         const elapsed = now.getTime() - start.getTime();
         return Math.round((elapsed / total) * 100);
+    }
+
+    get subscriptionDuration(): string {
+        if (!this.subscription) return 'N/A';
+        const start = new Date(this.subscription.startDate);
+        const end = new Date(this.subscription.endDate);
+        const durationInDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+        return `${durationInDays} days`;
     }
 }

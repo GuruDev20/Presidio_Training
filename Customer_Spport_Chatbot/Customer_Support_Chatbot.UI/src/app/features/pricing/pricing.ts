@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { PaymentFormComponent } from '../payment/payment-form/payment-form';
+import { SubscriptionPlanModel } from '../../models/subscription.model';
 
 @Component({
   selector: 'app-pricing',
@@ -9,55 +10,66 @@ import { PaymentFormComponent } from '../payment/payment-form/payment-form';
   styleUrl: './pricing.css',
 })
 export class Pricing {
-  tiers = [
+  subscriptionPlans: SubscriptionPlanModel[] = [
     {
+      id: '0',
       name: 'Basic',
-      price: 'Free',
-      amount: 0,
+      price: 0,
+      description: 'Free plan with limited features',
       features: [
         'Standard support for text chat',
         'Standard agent assignment speed',
         'Standard agent relevance',
       ],
-      highlight: false,
+      durationInDays: 30,
+      highlight: true,
     },
     {
+      id: '1',
       name: 'Pro',
-      price: '$19/month',
-      amount: 19,
+      price: 19,
+      description: 'Pro plan with extended features',
       features: [
         'Support for media types (video, audio, documents)',
         'Faster agent assignment',
         'Increased agent relevance',
         'Extended chat retention time',
       ],
+      durationInDays: 30,
       highlight: true,
+
     },
     {
-      name: 'Premium',
-      price: '$49/month',
-      amount: 49,
+      id: '2',
+      name: 'Business',
+      price: 49,
+      description: 'Business plan with advanced features',
       features: [
-        'All Pro benefits',
-        'Priority support (highest agent assignment speed)',
-        'Longest chat retention time',
-        'Dedicated account manager',
-        'Early access to new features',
+        'Support for media types (video, audio, documents)',
+        'Faster agent assignment',
+        'Increased agent relevance',
+        'Extended chat retention time',
       ],
-      highlight: false,
+      durationInDays: 30,
+      highlight: true,
+
     },
   ];
 
   showPaymentDialog = false;
-  selectedAmount: number | null = null;
+  selectedPlan: SubscriptionPlanModel | null = null;
 
-  openPaymentDialog(amount: number) {
-    this.selectedAmount = amount;
+  openPaymentDialog(plan: SubscriptionPlanModel) {
+    this.selectedPlan = plan;
     this.showPaymentDialog = true;
   }
 
   closePaymentDialog() {
     this.showPaymentDialog = false;
-    this.selectedAmount = null;
+    this.selectedPlan = null;
+  }
+
+  getDurationInMonths(days: number): string {
+    return `${Math.ceil(days / 30) > 1 ? Math.ceil(days / 30) : ''} month${days > 30 ? 's' : ''}`;
   }
 }
