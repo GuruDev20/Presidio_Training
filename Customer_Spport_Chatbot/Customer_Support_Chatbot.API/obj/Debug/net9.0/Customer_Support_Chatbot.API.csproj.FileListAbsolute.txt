@@ -1,4 +1,3 @@
-/Users/dev/Desktop/Presidio_Training/Customer_Spport_Chatbot/Customer_Support_Chatbot.API/bin/Debug/net9.0/appsettings.Development.json
 /Users/dev/Desktop/Presidio_Training/Customer_Spport_Chatbot/Customer_Support_Chatbot.API/bin/Debug/net9.0/appsettings.json
 /Users/dev/Desktop/Presidio_Training/Customer_Spport_Chatbot/Customer_Support_Chatbot.API/bin/Debug/net9.0/Customer_Support_Chatbot.API.staticwebassets.runtime.json
 /Users/dev/Desktop/Presidio_Training/Customer_Spport_Chatbot/Customer_Support_Chatbot.API/bin/Debug/net9.0/Customer_Support_Chatbot.API.staticwebassets.endpoints.json

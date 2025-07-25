@@ -20,11 +20,11 @@ var builder = WebApplication.CreateBuilder(args);
 // builder.Services.AddSingleton(x=>builder.Configuration.GetSection("AzureBlobStorage:ChatContainer").Value!);
 // builder.Services.AddSingleton(x=>builder.Configuration.GetSection("AzureBlobStorage:ProfileContainer").Value!);
 
-var keyVaultUrl = new Uri("https://customerchatbot.vault.azure.net/");
-var secretClient = new SecretClient(keyVaultUrl, new DefaultAzureCredential());
-var dbConnectionString = secretClient.GetSecret("DbConnectionString").Value.Value;
+// var keyVaultUrl = new Uri("https://customerchatbot.vault.azure.net/");
+// var secretClient = new SecretClient(keyVaultUrl, new DefaultAzureCredential());
+// var dbConnectionString = secretClient.GetSecret("DbConnectionString").Value.Value;
 
-builder.Configuration["ConnectionStrings:DefaultConnection"] = dbConnectionString;
+// builder.Configuration["ConnectionStrings:DefaultConnection"] = dbConnectionString;
 
 builder.Services.AddControllers()
     .AddJsonOptions(opts =>
@@ -65,7 +65,7 @@ builder.Services.AddSwaggerGen(opt =>
 #region Contexts
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseNpgsql(dbConnectionString);
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 #endregion
 

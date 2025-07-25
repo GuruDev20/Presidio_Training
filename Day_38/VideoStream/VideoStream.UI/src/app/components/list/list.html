@@ -1,0 +1,10 @@
+<div class="video-list">
+    <div class="video-card" *ngFor="let video of videos">
+        <div class="video-details">
+            <h3>{{ video.title }}</h3>
+        </div>
+        <button (click)="play(video)">▶ Play</button>
+    </div>
+</div>
+
+<app-video-modal *ngIf="selectedVideo" [video]="selectedVideo" (close)="selectedVideo = null"></app-video-modal>

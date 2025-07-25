@@ -1,0 +1,11 @@
+<div class="container">
+    <h1 class="title">VideoStream</h1>
+
+    <div class="button-toggle">
+        <button class="toggle-btn" [class.active]="mode === 'upload'" (click)="mode = 'upload'">Add Video</button>
+        <button class="toggle-btn" [class.active]="mode === 'view'" (click)="mode = 'view'">View Videos</button>
+    </div>
+
+    <app-upload *ngIf="mode === 'upload'"></app-upload>
+    <app-view *ngIf="mode === 'view'"></app-view>
+</div>

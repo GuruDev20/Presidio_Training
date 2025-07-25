@@ -1,0 +1,11 @@
+<div class="modal-backdrop">
+    <button class="close-btn" (click)="handleClose()">✖</button>
+    <div class="modal-content">
+        <video
+            [src]="video.blobUrl"
+            controls
+            autoplay
+            width="100%">
+        </video>
+    </div>
+</div>
