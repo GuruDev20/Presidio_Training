@@ -1,1 +1,104 @@
-<p>Agent Settings</p>
+<div class="container mx-auto p-6">
+    <h1 class="text-2xl font-semibold mb-10 flex items-center">
+        <lucide-icon name="Settings" class="mr-1"></lucide-icon> Settings
+    </h1>
+
+    <div class="grid gap-4">
+        <!-- Password -->
+        <div class="card bg-white shadow-md p-4">
+            <div class="flex flex-row justify-between items-center mb-2">
+                <div class="flex items-center">
+                    <lucide-icon name="Lock" class="mr-2"></lucide-icon>
+                    <h2 class="text-lg font-normal">Password Management</h2>
+                </div>
+                <button class="text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded" (click)="toggleDrawer('password')">Change Password</button>
+            </div>
+            <div *ngIf="isDrawerOpen.password" class="mt-4 p-4 bg-gray-50 border-t border-gray-200 transition-all duration-300">
+                <form [formGroup]="passwordForm" (ngSubmit)="onSubmitPassword()" class="space-y-4">
+                    <div>
+                        <label for="oldPassword" class="block text-sm font-medium text-gray-700">Old Password</label>
+                        <input id="oldPassword" type="password" formControlName="oldPassword" class="mt-1 block w-full border border-gray-300 rounded-md p-2" />
+                        <div *ngIf="passwordForm.get('oldPassword')?.touched && passwordForm.get('oldPassword')?.hasError('required')" class="text-red-500 text-sm mt-1">
+                            Old password is required.
+                        </div>
+                    </div>
+                    <div>
+                        <label for="newPassword" class="block text-sm font-medium text-gray-700">New Password</label>
+                        <input id="newPassword" type="password" formControlName="newPassword" class="mt-1 block w-full border border-gray-300 rounded-md p-2" />
+                        <div *ngIf="passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.hasError('required')" class="text-red-500 text-sm mt-1">
+                            New password is required.
+                        </div>
+                        <div *ngIf="passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.hasError('minlength')" class="text-red-500 text-sm mt-1">
+                            New password must be at least 6 characters long.
+                        </div>
+                    </div>
+                    <div>
+                        <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm New Password</label>
+                        <input id="confirmPassword" type="password" formControlName="confirmPassword" class="mt-1 block w-full border border-gray-300 rounded-md p-2" />
+                        <div *ngIf="passwordForm.get('confirmPassword')?.touched && passwordForm.get('confirmPassword')?.hasError('required')" class="text-red-500 text-sm mt-1">
+                            Confirm new password is required.
+                        </div>
+                        <div *ngIf="passwordForm.hasError('passwordMismatch') && passwordForm.get('confirmPassword')?.touched" class="text-red-500 text-sm mt-1">
+                            Passwords do not match.
+                        </div>
+                    </div>
+                    <div *ngIf="errorMessage.password" class="text-red-500 text-sm">{{ errorMessage.password }}</div>
+                    <div *ngIf="successMessage.password" class="text-green-500 text-sm">{{ successMessage.password }}</div>
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100" (click)="toggleDrawer('password')">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600" [disabled]="passwordForm.invalid">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Status Settings -->
+        <div class="card bg-white shadow-md p-4 cursor-pointer" (click)="toggleDrawer('status')">
+            <div class="flex flex-row justify-between items-center mb-2">
+                <div class="flex items-center">
+                    <lucide-icon name="CircleDashed" class="mr-2"></lucide-icon>
+                    <h2 class="text-lg font-normal">Status Settings</h2>
+                </div>
+                <lucide-icon name="ChevronRight" class="text-gray-500"></lucide-icon>
+            </div>
+            <div *ngIf="isDrawerOpen.status" class="mt-4 p-4 bg-gray-50 border-t border-gray-200 transition-all duration-300">
+                <form [formGroup]="statusForm" (ngSubmit)="onSubmitStatus()" (click)="$event.stopPropagation()" class="space-y-4">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-medium text-gray-700">Select Status</label>
+                        <div class="flex flex-col space-y-2">
+                            <label class="flex items-center cursor-pointer" (click)="$event.stopPropagation()">
+                                <input type="radio" id="status-available" formControlName="status" value="Available" class="mr-2" />
+                                <span class="text-sm text-gray-700">Available</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer" (click)="$event.stopPropagation()">
+                                <input type="radio" id="status-busy" formControlName="status" value="Busy" class="mr-2" />
+                                <span class="text-sm text-gray-700">Busy</span>
+                            </label>
+                            <label class="flex items-center cursor-pointer" (click)="$event.stopPropagation()">
+                                <input type="radio" id="status-offline" formControlName="status" value="Offline" class="mr-2" />
+                                <span class="text-sm text-gray-700">Offline</span>
+                            </label>
+                        </div>
+                        <div *ngIf="statusForm.get('status')?.touched && statusForm.get('status')?.hasError('required')" class="text-red-500 text-sm mt-1">
+                            Status is required.
+                        </div>
+                    </div>
+                    <div *ngIf="errorMessage.status" class="text-red-500 text-sm">{{ errorMessage.status }}</div>
+                    <div *ngIf="successMessage.status" class="text-green-500 text-sm">{{ successMessage.status }}</div>
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100" (click)="toggleDrawer('status')">Close</button>
+                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600" [disabled]="statusForm.invalid">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Notifications -->
+        <div class="card bg-white shadow-md p-4">
+            <div class="flex items-center mb-2">
+                <lucide-icon name="Bell" class="mr-2"></lucide-icon>
+                <h2 class="text-lg font-normal">Notification Settings</h2>
+            </div>
+        </div>
+    </div>
+</div>

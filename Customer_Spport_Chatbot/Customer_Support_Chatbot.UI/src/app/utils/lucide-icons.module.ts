@@ -33,7 +33,7 @@ import { Camera, User, LogIn, LogOut, Sun, Moon } from 'lucide-angular';
             LockOpen,
             Lock,
             CircleDashed,
-            Edit
+            Edit,
         })
     ],
     exports: [LucideAngularModule]

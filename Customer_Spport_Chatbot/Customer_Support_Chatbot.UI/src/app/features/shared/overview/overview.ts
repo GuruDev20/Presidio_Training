@@ -83,7 +83,7 @@ export class Overview implements OnInit{
 
     viewMore(){
         let baseRoute = '/user/dashboard';
-        if (this.role === 'agent') {
+        if (this.role === 'Agent') {
             baseRoute = '/agent/dashboard';
         } 
         this.router.navigate([`${baseRoute}/history`]);

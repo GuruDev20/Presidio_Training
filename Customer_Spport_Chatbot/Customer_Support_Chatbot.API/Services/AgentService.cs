@@ -27,19 +27,5 @@ namespace Customer_Support_Chatbot.Services
             }
             return ApiResponse<object>.Ok("Tickets retrieved successfully.", tickets);
         }
-
-        public async Task<ApiResponse<string>> UpdateStatusAsync(Guid agentId, AgentStatusUpdateDto dto)
-        {
-            if (agentId == Guid.Empty)
-            {
-                throw new ArgumentException("Agent ID cannot be empty.", nameof(agentId));
-            }
-            if (dto == null || string.IsNullOrWhiteSpace(dto.Status))
-            {
-                return ApiResponse<string>.Fail("Invalid status update request.", 400);
-            }
-            await _agentRepository.UpdateStatusAsync(agentId, dto.Status);
-            return ApiResponse<string>.Ok("Agent status updated successfully.");
-        }
     }
 }

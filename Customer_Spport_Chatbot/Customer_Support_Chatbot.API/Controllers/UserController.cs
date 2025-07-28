@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Customer_Support_Chatbot.DTOs.Agent;
 using Customer_Support_Chatbot.DTOs.Auth;
 using Customer_Support_Chatbot.DTOs.User;
 using Customer_Support_Chatbot.Interfaces.Services;
@@ -119,6 +120,28 @@ namespace Customer_Support_Chatbot.Controllers
                 return Ok(result);
             }
             return BadRequest(result);
+        }
+
+        [HttpGet("status")]
+        public async Task<IActionResult> GetStatus()
+        {
+            var userId = User.FindFirstValue("sid");
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(ApiResponse<object>.Fail("User not authenticated.", 401));
+
+            var response = await _userService.GetAgentStatusAsync(Guid.Parse(userId));
+            return response.Success ? Ok(response) : BadRequest(response);
+        }
+
+        [HttpPut("status")]
+        public async Task<IActionResult> UpdateStatus([FromBody] UpdateStatusDto request)
+        {
+            var userId = User.FindFirstValue("sid");
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized(ApiResponse<object>.Fail("User not authenticated.", 401));
+
+            var response = await _userService.UpdateAgentStatusAsync(Guid.Parse(userId), request.Status);
+            return response.Success ? Ok(response) : BadRequest(response);
         }
     }
 }

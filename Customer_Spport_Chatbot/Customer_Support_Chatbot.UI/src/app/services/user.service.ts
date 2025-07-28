@@ -45,4 +45,12 @@ export class UserService{
     changePassword(oldPassword: string, newPassword: string): Observable<ApiResponse<void>>{
         return this.http.put<ApiResponse<void>>(`${this.baseurl}/users/change-password`, { oldPassword, newPassword });
     }
+
+    getCurrentStatus(): Observable<ApiResponse<{ status: string }>> {
+        return this.http.get<ApiResponse<{ status: string }>>(`${this.baseurl}/users/status`);
+    }
+
+    updateStatus(status: string): Observable<ApiResponse<any>> {
+        return this.http.put<ApiResponse<any>>(`${this.baseurl}/users/status`, { status });
+    }
 }

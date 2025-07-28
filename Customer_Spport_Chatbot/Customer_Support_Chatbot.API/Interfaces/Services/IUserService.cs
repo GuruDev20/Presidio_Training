@@ -11,5 +11,7 @@ namespace Customer_Support_Chatbot.Interfaces.Services
         public Task<ApiResponse<UpdateProfilePictureResponseDto>> UpdateProfilePictureAsync(Guid userId, UpdateProfilePictureResponseDto dto);
         public Task<ApiResponse<string>> UpdateProfileNameAsync(Guid userId, string fullName);
         public Task<ApiResponse<string>> ChangePasswordAsync(Guid userId, ChangePasswordDto dto);
+        Task<ApiResponse<object>> GetAgentStatusAsync(Guid userId);
+        Task<ApiResponse<object>> UpdateAgentStatusAsync(Guid userId, string status);
     }
 }

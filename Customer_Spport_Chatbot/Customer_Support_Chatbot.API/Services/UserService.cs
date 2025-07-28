@@ -1,9 +1,11 @@
 using AutoMapper;
+using Customer_Support_Chatbot.Contexts;
 using Customer_Support_Chatbot.DTOs.User;
 using Customer_Support_Chatbot.Interfaces.Repositories;
 using Customer_Support_Chatbot.Interfaces.Services;
 using Customer_Support_Chatbot.Models;
 using Customer_Support_Chatbot.Wrappers;
+using Microsoft.EntityFrameworkCore;
 
 namespace Customer_Support_Chatbot.Services
 {
@@ -11,12 +13,13 @@ namespace Customer_Support_Chatbot.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IWebHostEnvironment _environment;
-        public UserService(IUserRepository userRepository, IWebHostEnvironment environment)
+        private readonly AppDbContext _context;
+        public UserService(IUserRepository userRepository, IWebHostEnvironment environment, AppDbContext context)
         {
-            _environment = environment;
             _userRepository = userRepository;
+            _context = context;
+            _environment = environment;
         }
-
         public Task<ApiResponse<string>> ChangePasswordAsync(Guid userId, ChangePasswordDto dto)
         {
             if (userId == Guid.Empty)
@@ -75,6 +78,26 @@ namespace Customer_Support_Chatbot.Services
             return ApiResponse<string>.Ok("User deactivated. Account will be deleted in 15 days.");
         }
 
+        public async Task<ApiResponse<object>> GetAgentStatusAsync(Guid userId)
+        {
+            try
+            {
+                var agent = await _context.Agents
+                    .Where(a => a.UserId == userId)
+                    .Select(a => new { Status = a.Status })
+                    .FirstOrDefaultAsync();
+
+                if (agent == null)
+                    return ApiResponse<object>.Fail("Agent not found.", 404);
+
+                return ApiResponse<object>.Ok("Status retrieved successfully.", new { status = agent.Status });
+            }
+            catch (Exception ex)
+            {
+                return ApiResponse<object>.Fail($"Error retrieving status: {ex.Message}", 500);
+            }
+        }
+
         public async Task<ApiResponse<object>> GetUserTicketsAsync(Guid userId)
         {
             if (userId == Guid.Empty)
@@ -118,6 +141,37 @@ namespace Customer_Support_Chatbot.Services
             };
             await _userRepository.AddAsync(user);
             return ApiResponse<string>.Ok("User registered successfully.");
+        }
+
+        public async Task<ApiResponse<object>> UpdateAgentStatusAsync(Guid userId, string status)
+        {
+            try
+            {
+                if (!IsValidStatus(status))
+                    return ApiResponse<object>.Fail("Invalid status. Allowed values: Available, Busy, Offline.", 400);
+
+                var agent = await _context.Agents
+                    .Where(a => a.UserId == userId)
+                    .FirstOrDefaultAsync();
+
+                if (agent == null)
+                    return ApiResponse<object>.Fail("Agent not found.", 404);
+
+                agent.Status = status;
+                agent.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+
+                return ApiResponse<object>.Ok("Status updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return ApiResponse<object>.Fail($"Error updating status: {ex.Message}", 500);
+            }
+        }
+
+        private bool IsValidStatus(string status)
+        {
+            return status == "Available" || status == "Busy" || status == "Offline";
         }
 
         public async Task<ApiResponse<string>> UpdateProfileNameAsync(Guid userId, string fullName)

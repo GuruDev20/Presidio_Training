@@ -1,1 +1,55 @@
-<p>Admin Settings</p>
+<div class="container mx-auto p-6">
+    <h1 class="text-2xl font-semibold mb-10 flex items-center">
+        <lucide-icon name="Settings" class="mr-1"></lucide-icon> Settings
+    </h1>
+
+    <div class="grid gap-4">
+        <!-- Password -->
+        <div class="card bg-white shadow-md p-4">
+            <div class="flex flex-row justify-between items-center mb-2">
+                <div class="flex items-center">
+                    <lucide-icon name="Lock" class="mr-2"></lucide-icon>
+                    <h2 class="text-lg font-normal">Password Management</h2>
+                </div>
+                <button class="text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded" (click)="toggleDrawer()">Change Password</button>
+            </div>
+            <div *ngIf="isDrawerOpen" class="mt-4 p-4 bg-gray-50 border-t border-gray-200 transition-all duration-300">
+                <form [formGroup]="passwordForm" (ngSubmit)="onSubmit()" class="space-y-4">
+                    <div>
+                        <label for="oldPassword" class="block text-sm font-medium text-gray-700">Old Password</label>
+                        <input id="oldPassword" type="password" formControlName="oldPassword" class="mt-1 block w-full border border-gray-300 rounded-md p-2" />
+                        <div *ngIf="passwordForm.get('oldPassword')?.touched && passwordForm.get('oldPassword')?.hasError('required')" class="text-red-500 text-sm mt-1">
+                            Old password is required.
+                        </div>
+                    </div>
+                    <div>
+                        <label for="newPassword" class="block text-sm font-medium text-gray-700">New Password</label>
+                        <input id="newPassword" type="password" formControlName="newPassword" class="mt-1 block w-full border border-gray-300 rounded-md p-2" />
+                        <div *ngIf="passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.hasError('required')" class="text-red-500 text-sm mt-1">
+                            New password is required.
+                        </div>
+                        <div *ngIf="passwordForm.get('newPassword')?.touched && passwordForm.get('newPassword')?.hasError('minlength')" class="text-red-500 text-sm mt-1">
+                            New password must be at least 8 characters long.
+                        </div>
+                    </div>
+                    <div>
+                        <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirm New Password</label>
+                        <input id="confirmPassword" type="password" formControlName="confirmPassword" class="mt-1 block w-full border border-gray-300 rounded-md p-2" />
+                        <div *ngIf="passwordForm.get('confirmPassword')?.touched && passwordForm.get('confirmPassword')?.hasError('required')" class="text-red-500 text-sm mt-1">
+                            Confirm new password is required.
+                        </div>
+                        <div *ngIf="passwordForm.hasError('mismatch') && passwordForm.get('confirmPassword')?.touched" class="text-red-500 text-sm mt-1">
+                            Passwords do not match.
+                        </div>
+                    </div>
+                    <div *ngIf="errorMessage" class="text-red-500 text-sm">{{ errorMessage }}</div>
+                    <div *ngIf="successMessage" class="text-green-500 text-sm">{{ successMessage }}</div>
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100" (click)="toggleDrawer()">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600" [disabled]="passwordForm.invalid">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

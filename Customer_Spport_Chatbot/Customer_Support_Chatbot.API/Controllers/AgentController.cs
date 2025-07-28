@@ -31,28 +31,5 @@ namespace Customer_Support_Chatbot.Contexts
             }
             return NotFound(response.Message);
         }
-
-        [Authorize(Roles = "Agent,Admin")]
-        [HttpPut("{agentId}/status")]
-        public async Task<IActionResult> UpdateStatus(Guid agentId, [FromBody] AgentStatusUpdateDto dto)
-        {
-            if (agentId == Guid.Empty)
-            {
-                return BadRequest("Agent ID cannot be empty.");
-            }
-            if (dto == null || string.IsNullOrWhiteSpace(dto.Status))
-            {
-                return BadRequest("Invalid status update request.");
-            }
-            var response = await _agentService.UpdateStatusAsync(agentId, dto);
-            if (response.Success)
-            {
-                return Ok(response.Message);
-            }
-            else
-            {
-                return BadRequest(response.Message);
-            }
-        }
     }
 }
