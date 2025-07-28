@@ -12,11 +12,12 @@ export class SubscriptionService {
   createSubscription(
     userId: string,
     planId: string,
+    paymentId: string,
     startDate: Date,
-    endDate: Date,
+    endDate: Date
   ): Observable<any> {
     console.log('Creating subscription with details:', {
-        userId,
+      userId,
       planId,
       startDate,
       endDate,

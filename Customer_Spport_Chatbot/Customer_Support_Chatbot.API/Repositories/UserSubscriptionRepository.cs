@@ -20,6 +20,7 @@ namespace Customer_Support_Chatbot.Repositories
             {
                 UserId = userSubscriptionDto.UserId,
                 PlanId = userSubscriptionDto.PlanId,
+                PaymentId = userSubscriptionDto.PaymentId,
                 StartDate = userSubscriptionDto.StartDate,
                 EndDate = userSubscriptionDto.EndDate,
                 Status = "Active"

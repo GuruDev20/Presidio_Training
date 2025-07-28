@@ -27,6 +27,8 @@ namespace Customer_Support_Chatbot.Services
                     throw new ArgumentException("UserId cannot be empty.");
                 if (UserSubscriptionDto.PlanId == Guid.Empty)
                     throw new ArgumentException("PlanId cannot be empty.");
+                if (UserSubscriptionDto.PaymentId == Guid.Empty)
+                    throw new ArgumentException("PaymentId cannot be empty.");
                 if (UserSubscriptionDto.StartDate == default)
                     throw new ArgumentException("StartDate must be set.");
                 if (UserSubscriptionDto.EndDate == default)

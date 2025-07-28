@@ -11,7 +11,7 @@ declare var Razorpay: any;
 export class RazorpayService {
   constructor(
     private http: HttpClient,
-    private paymentService: PaymentService, 
+    private paymentService: PaymentService,
     private subscriptionService: SubscriptionService
   ) {}
 
@@ -52,6 +52,25 @@ export class RazorpayService {
             .subscribe({
               next: (paymentResponse) => {
                 console.log('Payment recorded successfully:', paymentResponse);
+                this.subscriptionService
+                  .createSubscription(
+                    userId!,
+                    planId,
+                    paymentResponse.id,
+                    startDate,
+                    endDate
+                  )
+                  .subscribe({
+                    next: (subscriptionResponse) => {
+                      console.log(
+                        'Subscription created successfully:',
+                        subscriptionResponse
+                      );
+                    },
+                    error: (error) => {
+                      console.error('Error creating subscription:', error);
+                    },
+                  });
                 resolve(true);
               },
               error: (error) => {
@@ -59,16 +78,6 @@ export class RazorpayService {
                 reject(false);
               },
             });
-
-          this.subscriptionService.createSubscription(userId!, planId, startDate, endDate).subscribe({
-            next: (subscriptionResponse) => {
-              console.log('Subscription created successfully:', subscriptionResponse);
-            },
-            error: (error) => {
-              console.error('Error creating subscription:', error);
-            }
-          });
-          
         },
         prefill: {
           name: customerName,
