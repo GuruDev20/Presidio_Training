@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
-import { LucideAngularModule } from "lucide-angular";
+import { LucideAngularModule, LucideIcons } from "lucide-angular";
 
 @Component({
     selector: 'app-card',
