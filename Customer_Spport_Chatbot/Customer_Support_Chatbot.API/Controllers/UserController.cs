@@ -42,7 +42,7 @@ namespace Customer_Support_Chatbot.Controllers
             {
                 return Unauthorized(ApiResponse<string>.Fail("Invalid token"));
             }
-            var response = await _userService.DeactivateAccountAsync(userId,dto.Reason);
+            var response = await _userService.DeactivateAccountAsync(userId, dto.Reason);
             if (response.Success)
             {
                 return Ok(response);
@@ -93,6 +93,27 @@ namespace Customer_Support_Chatbot.Controllers
                 return Unauthorized(ApiResponse<string>.Fail("Invalid token"));
             }
             var result = await _userService.UpdateProfileNameAsync(userId, dto.FullName);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [Authorize(Roles = "User,Admin,Agent")]
+        [HttpPut("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
+        {
+            if (dto == null || string.IsNullOrEmpty(dto.OldPassword) || string.IsNullOrEmpty(dto.NewPassword))
+            {
+                return BadRequest("Invalid password change request.");
+            }
+            var userIdStr = User.FindFirstValue("sid");
+            if (!Guid.TryParse(userIdStr, out Guid userId))
+            {
+                return Unauthorized(ApiResponse<string>.Fail("Invalid token"));
+            }
+            var result = await _userService.ChangePasswordAsync(userId, dto);
             if (result.Success)
             {
                 return Ok(result);

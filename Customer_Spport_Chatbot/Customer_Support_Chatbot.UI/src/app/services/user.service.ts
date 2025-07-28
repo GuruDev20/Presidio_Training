@@ -41,4 +41,8 @@ export class UserService{
     deactivateAccount(reason:string):Observable<ApiResponse<string>>{
         return this.http.put<ApiResponse<string>>(`${this.baseurl}/users/deactivate`, { reason });
     }
+
+    changePassword(oldPassword: string, newPassword: string): Observable<ApiResponse<void>>{
+        return this.http.put<ApiResponse<void>>(`${this.baseurl}/users/change-password`, { oldPassword, newPassword });
+    }
 }
