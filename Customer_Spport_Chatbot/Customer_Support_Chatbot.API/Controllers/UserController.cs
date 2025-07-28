@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Customer_Support_Chatbot.DTOs.Auth;
 using Customer_Support_Chatbot.DTOs.User;
 using Customer_Support_Chatbot.Interfaces.Services;
 using Customer_Support_Chatbot.Wrappers;
@@ -33,14 +34,15 @@ namespace Customer_Support_Chatbot.Controllers
         }
 
         [Authorize(Roles = "User,Admin")]
-        [HttpPut("{id}/deactivate")]
-        public async Task<IActionResult> DeactivateAccountAsync(Guid id)
+        [HttpPut("deactivate")]
+        public async Task<IActionResult> DeactivateAccountAsync([FromBody] DeactivationRequestDto dto)
         {
-            if (id == Guid.Empty)
+            var userIdStr = User.FindFirstValue("sid");
+            if (!Guid.TryParse(userIdStr, out Guid userId))
             {
-                return BadRequest("Invalid user ID.");
+                return Unauthorized(ApiResponse<string>.Fail("Invalid token"));
             }
-            var response = await _userService.DeactivateAccountAsync(id);
+            var response = await _userService.DeactivateAccountAsync(userId,dto.Reason);
             if (response.Success)
             {
                 return Ok(response);

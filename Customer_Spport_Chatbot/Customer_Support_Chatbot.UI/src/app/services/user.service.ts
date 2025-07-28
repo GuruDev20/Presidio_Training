@@ -37,4 +37,8 @@ export class UserService{
     updateProfileName(fullName: string): Observable<ApiResponse<void>> {
         return this.http.put<ApiResponse<void>>(`${this.baseurl}/users/profile/name`, { fullName });
     }
+
+    deactivateAccount(reason:string):Observable<ApiResponse<string>>{
+        return this.http.put<ApiResponse<string>>(`${this.baseurl}/users/deactivate`, { reason });
+    }
 }

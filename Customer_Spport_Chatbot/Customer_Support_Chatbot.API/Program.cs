@@ -7,12 +7,14 @@ using Customer_Support_Chatbot.Helpers;
 using Customer_Support_Chatbot.Hubs;
 using Customer_Support_Chatbot.Interfaces.Repositories;
 using Customer_Support_Chatbot.Interfaces.Services;
+using Customer_Support_Chatbot.Jobs;
 using Customer_Support_Chatbot.Repositories;
 using Customer_Support_Chatbot.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -155,6 +157,24 @@ builder.Services.AddCors(options =>
 });
 #endregion
 
+#region Jobs
+builder.Services.AddQuartz(q =>
+{
+    q.UseInMemoryStore();
+    var jobKey = new JobKey("DeleteDeactivatedUsersJob");
+    q.AddJob<DeleteDeactivatedUsersJob>(opts => opts.WithIdentity(jobKey));
+    q.AddTrigger(opts => opts
+        .ForJob(jobKey)
+        .WithIdentity("DeleteDeactivatedUsersTrigger")
+        .WithSimpleSchedule(x => x
+            .WithIntervalInMinutes(1) // Run every minute for testing (checks for 2-minute delay)
+            .RepeatForever())
+    // For production, use the following trigger to run daily at midnight (checks for 15-day delay):
+    // .WithCronSchedule("0 0 0 * * ?") // Run daily at midnight
+    );
+});
+builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+#endregion
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

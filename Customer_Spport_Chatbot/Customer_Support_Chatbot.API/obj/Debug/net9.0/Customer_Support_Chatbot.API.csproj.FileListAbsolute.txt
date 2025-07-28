@@ -145,3 +145,9 @@
 /Users/dev/Desktop/Presidio_Training/Customer_Spport_Chatbot/Customer_Support_Chatbot.API/bin/Debug/net9.0/Azure.Storage.Blobs.dll
 /Users/dev/Desktop/Presidio_Training/Customer_Spport_Chatbot/Customer_Support_Chatbot.API/bin/Debug/net9.0/Azure.Storage.Common.dll
 /Users/dev/Desktop/Presidio_Training/Customer_Spport_Chatbot/Customer_Support_Chatbot.API/bin/Debug/net9.0/System.IO.Hashing.dll
+/Users/dev/Desktop/Presidio_Training/Customer_Spport_Chatbot/Customer_Support_Chatbot.API/bin/Debug/net9.0/Quartz.dll
+/Users/dev/Desktop/Presidio_Training/Customer_Spport_Chatbot/Customer_Support_Chatbot.API/bin/Debug/net9.0/Quartz.Extensions.DependencyInjection.dll
+/Users/dev/Desktop/Presidio_Training/Customer_Spport_Chatbot/Customer_Support_Chatbot.API/bin/Debug/net9.0/Quartz.Extensions.Hosting.dll
+/Users/dev/Desktop/Presidio_Training/Customer_Spport_Chatbot/Customer_Support_Chatbot.API/bin/Debug/net9.0/Quartz.Jobs.dll
+/Users/dev/Desktop/Presidio_Training/Customer_Spport_Chatbot/Customer_Support_Chatbot.API/bin/Debug/net9.0/Quartz.Plugins.dll
+/Users/dev/Desktop/Presidio_Training/Customer_Spport_Chatbot/Customer_Support_Chatbot.API/bin/Debug/net9.0/Quartz.Serialization.Json.dll

@@ -107,7 +107,20 @@ export class Profile implements OnInit, OnDestroy {
     }
 
     deactivateAccount() {
-        
+        console.log("Deactivation reason:", this.deactivationReason);
+        if(this.deactivationReason && this.userProfile){
+            this.userService.deactivateAccount(this.deactivationReason).
+                subscribe({
+                    next:(res)=>{
+                        console.log("Account deactivated successfully:", res);
+                        this.authService.logout();
+                        this.router.navigate(['/auth/login']);
+                    },
+                    error:(err)=>{
+                        console.error("Error deactivating account:", err);
+                    }
+                });
+        }
     }
 
     logout() {

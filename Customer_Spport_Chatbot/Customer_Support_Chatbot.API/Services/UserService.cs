@@ -17,11 +17,15 @@ namespace Customer_Support_Chatbot.Services
             _userRepository = userRepository;
         }
 
-        public async Task<ApiResponse<string>> DeactivateAccountAsync(Guid userId)
+        public async Task<ApiResponse<string>> DeactivateAccountAsync(Guid userId,string reason)
         {
             if (userId == Guid.Empty)
             {
                 throw new ArgumentException("User ID cannot be empty.", nameof(userId));
+            }
+            if (string.IsNullOrWhiteSpace(reason))
+            {
+                return ApiResponse<string>.Fail("Reason for deactivation cannot be empty.");
             }
             var user = await _userRepository.GetByIdAsync(userId);
             if (user == null)
@@ -30,7 +34,19 @@ namespace Customer_Support_Chatbot.Services
             }
             user.IsActive = false;
             user.IsDeactivated = true;
+            user.DeactivationRequestedAt = DateTime.UtcNow;
+            var deactivationRequest = new DeactivationRequest
+            {
+                Id = Guid.NewGuid(),
+                UserId = userId,
+                Reason = reason,
+                RequestedAt = DateTime.UtcNow,
+                Status = "Pending",
+                User = user
+            };
+            await _userRepository.AddDeactivationRequestAsync(deactivationRequest);
             _userRepository.Update(user);
+            await _userRepository.SaveChangesAsync();
             return ApiResponse<string>.Ok("User deactivated. Account will be deleted in 15 days.");
         }
 

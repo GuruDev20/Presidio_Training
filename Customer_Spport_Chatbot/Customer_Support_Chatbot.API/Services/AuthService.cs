@@ -59,7 +59,7 @@ namespace Customer_Support_Chatbot.Services
             }
             if (user.IsDeactivated)
             {
-                return ApiResponse<AuthResponseDto>.Fail("User is inactive", 403);
+                return ApiResponse<AuthResponseDto>.Fail("Your account has been deactivated, Try using by creating a new account", 403);
             }
             var activeDevices = await _authRepository.GetActiveDevicesAsync(user.Id);
             if (activeDevices.Count >= 3)
