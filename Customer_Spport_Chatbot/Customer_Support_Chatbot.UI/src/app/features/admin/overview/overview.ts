@@ -6,7 +6,8 @@ import { LucideIconsModule } from "../../../utils/lucide-icons.module";
 import { Activity, ChevronDown, Ticket, UserRound, Users } from "lucide-angular";
 import { FormsModule } from "@angular/forms";
 import { ChartConfiguration, ChartData, ChartType } from "chart.js";
-import { interval, Subscription } from "rxjs";
+import { interval, Subject, Subscription } from "rxjs";
+import { debounceTime } from "rxjs/operators";
 import { NgChartsModule } from 'ng2-charts';
 
 @Component({
@@ -60,13 +61,19 @@ export class AdminDashboard implements OnInit, OnDestroy {
     agents: any[] = [];
 
     private subscriptions: Subscription[] = [];
+    private fetchSubject = new Subject<void>();
 
     constructor(private adminService: AdminService) {}
 
     ngOnInit() {
-        this.fetchAllData();
-        const updateSub = interval(30000).subscribe(() => {
-            this.fetchAllData();
+        this.subscriptions.push(
+            this.fetchSubject.pipe(debounceTime(200)).subscribe(() => {
+                this.fetchAllData();
+            })
+        );
+        this.fetchSubject.next();
+        const updateSub = interval(15000).subscribe(() => {
+            this.fetchSubject.next();
         });
         this.subscriptions.push(updateSub);
     }
@@ -118,42 +125,7 @@ export class AdminDashboard implements OnInit, OnDestroy {
 
     updatePieChartData(filter: string) {
         this.pieFilter = filter;
-        this.adminService.getOverview().subscribe({
-            next: (response) => {
-                if (response.success) {
-                    const data = response.data;
-                    let labels: string[] = [];
-                    let values: number[] = [];
-                    let bgColors: string[] = [];
-
-                    if (filter === 'all') {
-                        labels = ['Total Users', 'Active Users', 'Total Agents', 'Active Agents'];
-                        values = [data.totalUsers, data.activeUsers, data.totalAgents, data.activeAgents];
-                        bgColors = ["#5fa8d3", "#a1cca5", "#ffa69e", "#f7d794"];
-                    } else if (filter === 'users') {
-                        labels = ['Total Users', 'Active Users'];
-                        values = [data.totalUsers, data.activeUsers];
-                        bgColors = ['#5fa8d3', '#a1cca5'];
-                    } else if (filter === 'agents') {
-                        labels = ['Total Agents', 'Active Agents'];
-                        values = [data.totalAgents, data.activeAgents];
-                        bgColors = ['#ffa69e', '#f7d794'];
-                    }
-                    this.pieChartData = {
-                        labels: labels,
-                        datasets: [{
-                            data: values,
-                            backgroundColor: bgColors
-                        }]
-                    };
-                } else {
-                    console.error('Pie chart fetch failed:', response.message);
-                }
-            },
-            error: (error) => {
-                console.error('Error updating pie chart data:', error);
-            }
-        });
+        this.fetchSubject.next();
     }
 
     updateLineChartData(filter: string) {
@@ -195,8 +167,7 @@ export class AdminDashboard implements OnInit, OnDestroy {
             next: (response) => {
                 if (response.success) {
                     this.agents = response.data.$values || [];
-                } 
-                else {
+                } else {
                     console.error('Agents fetch failed:', response.message);
                     this.agents = [];
                 }
@@ -228,7 +199,7 @@ export class AdminDashboard implements OnInit, OnDestroy {
     changePage(page: number) {
         if (page >= 1 && page <= this.totalPages) {
             this.currentPage = page;
-            this.fetchTickets();
+            this.fetchSubject.next();
         }
     }
 }
