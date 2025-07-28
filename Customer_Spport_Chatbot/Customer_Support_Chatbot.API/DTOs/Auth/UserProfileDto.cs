@@ -1,3 +1,5 @@
+using Customer_Support_Chatbot.Models;
+
 namespace Customer_Support_Chatbot.DTOs.Auth
 {
     public class UserProfileDto
@@ -9,5 +11,6 @@ namespace Customer_Support_Chatbot.DTOs.Auth
         public bool IsActive { get; set; }
         public string? ProfilePictureUrl { get; set; } = null;
         public DateTime CreatedAt { get; set; }
+        public ICollection<UserSubscription>? Subscriptions { get; set; }
     }
 }

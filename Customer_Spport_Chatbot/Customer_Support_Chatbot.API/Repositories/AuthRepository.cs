@@ -13,6 +13,13 @@ namespace Customer_Support_Chatbot.Repositories
             _context = context;
         }
 
+        public async Task<User?> GetByIdWithSubscriptionsAsync(Guid userId)
+        {
+            return await _context.Users
+                .Include(u => u.Subscriptions)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+        }
+
         public async Task AddDeactivationRequestAsync(DeactivationRequest request)
         {
             await _context.DeactivationRequests.AddAsync(request);

@@ -26,7 +26,7 @@ namespace Customer_Support_Chatbot.Services
             }
             catch (Exception ex)
             {
-                return ApiResponse<IEnumerable<SubscriptionPlan>>.Fail("An error occurred while retrieving subscription plans.", 500, ex);
+                return ApiResponse<IEnumerable<SubscriptionPlan>>.Fail("An error occurred while retrieving subscription plans.", 500, ex.Message);
             }
         }
 
@@ -43,7 +43,7 @@ namespace Customer_Support_Chatbot.Services
             }
             catch (Exception ex)
             {
-                return ApiResponse<SubscriptionPlan>.Fail($"An error occurred while retrieving the subscription plan with ID {id}.", 500, ex);
+                return ApiResponse<SubscriptionPlan>.Fail($"An error occurred while retrieving the subscription plan with ID {id}.", 500, ex.Message);
             }
         }
 
@@ -73,7 +73,7 @@ namespace Customer_Support_Chatbot.Services
             }
             catch (Exception ex)
             {
-                return ApiResponse<SubscriptionPlan>.Fail("An error occurred while adding the subscription plan.", 500, ex);
+                return ApiResponse<SubscriptionPlan>.Fail("An error occurred while adding the subscription plan.", 500, ex.Message);
             }
         }
 
@@ -120,7 +120,7 @@ namespace Customer_Support_Chatbot.Services
             }
             catch (Exception ex)
             {
-                return ApiResponse<bool>.Fail("An error occurred while deleting the subscription plan.", 500, ex);
+                return ApiResponse<bool>.Fail("An error occurred while deleting the subscription plan.", 500, ex.Message);
             }
         }
     }
