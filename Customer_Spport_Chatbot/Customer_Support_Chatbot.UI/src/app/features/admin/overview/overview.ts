@@ -13,28 +13,26 @@ import { NgChartsModule } from 'ng2-charts';
     selector: 'app-admin-overview',
     templateUrl: './overview.html',
     standalone: true,
-    imports: [CommonModule, CardComponent,LucideIconsModule,FormsModule, NgChartsModule],
+    imports: [CommonModule, CardComponent, LucideIconsModule, FormsModule, NgChartsModule],
 })
-
-export class AdminDashboard implements OnInit,OnDestroy {
-
+export class AdminDashboard implements OnInit, OnDestroy {
     chevronDown = ChevronDown;
 
     cards = [
-        { title: 'Total Users', count: 0, bgColor: '#5fa8d3',icon:Users },
-        { title: 'Active Users', count: 0, bgColor: '#a1cca5',icon:UserRound },
-        { title: 'Active Agents', count: 0, bgColor: '#ffa69e',icon:Activity },
-        { title: 'Total Raised Tickets', count: 0, bgColor: '#f7d794',icon:Ticket }
+        { title: 'Total Users', count: 0, bgColor: '#5fa8d3', icon: Users },
+        { title: 'Active Users', count: 0, bgColor: '#a1cca5', icon: UserRound },
+        { title: 'Active Agents', count: 0, bgColor: '#ffa69e', icon: Activity },
+        { title: 'Total Raised Tickets', count: 0, bgColor: '#f7d794', icon: Ticket }
     ];
 
-    pieChartOptions:ChartConfiguration["options"]={
-        responsive:true,
-        maintainAspectRatio:false,
-        plugins: {legend: { position: 'right' }},
-    }
+    pieChartOptions: ChartConfiguration["options"] = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'right' } },
+    };
 
     pieChartData: ChartData<'doughnut'> = {
-        labels: ['Total Users', 'Active Users','Total Agents, Active Agents'],
+        labels: ['Total Users', 'Active Users', 'Total Agents', 'Active Agents'],
         datasets: [{ data: [0, 0, 0, 0], backgroundColor: ["#5fa8d3", "#a1cca5", "#ffa69e", "#f7d794"] }]
     };
     pieChartType: ChartType = 'doughnut';
@@ -43,8 +41,8 @@ export class AdminDashboard implements OnInit,OnDestroy {
     lineChartOptions: ChartConfiguration["options"] = {
         responsive: true,
         maintainAspectRatio: false,
-        plugins:{legend: { position: 'bottom' }},
-    }
+        plugins: { legend: { position: 'bottom' } },
+    };
     lineChartData: ChartData<"line"> = {
         labels: [],
         datasets: [{ data: [], label: "Tickets Raised", borderColor: "#5fa8d3", fill: false }]
@@ -58,27 +56,31 @@ export class AdminDashboard implements OnInit,OnDestroy {
     currentPage: number = 1;
     pageSize: number = 5;
     totalTickets: number = 0;
+    totalPages: number = 1;
+    agents: any[] = [];
 
     private subscriptions: Subscription[] = [];
 
     constructor(private adminService: AdminService) {}
 
     ngOnInit() {
-        this.fetchOverviewData();
-        this.fetchDeactivationRequests();
-        this.fetchTickets();
-        this.updateLineChartData(this.lineFilter); 
-        const updateSub=interval(30000).subscribe(()=>{
-            this.fetchOverviewData();
-            this.fetchDeactivationRequests();
-            this.fetchTickets();
-            this.updateLineChartData(this.lineFilter); 
-        })
+        this.fetchAllData();
+        const updateSub = interval(30000).subscribe(() => {
+            this.fetchAllData();
+        });
         this.subscriptions.push(updateSub);
     }
 
     ngOnDestroy(): void {
         this.subscriptions.forEach(sub => sub.unsubscribe());
+    }
+
+    fetchAllData() {
+        this.fetchOverviewData();
+        this.fetchDeactivationRequests();
+        this.fetchAgents();
+        this.fetchTickets();
+        this.updateLineChartData(this.lineFilter);
     }
 
     fetchOverviewData() {
@@ -90,20 +92,22 @@ export class AdminDashboard implements OnInit,OnDestroy {
                         { title: 'Total Users', count: data.totalUsers, bgColor: '#5fa8d3', icon: Users },
                         { title: 'Active Users', count: data.activeUsers, bgColor: '#a1cca5', icon: UserRound },
                         { title: 'Active Agents', count: data.activeAgents, bgColor: '#ffa69e', icon: Activity },
-                        { title: 'Total Raised Tickets', count: data.totalTickets, bgColor: '#f7d794',icon:Ticket }
+                        { title: 'Total Raised Tickets', count: data.totalTickets, bgColor: '#f7d794', icon: Ticket }
                     ];
                     this.pieChartData = {
-                        labels: ['Total Users', 'Active Users','Total Agents', 'Active Agents'],
-                            datasets: [{
-                                data: [
-                                    data.totalUsers || 0,
-                                    data.activeUsers || 0,
-                                    data.totalAgents || 0,
-                                    data.activeAgents || 0
-                                ],
-                                backgroundColor: ['#5fa8d3', '#a1cca5', '#ffa69e', '#f7d794']
-                            }]
+                        labels: ['Total Users', 'Active Users', 'Total Agents', 'Active Agents'],
+                        datasets: [{
+                            data: [
+                                data.totalUsers || 0,
+                                data.activeUsers || 0,
+                                data.totalAgents || 0,
+                                data.activeAgents || 0
+                            ],
+                            backgroundColor: ['#5fa8d3', '#a1cca5', '#ffa69e', '#f7d794']
+                        }]
                     };
+                } else {
+                    console.error('Overview fetch failed:', response.message);
                 }
             },
             error: (error) => {
@@ -114,7 +118,6 @@ export class AdminDashboard implements OnInit,OnDestroy {
 
     updatePieChartData(filter: string) {
         this.pieFilter = filter;
-
         this.adminService.getOverview().subscribe({
             next: (response) => {
                 if (response.success) {
@@ -125,15 +128,13 @@ export class AdminDashboard implements OnInit,OnDestroy {
 
                     if (filter === 'all') {
                         labels = ['Total Users', 'Active Users', 'Total Agents', 'Active Agents'];
-                        values = [data.totalUsers, data.activeUsers,data.totalAgents, data.activeAgents];
+                        values = [data.totalUsers, data.activeUsers, data.totalAgents, data.activeAgents];
                         bgColors = ["#5fa8d3", "#a1cca5", "#ffa69e", "#f7d794"];
-                    } 
-                    else if (filter === 'users') {
+                    } else if (filter === 'users') {
                         labels = ['Total Users', 'Active Users'];
                         values = [data.totalUsers, data.activeUsers];
                         bgColors = ['#5fa8d3', '#a1cca5'];
-                    } 
-                    else if (filter === 'agents') {
+                    } else if (filter === 'agents') {
                         labels = ['Total Agents', 'Active Agents'];
                         values = [data.totalAgents, data.activeAgents];
                         bgColors = ['#ffa69e', '#f7d794'];
@@ -145,6 +146,8 @@ export class AdminDashboard implements OnInit,OnDestroy {
                             backgroundColor: bgColors
                         }]
                     };
+                } else {
+                    console.error('Pie chart fetch failed:', response.message);
                 }
             },
             error: (error) => {
@@ -153,7 +156,7 @@ export class AdminDashboard implements OnInit,OnDestroy {
         });
     }
 
-    updateLineChartData(filter: string){
+    updateLineChartData(filter: string) {
         this.lineFilter = filter;
         this.adminService.getTicketGrowth(filter).subscribe({
             next: (response) => {
@@ -162,6 +165,8 @@ export class AdminDashboard implements OnInit,OnDestroy {
                         labels: response.data.labels.$values,
                         datasets: [{ data: response.data.values.$values, label: "Tickets Raised", borderColor: "#5fa8d3", fill: false }]
                     };
+                } else {
+                    console.error('Ticket growth fetch failed:', response.message);
                 }
             },
             error: (error) => {
@@ -170,8 +175,60 @@ export class AdminDashboard implements OnInit,OnDestroy {
         });
     }
 
-    fetchDeactivationRequests(){}
+    fetchDeactivationRequests() {
+        this.adminService.getDeactivationRequests().subscribe({
+            next: (response) => {
+                if (response.success) {
+                    this.deactivationRequests = response.data.$values;
+                } else {
+                    console.error('Deactivation requests fetch failed:', response.message);
+                }
+            },
+            error: (error) => {
+                console.error('Error fetching deactivation requests:', error);
+            }
+        });
+    }
 
-    fetchTickets(){}
+    fetchAgents() {
+        this.adminService.getAgentDetails().subscribe({
+            next: (response) => {
+                if (response.success) {
+                    this.agents = response.data.$values || [];
+                } 
+                else {
+                    console.error('Agents fetch failed:', response.message);
+                    this.agents = [];
+                }
+            },
+            error: (error) => {
+                console.error('Error fetching agents:', error.message || error);
+                this.agents = [];
+            }
+        });
+    }
 
+    fetchTickets() {
+        this.adminService.getTicketDetails(this.currentPage, this.pageSize).subscribe({
+            next: (response) => {
+                if (response.success) {
+                    this.tickets = response.data.tickets.$values;
+                    this.totalTickets = response.data.totalCount;
+                    this.totalPages = Math.ceil(this.totalTickets / this.pageSize) || 1;
+                } else {
+                    console.error('Tickets fetch failed:', response.message);
+                }
+            },
+            error: (error) => {
+                console.error('Error fetching tickets:', error);
+            }
+        });
+    }
+
+    changePage(page: number) {
+        if (page >= 1 && page <= this.totalPages) {
+            this.currentPage = page;
+            this.fetchTickets();
+        }
+    }
 }

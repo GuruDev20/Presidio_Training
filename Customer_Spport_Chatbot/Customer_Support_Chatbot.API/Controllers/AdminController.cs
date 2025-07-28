@@ -63,5 +63,26 @@ namespace Customer_Support_Chatbot.Controllers
             var response = await _adminService.GetTicketGrowthAsync(filter);
             return response.Success ? Ok(response) : BadRequest(response);
         }
+
+        [HttpGet("dashboard/deactivation-requests")]
+        public async Task<IActionResult> GetDeactivationRequestsAsync()
+        {
+            var response = await _adminService.GetDeactivationRequestsAsync();
+            return response.Success ? Ok(response) : BadRequest(response);
+        }
+
+        [HttpGet("dashboard/agents")]
+        public async Task<IActionResult> GetAgentDetailsAsync()
+        {
+            var response = await _adminService.GetAgentDetailsAsync();
+            return response.Success ? Ok(response) : BadRequest(response);
+        }
+
+        [HttpGet("dashboard/tickets")]
+        public async Task<IActionResult> GetTicketDetailsAsync([FromQuery] int page = 1, [FromQuery] int pageSize = 5)
+        {
+            var response = await _adminService.GetTicketDetailsAsync(page, pageSize);
+            return response.Success ? Ok(response) : BadRequest(response);
+        }
     }
 }

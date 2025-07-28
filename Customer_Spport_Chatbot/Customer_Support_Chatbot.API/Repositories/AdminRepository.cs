@@ -1,4 +1,5 @@
 using Customer_Support_Chatbot.Contexts;
+using Customer_Support_Chatbot.DTOs.Admin;
 using Customer_Support_Chatbot.DTOs.Ticket;
 using Customer_Support_Chatbot.Interfaces.Repositories;
 using Customer_Support_Chatbot.Models;
@@ -83,6 +84,41 @@ namespace Customer_Support_Chatbot.Repositories
             return true;
         }
 
+        public async Task<List<AgentDto>> GetAgentDetailsAsync()
+        {
+            return await _context.Agents
+                .Join(_context.Users,
+                    agent => agent.UserId,
+                    user => user.Id,
+                    (agent, user) => new { Agent = agent, User = user })
+                .Select(au => new AgentDto
+                {
+                    Id = au.Agent.Id,
+                    Username = au.User.Username,
+                    Status = au.Agent.Status
+                })
+                .OrderBy(dto => dto.Username)
+                .Take(10)
+                .ToListAsync();
+        }
+
+        public async Task<List<DeactivationRequestDto>> GetDeactivationRequestsAsync()
+        {
+            return await _context.DeactivationRequests
+                .Include(dr => dr.User)
+                .Select(dr => new DeactivationRequestDto
+                {
+                    Id = dr.Id,
+                    Username = dr.User.Username,
+                    Reason = dr.Reason,
+                    Status = dr.Status,
+                    RequestedAt = dr.RequestedAt
+                })
+                .OrderByDescending(dr => dr.RequestedAt)
+                .Take(10)
+                .ToListAsync();
+        }
+
         public async Task<object> GetOverviewAsync()
         {
             var totalUsers = await _context.Users.CountAsync(u => u.Role == "User");
@@ -98,6 +134,32 @@ namespace Customer_Support_Chatbot.Repositories
                 ActiveAgents = activeAgents,
                 TotalTickets = totalTickets
             };
+        }
+
+        public async Task<(List<TicketDto> Tickets, int TotalCount)> GetTicketDetailsAsync(int page, int pageSize)
+        {
+            var query = _context.Tickets
+                .Include(t => t.User)
+                .Include(t => t.Agent)
+                .ThenInclude(a => a!.User)
+                .OrderByDescending(t => t.CreatedAt);
+
+            var totalCount = await query.CountAsync();
+
+            var tickets = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(t => new TicketDto
+                {
+                    Id = t.Id,
+                    Title = t.Name,
+                    Status = t.Status,
+                    CreatedAt = t.CreatedAt,
+                    AgentUsername = t.Agent != null ? t.Agent.User!.Username : null
+                })
+                .ToListAsync();
+
+            return (tickets, totalCount);
         }
 
         public async Task<object> GetTicketGrowthAsync(string filter)

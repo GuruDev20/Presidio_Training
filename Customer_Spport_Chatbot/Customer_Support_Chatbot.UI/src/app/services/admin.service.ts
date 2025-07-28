@@ -4,21 +4,29 @@ import { ApiResponse } from "../models/api.model";
 import { Observable } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
+export class AdminService {
+    private baseUrl = environment.apiUrl;
 
-export class AdminService{
-
-    private baseUrl=environment.apiUrl;
-
-    constructor(private http:HttpClient){}
+    constructor(private http: HttpClient) {}
 
     getOverview(): Observable<ApiResponse<any>> {
         return this.http.get<ApiResponse<any>>(`${this.baseUrl}/admin/dashboard/overview`);
     }
 
-    getDeactivationRequests(){}
+    getDeactivationRequests(): Observable<ApiResponse<any>> {
+        return this.http.get<ApiResponse<any>>(`${this.baseUrl}/admin/dashboard/deactivation-requests`);
+    }
 
-    getTicketGrowth(filter:string):Observable<ApiResponse<any>>{
+    getTicketGrowth(filter: string): Observable<ApiResponse<any>> {
         return this.http.get<ApiResponse<any>>(`${this.baseUrl}/admin/dashboard/ticket-growth?filter=${filter}`);
+    }
+
+    getTicketDetails(page: number, pageSize: number): Observable<ApiResponse<any>> {
+        return this.http.get<ApiResponse<any>>(`${this.baseUrl}/admin/dashboard/tickets?page=${page}&pageSize=${pageSize}`);
+    }
+
+    getAgentDetails(): Observable<ApiResponse<any>> {
+        return this.http.get<ApiResponse<any>>(`${this.baseUrl}/admin/dashboard/agents`);
     }
 }

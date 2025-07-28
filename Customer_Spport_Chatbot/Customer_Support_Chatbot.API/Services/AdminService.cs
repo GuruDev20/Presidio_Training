@@ -37,6 +37,19 @@ namespace Customer_Support_Chatbot.Services
                 : ApiResponse<string>.Fail("Agent not found or could not be deleted.", 404);
         }
 
+        public async Task<ApiResponse<List<AgentDto>>> GetAgentDetailsAsync()
+        {
+            try
+            {
+                var agents = await _adminRepository.GetAgentDetailsAsync();
+                return ApiResponse<List<AgentDto>>.Ok("Agent details retrieved successfully.", agents);
+            }
+            catch(Exception ex)
+            {
+                return ApiResponse<List<AgentDto>>.Fail($"An error occurred while retrieving agent details: {ex.Message}", 500);
+            }
+        }
+
         public async Task<ApiResponse<object>> GetDashboardOverviewAsync()
         {
             try
@@ -53,7 +66,38 @@ namespace Customer_Support_Chatbot.Services
                 return ApiResponse<object>.Fail($"An error occurred while retrieving the dashboard overview: {ex.Message}", 500);
             }
         }
-        
+
+        public async Task<ApiResponse<List<DeactivationRequestDto>>> GetDeactivationRequestsAsync()
+        {
+            try
+            {
+                var requests = await _adminRepository.GetDeactivationRequestsAsync();
+                return ApiResponse<List<DeactivationRequestDto>>.Ok("Deactivation requests retrieved successfully.", requests);
+            }
+            catch (Exception ex)
+            {
+                return ApiResponse<List<DeactivationRequestDto>>.Fail($"Error retrieving deactivation requests: {ex.Message}", 500);
+            }
+        }
+
+        public async Task<ApiResponse<PagedTicketResponseDto>> GetTicketDetailsAsync(int page, int pageSize)
+        {
+            try
+            {
+                var (tickets, totalCount) = await _adminRepository.GetTicketDetailsAsync(page, pageSize);
+                var response = new PagedTicketResponseDto
+                {
+                    Tickets = tickets,
+                    TotalCount = totalCount
+                };
+                return ApiResponse<PagedTicketResponseDto>.Ok("Ticket details retrieved successfully.", response);
+            }
+            catch (Exception ex)
+            {
+                return ApiResponse<PagedTicketResponseDto>.Fail($"Error retrieving ticket details: {ex.Message}", 500);
+            }
+        }
+
         public async Task<ApiResponse<object>> GetTicketGrowthAsync(string filter)
         {
             try
