@@ -1,7 +1,9 @@
 import { Inject, inject, Injectable, model } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { ApiResponse } from '../models/api.model';
+import { PaymentModel } from '../models/payment';
 
 @Injectable({ providedIn: 'root' })
 export class PaymentService {
@@ -15,7 +17,7 @@ export class PaymentService {
     status: string,
     orderId: string,
     razorpayPaymentId: string
-  ): Observable<any> {
+  ): Observable<ApiResponse<PaymentModel>> {
     console.log('Creating payment with details:', {
       amount,
       currency,
@@ -23,20 +25,27 @@ export class PaymentService {
       orderId,
       razorpayPaymentId,
     });
-    return this.http.post<any>(`${this.baseUrl}/payments`, {
-      amount,
-      currency,
-      status,
-      orderId,
-      razorpayPaymentId,
-    });
+    return this.http.post<ApiResponse<PaymentModel>>(
+      `${this.baseUrl}/payments`,
+      {
+        amount,
+        currency,
+        status,
+        orderId,
+        razorpayPaymentId,
+      }
+    );
   }
 
-  getAllPayments(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/payments`);
+  getAllPayments(): Observable<PaymentModel[]> {
+    return this.http
+      .get<ApiResponse<PaymentModel[]>>(`${this.baseUrl}/payments`)
+      .pipe(map((response) => response.data));
   }
 
-  getPaymentById(id: number): Observable<any> {
-    return this.http.get<any>(`${this.baseUrl}/payments/${id}`);
+  getPaymentById(id: number): Observable<PaymentModel> {
+    return this.http
+      .get<ApiResponse<PaymentModel>>(`${this.baseUrl}/payments/${id}`)
+      .pipe(map((response) => response.data));
   }
 }

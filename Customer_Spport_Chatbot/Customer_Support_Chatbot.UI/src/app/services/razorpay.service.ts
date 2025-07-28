@@ -56,7 +56,7 @@ export class RazorpayService {
                   .createSubscription(
                     userId!,
                     planId,
-                    paymentResponse.id,
+                    paymentResponse.data.id,
                     startDate,
                     endDate
                   )

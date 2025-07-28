@@ -19,14 +19,16 @@ export class SubscriptionService {
     console.log('Creating subscription with details:', {
       userId,
       planId,
+      paymentId,
       startDate,
       endDate,
     });
     return this.http.post<any>(`${this.baseUrl}/subscriptions`, {
       userId,
       planId,
-      startDate,
-      endDate,
+      paymentId,
+      startDate: new Date(startDate).toISOString(),
+      endDate: new Date(endDate).toISOString(),
     });
   }
 
