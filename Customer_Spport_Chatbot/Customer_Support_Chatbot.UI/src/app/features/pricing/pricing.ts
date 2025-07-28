@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { PaymentFormComponent } from '../payment/payment-form/payment-form';
 import { SubscriptionPlanModel } from '../../models/subscription.model';
+import { SubscriptionPlanService } from '../../services/subscription-plan.service';
 
 @Component({
   selector: 'app-pricing',
@@ -10,54 +11,32 @@ import { SubscriptionPlanModel } from '../../models/subscription.model';
   styleUrl: './pricing.css',
 })
 export class Pricing {
-  subscriptionPlans: SubscriptionPlanModel[] = [
-    {
-      id: '0',
-      name: 'Basic',
-      price: 0,
-      description: 'Free plan with limited features',
-      features: [
-        'Standard support for text chat',
-        'Standard agent assignment speed',
-        'Standard agent relevance',
-      ],
-      durationInDays: 30,
-      highlight: true,
-    },
-    {
-      id: '1',
-      name: 'Pro',
-      price: 19,
-      description: 'Pro plan with extended features',
-      features: [
-        'Support for media types (video, audio, documents)',
-        'Faster agent assignment',
-        'Increased agent relevance',
-        'Extended chat retention time',
-      ],
-      durationInDays: 30,
-      highlight: true,
-
-    },
-    {
-      id: '2',
-      name: 'Business',
-      price: 49,
-      description: 'Business plan with advanced features',
-      features: [
-        'Support for media types (video, audio, documents)',
-        'Faster agent assignment',
-        'Increased agent relevance',
-        'Extended chat retention time',
-      ],
-      durationInDays: 30,
-      highlight: true,
-
-    },
-  ];
+  subscriptionPlans: SubscriptionPlanModel[] = [];
 
   showPaymentDialog = false;
   selectedPlan: SubscriptionPlanModel | null = null;
+
+  constructor(private subscriptionPlanService: SubscriptionPlanService) {
+    this.loadSubscriptionPlans();
+  }
+
+  loadSubscriptionPlans() {
+    this.subscriptionPlanService.getAllSubscriptionPlans().subscribe({
+      next: (plans) => {
+        console.log('Subscription plans loaded:', plans);
+        // @ts-expect-error
+        this.subscriptionPlans = (plans.data.$values || []).map(
+          (plan: any) => ({
+            ...plan,
+            features: plan.features?.$values || [],
+          })
+        );
+      },
+      error: (err) => {
+        console.error('Error loading subscription plans', err);
+      },
+    });
+  }
 
   openPaymentDialog(plan: SubscriptionPlanModel) {
     this.selectedPlan = plan;
@@ -70,6 +49,8 @@ export class Pricing {
   }
 
   getDurationInMonths(days: number): string {
-    return `${Math.ceil(days / 30) > 1 ? Math.ceil(days / 30) : ''} month${days > 30 ? 's' : ''}`;
+    return `${Math.ceil(days / 30) > 1 ? Math.ceil(days / 30) : ''} month${
+      days > 30 ? 's' : ''
+    }`;
   }
 }

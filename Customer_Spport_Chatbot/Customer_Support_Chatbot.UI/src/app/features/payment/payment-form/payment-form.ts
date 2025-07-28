@@ -18,7 +18,7 @@ import { SubscriptionPlanModel } from '../../../models/subscription.model';
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
 })
-export class PaymentFormComponent  {
+export class PaymentFormComponent {
   @Input() subscriptionPlan: SubscriptionPlanModel | null = null;
   @Output() close = new EventEmitter<void>();
   paymentForm: FormGroup;
@@ -41,7 +41,6 @@ export class PaymentFormComponent  {
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
     });
-
   }
 
   ngOnInit(): void {
@@ -60,10 +59,16 @@ export class PaymentFormComponent  {
       return;
     }
     this.isLoading = true;
-    const { customerName, email, contactNumber, startDate, endDate } = this.paymentForm.value;
+    const { customerName, email, contactNumber, startDate, endDate } =
+      this.paymentForm.value;
     try {
       const order = await this.orderService
-        .createOrder(this.subscriptionPlan?.price!, customerName, email, contactNumber)
+        .createOrder(
+          this.subscriptionPlan?.price!,
+          customerName,
+          email,
+          contactNumber
+        )
         .subscribe({
           next: (order) => {
             console.log('Order created successfully:', order);
@@ -73,8 +78,8 @@ export class PaymentFormComponent  {
               customerName,
               email,
               contactNumber,
-              order.razorpayOrderId!,
-              order.id,
+              order.data.razorpayOrderId!,
+              order.data.id,
               this.subscriptionPlan?.id!,
               startDate,
               endDate
