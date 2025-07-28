@@ -5,7 +5,6 @@ import { Router } from "@angular/router";
 import { AuthService } from "../../../services/auth.service";
 import { UserService } from "../../../services/user.service";
 import { LucideIconsModule } from "../../../utils/lucide-icons.module";
-import { LockOpen, Ticket,Lock, CircleDashed } from "lucide-angular";
 
 @Component({
     selector: 'app-overview',
@@ -20,14 +19,13 @@ export class Overview implements OnInit{
     history: any[] = [];
     currentPage=1;
     itemsPerPage=8;
-    role= '';
 
     constructor(private router:Router,private authService:AuthService,private userService:UserService){}
 
     ngOnInit(): void {
         const userId= this.authService.getUserId();
-        this.role= this.authService.getRole();
-        this.userService.getTicketsByUser({userOrAgentId:userId,role:this.role})
+        const role= this.authService.getRole();
+        this.userService.getTicketsByUser({userOrAgentId:userId,role})
             .subscribe({
                 next:(res)=>{
                     this.history = Array.isArray((res.data as any)?.$values)
@@ -43,10 +41,10 @@ export class Overview implements OnInit{
     }
 
     cards=[
-        { title: 'Total Tickets', count: 0, bgColor: '#5fa8d3',icon:Ticket},
-        { title: 'Active Tickets', count: 0, bgColor: '#a1cca5',icon:LockOpen },
-        { title: 'Closed Tickets', count: 0, bgColor: '#ffa69e', icon:Lock },
-        { title: 'Pending Tickets', count: 0, bgColor: '#f7d794',icon:CircleDashed }
+        { title: 'Total Tickets', count: 0, bgColor: '#5fa8d3' },
+        { title: 'Active Tickets', count: 0, bgColor: '#a1cca5' },
+        { title: 'Closed Tickets', count: 0, bgColor: '#ffa69e' },
+        { title: 'Pending Tickets', count: 0, bgColor: '#f7d794' }
     ];
 
     updateCardStats() {
@@ -82,11 +80,7 @@ export class Overview implements OnInit{
     }
 
     viewMore(){
-        let baseRoute = '/user/dashboard';
-        if (this.role === 'agent') {
-            baseRoute = '/agent/dashboard';
-        } 
-        this.router.navigate([`${baseRoute}/history`]);
+        this.router.navigate(['/agent/dashboard/history']);
     }
 
     deleteHistory(index:number){

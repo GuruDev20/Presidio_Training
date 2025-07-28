@@ -22,4 +22,5 @@ export const routes: Routes = [
         path:'user',
         loadChildren:()=>import('./features/user/user.routes').then(m=>m.User_Routes)
     },
+    {path:'settings',component:SettingsComponent}
 ];

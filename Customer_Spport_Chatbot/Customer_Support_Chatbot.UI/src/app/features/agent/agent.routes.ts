@@ -4,8 +4,6 @@ import { Agent_Sidebar_Constants } from "../../constants/agent-sidebar.constant"
 import { AgentWorkspaceComponent } from "./workspace/workspace.component";
 import { AgentHistoryComponent } from "./history/history.component";
 import { Overview } from "../shared/overview/overview";
-import { Profile } from "../../components/profile/profile.component";
-import { SettingsComponent } from "../settings/settings.component";
 
 export const Agent_Routes:Routes=[
     {
@@ -26,8 +24,6 @@ export const Agent_Routes:Routes=[
                 ]
             },
             {path:'history',component:AgentHistoryComponent},
-            {path:'profile',component:Profile},
-            {path:'settings',component:SettingsComponent}
         ]
     }
 ]

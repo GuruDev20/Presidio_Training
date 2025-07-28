@@ -15,6 +15,7 @@ export class UserLayoutComponent implements OnInit,OnDestroy {
     items: any[] = [];
 
     showSidebar = false;
+    showProfileDrawer = false;
 
     isMobile = false;
     isTablet = false;
@@ -33,7 +34,6 @@ export class UserLayoutComponent implements OnInit,OnDestroy {
     }
 
     @HostListener('window:resize')
-
     checkScreenSize(): void {
         const width = window.innerWidth;
         this.isMobile = width < 768;
@@ -45,7 +45,12 @@ export class UserLayoutComponent implements OnInit,OnDestroy {
         this.showSidebar = !this.showSidebar;
     }
 
+    toggleProfileDrawer(): void {
+        this.showProfileDrawer = !this.showProfileDrawer;
+    }
+
     closeDrawers(): void {
         this.showSidebar = false;
+        this.showProfileDrawer = false;
     }
 }
