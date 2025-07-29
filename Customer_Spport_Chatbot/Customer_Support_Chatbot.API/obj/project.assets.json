@@ -1608,53 +1608,16 @@
           }
         }
       },
-      "Quartz.Jobs/3.14.0": {
+      "Razorpay/2.2.0": {
         "type": "package",
         "dependencies": {
-          "Quartz": "3.14.0"
+          "Newtonsoft.Json": "7.0.1"
         },
         "compile": {
-          "lib/netstandard2.0/Quartz.Jobs.dll": {
-            "related": ".xml"
-          }
+          "lib/net45/Razorpay.dll": {}
         },
         "runtime": {
-          "lib/netstandard2.0/Quartz.Jobs.dll": {
-            "related": ".xml"
-          }
-        }
-      },
-      "Quartz.Plugins/3.14.0": {
-        "type": "package",
-        "dependencies": {
-          "Quartz.Jobs": "3.14.0"
-        },
-        "compile": {
-          "lib/netstandard2.0/Quartz.Plugins.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/netstandard2.0/Quartz.Plugins.dll": {
-            "related": ".xml"
-          }
-        }
-      },
-      "Quartz.Serialization.Json/3.14.0": {
-        "type": "package",
-        "dependencies": {
-          "Newtonsoft.Json": "13.0.3",
-          "Quartz": "3.14.0"
-        },
-        "compile": {
-          "lib/netstandard2.0/Quartz.Serialization.Json.dll": {
-            "related": ".xml"
-          }
-        },
-        "runtime": {
-          "lib/netstandard2.0/Quartz.Serialization.Json.dll": {
-            "related": ".xml"
-          }
+          "lib/net45/Razorpay.dll": {}
         }
       },
       "Serilog/3.1.1": {
@@ -4762,61 +4725,17 @@
         "quartz.extensions.hosting.nuspec"
       ]
     },
-    "Quartz.Jobs/3.14.0": {
-      "sha512": "qOyqTZkG8cAjqOvCu5kUMTTO95wDh+ZC3JyS4PRvWr4dH/P7LoIJlDeblyOS5FOCGXHWUqdEwGgm2NGj1azUJA==",
+    "Razorpay/2.2.0": {
+      "sha512": "/jcipsJETs2IMMcVZCy2OjwK2q+ETRubloAFnrnnJY/XRi3siiMPiDqsL1IB8/u5hJpxW9hMVgH+obuWUzTnVg==",
       "type": "package",
-      "path": "quartz.jobs/3.14.0",
+      "path": "razorpay/2.2.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "lib/net462/Quartz.Jobs.dll",
-        "lib/net462/Quartz.Jobs.xml",
-        "lib/net472/Quartz.Jobs.dll",
-        "lib/net472/Quartz.Jobs.xml",
-        "lib/netstandard2.0/Quartz.Jobs.dll",
-        "lib/netstandard2.0/Quartz.Jobs.xml",
-        "quartz-jobs.md",
-        "quartz-logo-small.png",
-        "quartz.jobs.3.14.0.nupkg.sha512",
-        "quartz.jobs.nuspec"
-      ]
-    },
-    "Quartz.Plugins/3.14.0": {
-      "sha512": "bUPYbjuzNjzl2JHMxHSqFL2lW0f6p2P90LEpIBlfwPPVTuWXczsumt8ljVm+5/SKySVPGaNrse95j1+9bYiZQQ==",
-      "type": "package",
-      "path": "quartz.plugins/3.14.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "lib/net462/Quartz.Plugins.dll",
-        "lib/net462/Quartz.Plugins.xml",
-        "lib/net472/Quartz.Plugins.dll",
-        "lib/net472/Quartz.Plugins.xml",
-        "lib/netstandard2.0/Quartz.Plugins.dll",
-        "lib/netstandard2.0/Quartz.Plugins.xml",
-        "quartz-logo-small.png",
-        "quartz-plugins.md",
-        "quartz.plugins.3.14.0.nupkg.sha512",
-        "quartz.plugins.nuspec"
-      ]
-    },
-    "Quartz.Serialization.Json/3.14.0": {
-      "sha512": "0vWHRi/Z1TBpLh0Xx0HS85SkopM8PumYJps3YTaHPT3cWo6GbXavite9V53ghAtXYfJZASVPfVb+W4HFGw1jFw==",
-      "type": "package",
-      "path": "quartz.serialization.json/3.14.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "json-serialization.md",
-        "lib/net462/Quartz.Serialization.Json.dll",
-        "lib/net462/Quartz.Serialization.Json.xml",
-        "lib/net472/Quartz.Serialization.Json.dll",
-        "lib/net472/Quartz.Serialization.Json.xml",
-        "lib/netstandard2.0/Quartz.Serialization.Json.dll",
-        "lib/netstandard2.0/Quartz.Serialization.Json.xml",
-        "quartz-logo-small.png",
-        "quartz.serialization.json.3.14.0.nupkg.sha512",
-        "quartz.serialization.json.nuspec"
+        "lib/net40/Razorpay.dll",
+        "lib/net45/Razorpay.dll",
+        "razorpay.2.2.0.nupkg.sha512",
+        "razorpay.nuspec"
       ]
     },
     "Serilog/3.1.1": {
@@ -6377,8 +6296,7 @@
       "Npgsql.EntityFrameworkCore.PostgreSQL >= 8.0.2",
       "Quartz >= 3.14.0",
       "Quartz.Extensions.Hosting >= 3.14.0",
-      "Quartz.Plugins >= 3.14.0",
-      "Quartz.Serialization.Json >= 3.14.0",
+      "Razorpay >= 2.1.2",
       "Serilog.AspNetCore >= 8.0.0",
       "Serilog.Sinks.File >= 5.0.0",
       "Swashbuckle.AspNetCore >= 6.5.0"
@@ -6493,13 +6411,9 @@
             "target": "Package",
             "version": "[3.14.0, )"
           },
-          "Quartz.Plugins": {
+          "Razorpay": {
             "target": "Package",
-            "version": "[3.14.0, )"
-          },
-          "Quartz.Serialization.Json": {
-            "target": "Package",
-            "version": "[3.14.0, )"
+            "version": "[2.1.2, )"
           },
           "Serilog.AspNetCore": {
             "target": "Package",
@@ -6536,5 +6450,27 @@
         "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.300/PortableRuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "NU1603",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Customer_Support_Chatbot.API depends on Razorpay (>= 2.1.2) but Razorpay 2.1.2 was not found. Razorpay 2.2.0 was resolved instead.",
+      "libraryId": "Razorpay",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    },
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'Razorpay 2.2.0' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net9.0'. This package may not be fully compatible with your project.",
+      "libraryId": "Razorpay",
+      "targetGraphs": [
+        "net9.0"
+      ]
+    }
+  ]
 }

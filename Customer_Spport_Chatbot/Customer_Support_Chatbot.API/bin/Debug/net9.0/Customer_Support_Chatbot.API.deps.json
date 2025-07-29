@@ -24,8 +24,7 @@
           "Npgsql.EntityFrameworkCore.PostgreSQL": "8.0.2",
           "Quartz": "3.14.0",
           "Quartz.Extensions.Hosting": "3.14.0",
-          "Quartz.Plugins": "3.14.0",
-          "Quartz.Serialization.Json": "3.14.0",
+          "Razorpay": "2.2.0",
           "Serilog.AspNetCore": "8.0.0",
           "Serilog.Sinks.File": "5.0.0",
           "Swashbuckle.AspNetCore": "6.5.0"
@@ -942,37 +941,14 @@
           }
         }
       },
-      "Quartz.Jobs/3.14.0": {
+      "Razorpay/2.2.0": {
         "dependencies": {
-          "Quartz": "3.14.0"
+          "Newtonsoft.Json": "13.0.3"
         },
         "runtime": {
-          "lib/netstandard2.0/Quartz.Jobs.dll": {
-            "assemblyVersion": "3.14.0.0",
-            "fileVersion": "3.14.0.0"
-          }
-        }
-      },
-      "Quartz.Plugins/3.14.0": {
-        "dependencies": {
-          "Quartz.Jobs": "3.14.0"
-        },
-        "runtime": {
-          "lib/netstandard2.0/Quartz.Plugins.dll": {
-            "assemblyVersion": "3.14.0.0",
-            "fileVersion": "3.14.0.0"
-          }
-        }
-      },
-      "Quartz.Serialization.Json/3.14.0": {
-        "dependencies": {
-          "Newtonsoft.Json": "13.0.3",
-          "Quartz": "3.14.0"
-        },
-        "runtime": {
-          "lib/netstandard2.0/Quartz.Serialization.Json.dll": {
-            "assemblyVersion": "3.14.0.0",
-            "fileVersion": "3.14.0.0"
+          "lib/net45/Razorpay.dll": {
+            "assemblyVersion": "0.0.0.0",
+            "fileVersion": "0.0.0.0"
           }
         }
       },
@@ -1965,26 +1941,12 @@
       "path": "quartz.extensions.hosting/3.14.0",
       "hashPath": "quartz.extensions.hosting.3.14.0.nupkg.sha512"
     },
-    "Quartz.Jobs/3.14.0": {
+    "Razorpay/2.2.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-qOyqTZkG8cAjqOvCu5kUMTTO95wDh+ZC3JyS4PRvWr4dH/P7LoIJlDeblyOS5FOCGXHWUqdEwGgm2NGj1azUJA==",
-      "path": "quartz.jobs/3.14.0",
-      "hashPath": "quartz.jobs.3.14.0.nupkg.sha512"
-    },
-    "Quartz.Plugins/3.14.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-bUPYbjuzNjzl2JHMxHSqFL2lW0f6p2P90LEpIBlfwPPVTuWXczsumt8ljVm+5/SKySVPGaNrse95j1+9bYiZQQ==",
-      "path": "quartz.plugins/3.14.0",
-      "hashPath": "quartz.plugins.3.14.0.nupkg.sha512"
-    },
-    "Quartz.Serialization.Json/3.14.0": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-0vWHRi/Z1TBpLh0Xx0HS85SkopM8PumYJps3YTaHPT3cWo6GbXavite9V53ghAtXYfJZASVPfVb+W4HFGw1jFw==",
-      "path": "quartz.serialization.json/3.14.0",
-      "hashPath": "quartz.serialization.json.3.14.0.nupkg.sha512"
+      "sha512": "sha512-/jcipsJETs2IMMcVZCy2OjwK2q+ETRubloAFnrnnJY/XRi3siiMPiDqsL1IB8/u5hJpxW9hMVgH+obuWUzTnVg==",
+      "path": "razorpay/2.2.0",
+      "hashPath": "razorpay.2.2.0.nupkg.sha512"
     },
     "Serilog/3.1.1": {
       "type": "package",

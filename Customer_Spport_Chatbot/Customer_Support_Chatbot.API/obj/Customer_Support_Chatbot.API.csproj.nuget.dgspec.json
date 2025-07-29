@@ -110,13 +110,9 @@
               "target": "Package",
               "version": "[3.14.0, )"
             },
-            "Quartz.Plugins": {
+            "Razorpay": {
               "target": "Package",
-              "version": "[3.14.0, )"
-            },
-            "Quartz.Serialization.Json": {
-              "target": "Package",
-              "version": "[3.14.0, )"
+              "version": "[2.1.2, )"
             },
             "Serilog.AspNetCore": {
               "target": "Package",
