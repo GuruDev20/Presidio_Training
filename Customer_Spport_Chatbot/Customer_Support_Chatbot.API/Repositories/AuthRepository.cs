@@ -16,7 +16,7 @@ namespace Customer_Support_Chatbot.Repositories
         public async Task<User?> GetByIdWithSubscriptionsAsync(Guid userId)
         {
             return await _context.Users
-                .Include(u => u.Subscriptions)
+                .Include(u => u.Subscriptions).ThenInclude(us => us.Plan)
                 .FirstOrDefaultAsync(u => u.Id == userId);
         }
 

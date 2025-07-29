@@ -28,7 +28,9 @@ export interface UserProfile {
   u?: string;
   role: 'Admin' | 'User' | 'Agent';
   profilePictureUrl?: string;
-  subscriptions?: SubscriptionModel[];
+  subscriptions?: {
+    $values: SubscriptionModel[];
+  };
 }
 
 export interface UserDevice {

@@ -3,7 +3,7 @@ import { PaymentModel } from './payment';
 export interface SubscriptionModel {
   id: string;
   payment: PaymentModel;
-  subscriptionPlan: SubscriptionPlanModel;
+  plan: SubscriptionPlanModel;
   startDate: Date;
   endDate: Date;
   status: 'Active' | 'Inactive' | 'Cancelled' | 'Expired' | 'Pending';

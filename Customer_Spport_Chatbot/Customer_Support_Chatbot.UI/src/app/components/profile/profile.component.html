@@ -111,20 +111,18 @@
               <div
                 class="flex items-center justify-center w-16 h-16 rounded-full"
                 [ngClass]="{
-                  'bg-orange-400':
-                    subscription.subscriptionPlan.name === 'Basic',
-                  'bg-gray-400': subscription.subscriptionPlan.name === 'Pro',
-                  'bg-yellow-400':
-                    subscription.subscriptionPlan.name === 'Business'
+                  'bg-orange-400': subscription.plan?.name === 'Basic',
+                  'bg-gray-400': subscription.plan?.name === 'Pro',
+                  'bg-yellow-400': subscription.plan?.name === 'Business'
                 }"
               >
                 <span class="text-white text-xl font-bold">{{
-                  subscription.subscriptionPlan.name
+                  subscription.plan?.name
                 }}</span>
               </div>
               <div>
                 <p class="text-lg font-semibold">
-                  Tier: {{ subscription.subscriptionPlan.name }}
+                  Tier: {{ subscription.plan?.name }}
                 </p>
                 <p class="text-sm text-gray-600">
                   Status:
@@ -147,11 +145,11 @@
                 End Date: {{ subscription.endDate | date : "medium" }}
               </p>
               <p class="text-sm text-gray-600">
-                Description: {{ subscription.subscriptionPlan.description }}
+                Description: {{ subscription.plan?.description }}
               </p>
               <p class="text-sm text-gray-600">
-                Price: ₹{{ subscription.subscriptionPlan.price }} /
-                {{ subscription.subscriptionPlan.durationInDays }} days
+                Price: ₹{{ subscription.plan?.price }} /
+                {{ subscription.plan?.durationInDays }} days
               </p>
               <p class="text-sm text-gray-600">
                 Duration:
@@ -162,19 +160,12 @@
                   )
                 }}
               </p>
-              <div
-                *ngIf="subscription.subscriptionPlan.features?.length"
-                class="mt-2"
-              >
+              <div *ngIf="subscription.plan?.features?.length" class="mt-2">
                 <p class="text-sm text-gray-600 font-semibold mb-1">
                   Features:
                 </p>
                 <ul class="list-disc ml-6 text-sm text-gray-600">
-                  <li
-                    *ngFor="
-                      let feature of subscription.subscriptionPlan.features
-                    "
-                  >
+                  <li *ngFor="let feature of subscription.plan?.features">
                     {{ feature }}
                   </li>
                 </ul>
@@ -217,18 +208,18 @@
               <div
                 class="flex items-center justify-center w-12 h-12 rounded-full"
                 [ngClass]="{
-                  'bg-orange-400': prev.subscriptionPlan.name === 'Basic',
-                  'bg-gray-400': prev.subscriptionPlan.name === 'Pro',
-                  'bg-yellow-400': prev.subscriptionPlan.name === 'Business'
+                  'bg-orange-400': prev.plan?.name === 'Basic',
+                  'bg-gray-400': prev.plan?.name === 'Pro',
+                  'bg-yellow-400': prev.plan?.name === 'Business'
                 }"
               >
                 <span class="text-white text-base font-bold">{{
-                  prev.subscriptionPlan.name
+                  prev.plan?.name
                 }}</span>
               </div>
               <div>
                 <p class="text-base font-semibold">
-                  Tier: {{ prev.subscriptionPlan.name }}
+                  Tier: {{ prev.plan?.name }}
                 </p>
                 <p class="text-xs text-gray-600">
                   Status:
@@ -251,8 +242,8 @@
                 End: {{ prev.endDate | date : "medium" }}
               </p>
               <p class="text-xs text-gray-600">
-                Price: ₹{{ prev.subscriptionPlan.price }} /
-                {{ prev.subscriptionPlan.durationInDays }} days
+                Price: ₹{{ prev.plan?.price }} /
+                {{ prev.plan?.durationInDays }} days
               </p>
             </div>
           </div>

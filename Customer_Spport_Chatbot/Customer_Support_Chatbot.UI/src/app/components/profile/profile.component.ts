@@ -125,12 +125,14 @@ export class Profile implements OnInit, OnDestroy {
         const userRole = res.data.role;
         this.showDeactivationSection =
           userRole !== 'Agent' && userRole !== 'Admin';
-        this.subscriptions = (res.data.subscriptions || [])
+        this.subscriptions = (res.data.subscriptions?.$values || [])
           .slice()
           .sort(
             (a: SubscriptionModel, b: SubscriptionModel) =>
               new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
           );
+
+        console.log('User profile loaded:', this.userProfile);
       },
       error: (err) => {
         console.error('Error fetching user profile:', err);
