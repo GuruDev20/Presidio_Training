@@ -19,7 +19,8 @@ namespace Customer_Support_Chatbot.Services
 
         public async Task<ApiResponse<UserProfileDto>> GetProfileAsync(Guid userId)
         {
-            var user = await _authRepository.GetByIdAsync(userId);
+            // Ensure Subscriptions are included
+            var user = await _authRepository.GetByIdWithSubscriptionsAsync(userId);
             if (user == null)
             {
                 return ApiResponse<UserProfileDto>.Fail("User not found", 404);
@@ -32,7 +33,8 @@ namespace Customer_Support_Chatbot.Services
                 Role = user.Role,
                 IsActive = user.IsActive,
                 CreatedAt = user.CreatedAt,
-                ProfilePictureUrl = user.ProfilePictureUrl
+                ProfilePictureUrl = user.ProfilePictureUrl,
+                Subscriptions = user.Subscriptions
             });
         }
 

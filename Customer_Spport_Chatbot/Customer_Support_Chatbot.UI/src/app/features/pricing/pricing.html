@@ -1,0 +1,51 @@
+<div
+  class="min-h-screen bg-gray-50 flex flex-col items-center justify-center py-8"
+>
+  <h1 class="text-4xl font-bold mb-8 text-center text-blue-700">
+    Choose Your Support Plan
+  </h1>
+  <div class="flex flex-col md:flex-row gap-8">
+    <div
+      *ngFor="let tier of subscriptionPlans"
+      class="bg-white rounded-xl shadow-lg p-8 w-80 flex flex-col items-center border-2"
+      [ngClass]="{
+        'border-blue-500': tier.highlight,
+        'border-gray-200': !tier.highlight
+      }"
+    >
+      <h2 class="text-2xl font-semibold mb-2">{{ tier.name }}</h2>
+      <p class="text-xl font-bold mb-4 text-blue-600">
+        ₹ {{ tier.price }} / {{ getDurationInMonths(tier.durationInDays) }}
+      </p>
+      <ul class="mb-6 text-gray-700 text-left w-full">
+        <li
+          *ngFor="let feature of tier.features"
+          class="mb-2 flex items-center"
+        >
+          <span
+            class="inline-block w-2 h-2 bg-blue-400 rounded-full mr-2"
+          ></span>
+          {{ feature }}
+        </li>
+      </ul>
+      <button
+        class="mt-auto px-6 py-2 rounded bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
+        (click)="openPaymentDialog(tier)"
+      >
+        Subscribe
+      </button>
+    </div>
+  </div>
+  <!-- Payment Dialog -->
+  <div
+    *ngIf="showPaymentDialog"
+    class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
+  >
+    <div class="bg-white rounded-lg shadow-xl p-8 w-full max-w-md relative">
+      <app-payment-form
+        [subscriptionPlan]="selectedPlan"
+        (close)="closePaymentDialog()"
+      ></app-payment-form>
+    </div>
+  </div>
+</div>
