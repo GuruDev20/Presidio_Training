@@ -14,6 +14,6 @@ namespace Customer_Support_Chatbot.Models
         public ICollection<Ticket>? Tickets { get; set; }
         public ICollection<RefreshToken>? RefreshTokens { get; set; }
         public DateTime CreatedAt { get; set; }
-        public ICollection<UserSubscription>? Subscriptions { get; set; }
+        public ICollection<UserSubscription> Subscriptions { get; set; } = new List<UserSubscription>();
     }
 }
