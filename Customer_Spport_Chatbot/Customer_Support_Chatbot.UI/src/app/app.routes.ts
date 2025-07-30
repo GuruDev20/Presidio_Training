@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { SettingsComponent } from './features/settings/settings.component';
 import { HomeComponent } from './features/home/home.component';
-import { Pricing } from './features/pricing/pricing';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -25,9 +24,5 @@ export const routes: Routes = [
     path: 'user',
     loadChildren: () =>
       import('./features/user/user.routes').then((m) => m.User_Routes),
-  },
-  {
-    path: 'pricing',
-    component: Pricing,
   },
 ];

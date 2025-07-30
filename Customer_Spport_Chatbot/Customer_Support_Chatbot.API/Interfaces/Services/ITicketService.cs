@@ -10,6 +10,6 @@ namespace Customer_Support_Chatbot.Interfaces.Services
         public Task<ApiResponse<object>> GetTicketsHistoryAsync(TicketHistoryFilterDto filterDto);
         public Task<ApiResponse<object>> GetChatSessionAsync(Guid ticketId);
         public Task<ApiResponse<object>> CheckAgentAvailabilityAsync(Guid agentId);
-        public Task<ApiResponse<object>> AssignNewAgentAsync(Guid ticketId);
+        public Task<ApiResponse<object>> AssignNewAgentAsync();
     }
 }

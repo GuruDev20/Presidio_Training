@@ -24,7 +24,7 @@ export class TicketService{
         return this.http.get(`${this.baseUrl}/tickets/agent/${agentId}/availability`);
     }
 
-    assignNewAgent(ticketId: string): Observable<any> {
-        return this.http.post(`${this.baseUrl}/tickets/${ticketId}/assign-agent`, {});
+    assignNewAgent(): Observable<any> {
+        return this.http.post(`${this.baseUrl}/tickets/assign-agent`, {});
     }
 }

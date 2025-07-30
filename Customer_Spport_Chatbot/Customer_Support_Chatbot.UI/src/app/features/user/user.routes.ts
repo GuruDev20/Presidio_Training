@@ -25,6 +25,7 @@ export const User_Routes:Routes=[
                 ]
             },
             {path:'history',component:UserHistoryComponent},
+            {path:'pricing', loadComponent: () => import('../pricing/pricing').then(m => m.Pricing)},
             {path:'profile',component:Profile},
             {path:'settings',component:UserSettingsComponent}
         ]

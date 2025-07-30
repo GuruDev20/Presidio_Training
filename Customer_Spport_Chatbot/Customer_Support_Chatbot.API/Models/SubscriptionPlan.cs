@@ -8,6 +8,7 @@ namespace Customer_Support_Chatbot.Models
         public string Description { get; set; } = string.Empty;
         public List<string>? Features { get; set; } 
         public int DurationInDays { get; set; } = 0;
+        public int Priority { get; set; } // Higher number means higher priority
         public ICollection<UserSubscription>? UserSubscriptions { get; set; }
     }
 }
