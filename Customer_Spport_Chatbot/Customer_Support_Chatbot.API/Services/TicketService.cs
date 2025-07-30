@@ -1,3 +1,4 @@
+using Customer_Support_Chatbot.API.DTOs.Chat;
 using Customer_Support_Chatbot.DTOs.Chat;
 using Customer_Support_Chatbot.DTOs.Ticket;
 using Customer_Support_Chatbot.Hubs;
@@ -217,7 +218,114 @@ namespace Customer_Support_Chatbot.Services
             return ApiResponse<object>.Ok("Tickets history retrieved successfully.", data);
         }
         
-        
-        
+        public async Task<ApiResponse<string>> LeaveChatAsync(Guid ticketId, Guid userId, bool isAgent)
+    {
+      var ticket = await _ticketRepository.GetByIdAsync(ticketId);
+      if (ticket == null)
+      {
+        return ApiResponse<string>.Fail("Ticket not found.");
+      }
+
+      var user = await _userRepository.GetByIdAsync(userId);
+      if (user == null)
+      {
+        return ApiResponse<string>.Fail("User not found.");
+      }
+
+      if (isAgent)
+      {
+        if (!ticket.AgentId.HasValue || ticket.AgentId.Value != userId)
+        {
+          return ApiResponse<string>.Fail("Agent is not assigned to this ticket.");
+        }
+
+        // Notify user that agent has left
+        await _hubContext.Clients
+          .User(ticket.UserId.ToString())
+          .SendAsync("UserLeftChat", new
+          {
+            ticketId,
+            text = "The agent has left the chat.",
+            sender = "bot",
+            timestamp = DateTime.UtcNow.ToString("o")
+          });
+
+        // Update agent status
+        var agent = await _agentRepository.GetByIdAsync(userId);
+        if (agent != null)
+        {
+          agent.Status = "Available";
+          var agentUser = await _userRepository.GetByIdAsync(agent.UserId);
+          if (agentUser != null)
+          {
+            agentUser.IsActive = true;
+            _userRepository.Update(agentUser);
+          }
+          _agentRepository.Update(agent);
+        }
+
+        // Automatically make user leave
+        var ticketUser = await _userRepository.GetByIdAsync(ticket.UserId);
+        if (ticketUser != null)
+        {
+          ticketUser.IsActive = true;
+          _userRepository.Update(ticketUser);
+        }
+
+        await _hubContext.Clients
+          .User(ticket.UserId.ToString())
+          .SendAsync("LeaveChat", new { ticketId });
+      }
+      else
+      {
+        if (ticket.UserId != userId)
+        {
+          return ApiResponse<string>.Fail("User is not associated with this ticket.");
+        }
+
+        // Notify agent that user has left and trigger agent to leave
+        if (ticket.AgentId.HasValue)
+        {
+          await _hubContext.Clients
+            .User(ticket.AgentId.Value.ToString())
+            .SendAsync("UserLeftChat", new
+            {
+              ticketId,
+              text = "The user has left the chat.",
+              sender = "bot",
+              timestamp = DateTime.UtcNow.ToString("o")
+            });
+
+          // Update agent status
+          var agent = await _agentRepository.GetByIdAsync(ticket.AgentId.Value);
+          if (agent != null)
+          {
+            agent.Status = "Available";
+            var agentUser = await _userRepository.GetByIdAsync(agent.UserId);
+            if (agentUser != null)
+            {
+              agentUser.IsActive = true;
+              _userRepository.Update(agentUser);
+            }
+            _agentRepository.Update(agent);
+
+            // Automatically make agent leave
+            await _hubContext.Clients
+              .User(agent.UserId.ToString())
+              .SendAsync("LeaveChat", new { ticketId });
+          }
+        }
+
+        // Update user status
+        user.IsActive = true;
+        _userRepository.Update(user);
+      }
+
+      // Remove both from the SignalR group
+      await _hubContext.Clients.Group(ticketId.ToString()).SendAsync("LeaveChat", new { ticketId });
+
+      await _ticketRepository.SaveChangesAsync();
+      return ApiResponse<string>.Ok("Chat session left successfully.");
+    }
     }
 }

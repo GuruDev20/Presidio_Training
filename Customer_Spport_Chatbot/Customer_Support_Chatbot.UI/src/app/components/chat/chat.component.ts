@@ -52,17 +52,14 @@ export class ChatComponent implements OnInit, OnDestroy {
   allowedFileTypes: string = 'image/*';
   userPlan: string = 'Basic';
 
-  // Show the file type dialog
   openFileTypeDialog() {
     this.showFileTypeDialog = true;
   }
 
-  // Hide the file type dialog
   closeFileTypeDialog() {
     this.showFileTypeDialog = false;
   }
 
-  // Trigger file input for selected type
   selectFileType(option: { label: string; accept: string }) {
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
     if (fileInput) {
@@ -92,11 +89,9 @@ export class ChatComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Fetch user profile to determine plan and allowed file types
     this.authService.getCurrentUser().subscribe({
       next: (res) => {
         const user = res.data;
-        // Find active subscription plan
         let plan = 'Basic';
         if (user.subscriptions && user.subscriptions.$values.length > 0) {
           const active = user.subscriptions.$values.find(
@@ -189,12 +184,8 @@ export class ChatComponent implements OnInit, OnDestroy {
         return;
       }
 
-      // Ensure messages is initialized as an array
       this.messages = [];
-      // Fetch messages first to ensure UI is populated
       this.fetchMessages();
-
-      // Start SignalR connection and join chat
       this.startSignalRConnection();
     });
   }
@@ -425,18 +416,68 @@ export class ChatComponent implements OnInit, OnDestroy {
         }
       })
     );
+
+    this.subscriptions.push(
+      this.signalRService.userLeftChat$.subscribe((data) => {
+        if (data && data.ticketId === this.ticketId) {
+          const messageKey = `${data.ticketId}:${data.timestamp}`;
+          if (!this.agentJoinedProcessed.has(messageKey)) {
+            this.agentJoinedProcessed.add(messageKey);
+            if (Array.isArray(this.messages)) {
+              this.messages.push({
+                sender: data.sender,
+                text: data.text,
+                timestamp: data.timestamp,
+              });
+              console.log('[Chat] Messages array:', this.messages);
+              this.toastr.info(
+                data.text,
+                this.isAgent ? 'User Left' : 'Agent Left'
+              );
+              this.scrollToBottom();
+              this.cdr.detectChanges();
+              setTimeout(() => this.leaveChat(), 2000);
+            } else {
+              console.error(
+                '[Chat] this.messages is not an array:',
+                this.messages
+              );
+              this.messages = [];
+              this.toastr.error(
+                'Chat data corrupted. Resetting messages.',
+                'Error'
+              );
+            }
+          }
+        }
+      })
+    );
+
+    this.subscriptions.push(
+      this.signalRService.leaveChat$.subscribe((data) => {
+        if (data && data.ticketId === this.ticketId) {
+          console.log('[Chat] Received LeaveChat signal:', data);
+          this.chatEnded = true;
+          this.loading = false;
+          this.router.navigate([
+            this.isAgent
+              ? '/agent/dashboard/workspace/active'
+              : '/user/dashboard/tickets/active',
+          ]);
+          this.cdr.detectChanges();
+        }
+      })
+    );
   }
 
   private fetchMessages(): void {
     console.log('[Chat] Fetching messages for ticket:', this.ticketId);
     this.chatService.getMessages(this.ticketId).subscribe({
       next: (response) => {
-        // Handle response with $values wrapper
         const messages = Array.isArray(response)
           ? response
           : (response as any)?.$values || [];
         console.log('[Chat] Raw response from backend:', response);
-        // Ensure messages is an array
         if (!Array.isArray(messages)) {
           console.error(
             '[Chat] Received non-array messages from backend:',
@@ -538,10 +579,6 @@ export class ChatComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Assigns a new agent to the ticket. The backend will prioritize users with higher subscription tiers (Business > Pro > Basic).
-   * The frontend does not control the priority logic, but informs the user that priority is based on their subscription.
-   */
   private assignNewAgent(): void {
     this.ticketService.assignNewAgent().subscribe({
       next: (response: any) => {
@@ -552,7 +589,6 @@ export class ChatComponent implements OnInit, OnDestroy {
             .then(() => {
               console.log('[Chat] Notified new agent:', this.agentId);
               this.waitingForAgent = true;
-              // Inform the user about priority assignment
               this.toastr.info(
                 'You are being prioritized for agent assignment based on your subscription plan.',
                 'Priority Support'
@@ -620,14 +656,14 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.killBot();
-    this.signalRService
-      .leaveChat(this.ticketId)
-      .catch((err) => console.error('[Chat] Error leaving chat:', err));
+    if (!this.chatEnded) {
+      this.leaveChat();
+    }
     this.signalRService.stopConnection();
     this.subscriptions.forEach((sub) => sub.unsubscribe());
     this.agentJoinedProcessed.clear();
     this.lastAgentJoinedTime = 0;
-    this.messages = []; // Reset messages to ensure clean state
+    this.messages = [];
   }
 
   scrollToBottom(): void {
@@ -756,7 +792,6 @@ export class ChatComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Restrict file types based on plan
     const allowedTypes = this.allowedFileTypes.split(',').map((t) => t.trim());
     let valid = false;
     for (const type of allowedTypes) {
@@ -815,38 +850,38 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   leaveChat() {
-    this.killBot();
-    if (this.signalRService.isConnected()) {
-      this.signalRService
-        .leaveChat(this.ticketId)
-        .then(() => {
-          console.log(
-            '[Chat] Successfully left chat for ticket:',
-            this.ticketId
-          );
-        })
-        .catch((err) => console.error('[Chat] Error leaving chat:', err));
-    } else {
-      console.warn(
-        '[Chat] Cannot leave chat: SignalR connection is not active'
-      );
+    if (!this.ticketId || !this.senderId) {
+      console.error('[Chat] No ticket ID or sender ID available.');
+      this.toastr.error('Invalid session. Please try again.', 'Error');
+      return;
     }
-    this.signalRService.stopConnection();
-    this.messages = [];
-    this.userInput = '';
-    this.agentJoined = false;
-    this.newSession = false;
-    this.chatEnded = false;
-    this.loading = false;
-    this.agentJoinedProcessed.clear();
-    this.lastAgentJoinedTime = 0;
-    this.waitingForAgent = false;
-    this.router.navigate([
-      this.isAgent
-        ? '/agent/dashboard/workspace/active'
-        : '/user/dashboard/tickets/active',
-    ]);
-    this.cdr.detectChanges();
+
+    this.ticketService.leaveChat(this.ticketId, this.senderId, this.isAgent).subscribe({
+      next: () => {
+        console.log('[Chat] Successfully initiated leave chat for ticket:', this.ticketId);
+        this.killBot();
+        this.signalRService.stopConnection();
+        this.messages = [];
+        this.userInput = '';
+        this.agentJoined = false;
+        this.newSession = false;
+        this.chatEnded = false;
+        this.loading = false;
+        this.agentJoinedProcessed.clear();
+        this.lastAgentJoinedTime = 0;
+        this.waitingForAgent = false;
+        this.router.navigate([
+          this.isAgent
+            ? '/agent/dashboard/workspace/active'
+            : '/user/dashboard/tickets/active',
+        ]);
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('[Chat] Error leaving chat:', err);
+        this.toastr.error('Failed to leave chat. Please try again.', 'Error');
+      },
+    });
   }
 
   endChat() {

@@ -1,3 +1,4 @@
+using Customer_Support_Chatbot.API.DTOs.Chat;
 using Customer_Support_Chatbot.DTOs.Ticket;
 using Customer_Support_Chatbot.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -112,6 +113,23 @@ namespace Customer_Support_Chatbot.Contexts
                 return Ok(response);
             }
             return BadRequest(response.Message);
+        }
+
+        [Authorize]
+        [HttpPost("leave-chat")]
+        public async Task<IActionResult> LeaveChat([FromBody] LeaveChatDto dto)
+        {
+        if (dto == null || dto.TicketId == Guid.Empty || dto.UserId == Guid.Empty)
+        {
+            return BadRequest("Ticket ID and User ID are required.");
+        }
+
+        var response = await _ticketService.LeaveChatAsync(dto.TicketId, dto.UserId, dto.IsAgent);
+        if (response.Success)
+        {
+            return Ok(response);
+        }
+        return BadRequest(response.Message);
         }
     }
 }
