@@ -9,6 +9,7 @@ import { ChartConfiguration, ChartData, ChartType } from "chart.js";
 import { interval, Subject, Subscription } from "rxjs";
 import { debounceTime } from "rxjs/operators";
 import { NgChartsModule } from 'ng2-charts';
+import { Router } from "@angular/router";
 
 @Component({
     selector: 'app-admin-overview',
@@ -63,7 +64,7 @@ export class AdminDashboard implements OnInit, OnDestroy {
     private subscriptions: Subscription[] = [];
     private fetchSubject = new Subject<void>();
 
-    constructor(private adminService: AdminService) {}
+    constructor(private adminService: AdminService,private router: Router) {}
 
     ngOnInit() {
         this.subscriptions.push(
@@ -201,5 +202,13 @@ export class AdminDashboard implements OnInit, OnDestroy {
             this.currentPage = page;
             this.fetchSubject.next();
         }
+    }
+
+    manage(){
+        this.router.navigate([`/admin/dashboard/workspace/manage-agents`]);
+    }
+
+    viewAllDeactivationRequests() {
+        this.router.navigate(['/admin/dashboard/workspace/manage-users']);
     }
 }

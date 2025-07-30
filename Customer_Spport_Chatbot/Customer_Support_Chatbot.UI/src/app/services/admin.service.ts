@@ -29,4 +29,16 @@ export class AdminService {
     getAgentDetails(): Observable<ApiResponse<any>> {
         return this.http.get<ApiResponse<any>>(`${this.baseUrl}/admin/dashboard/agents`);
     }
+
+    createAgent(agentData: any): Observable<any> {
+        return this.http.post(`${this.baseUrl}/admin/dashboard/create-agent`, agentData);
+    }
+
+    updateAgent(agentData: any): Observable<any> {
+        return this.http.put(`${this.baseUrl}/admin/dashboard/update-agent`, agentData);
+    }
+
+    deleteAgent(agentId: string): Observable<any> {
+        return this.http.delete(`${this.baseUrl}/admin/dashboard/delete-agent/${agentId}`);
+    }
 }

@@ -15,7 +15,14 @@ export const Admin_Routes:Routes=[
         children:[
             {path:'', redirectTo:'overview', pathMatch:'full'},
             {path:'overview',component:AdminDashboard},
-            {path:'workspace',component:AdminWorkspaceComponent},
+            {
+                path:'workspace',
+                loadComponent:()=>import('./workspace/workspace.component').then(m=>m.AdminWorkspaceComponent),
+                children:[
+                    {path:'manage-users',loadComponent:()=>import('../../components/manage/users/manage-user.component').then(m=>m.ManageUserComponent)},
+                    {path:'manage-agents',loadComponent:()=>import('../../components/manage/agents/manage-agent.component').then(m=>m.ManageAgentComponent)},
+                ]
+            },
             {path:'profile',component:Profile},
             {path:'settings',component:AdminSettingsComponent}
         ]

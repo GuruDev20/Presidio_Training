@@ -60,7 +60,7 @@
         <div class="w-full lg:w-1/3 rounded-lg bg-white dark:bg-[#2a3444] shadow-md p-4">
             <div class="flex justify-between items-center mb-4">
                 <h4 class="text-lg font-semibold text-black dark:text-white">Deactivation Requests</h4>
-                <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium">View All</button>
+                <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium" (click)="viewAllDeactivationRequests()">View All</button>
             </div>
             <div class="space-y-2 max-h-64 overflow-y-auto flex flex-col items-center justify-center min-h-[200px]">
                 <div *ngFor="let request of deactivationRequests" class="p-2 border-b border-gray-200 dark:border-gray-600 w-full">
@@ -80,7 +80,7 @@
         <div class="w-full md:w-1/4 rounded-lg bg-white dark:bg-[#2a3444] shadow-md p-4">
             <div class="flex justify-between items-center mb-4">
                 <h4 class="text-lg font-semibold text-black dark:text-white">Agents</h4>
-                <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium">Manage</button>
+                <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium" (click)="manage()">Manage</button>
             </div>
             <div class="space-y-2 max-h-80 overflow-y-auto">
                 <div *ngFor="let agent of agents" class="p-2 border-b border-gray-200 dark:border-gray-600 flex justify-between items-center">

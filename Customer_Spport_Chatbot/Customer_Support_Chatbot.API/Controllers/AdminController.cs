@@ -1,6 +1,8 @@
 using Customer_Support_Chatbot.DTOs.Admin;
+using Customer_Support_Chatbot.Helpers;
 using Customer_Support_Chatbot.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Customer_Support_Chatbot.Controllers
@@ -11,12 +13,16 @@ namespace Customer_Support_Chatbot.Controllers
     public class AdminController : ControllerBase
     {
         private readonly IAdminService _adminService;
-        public AdminController(IAdminService adminService)
+        private readonly EmailHelper _emailHelper;
+        private readonly UserManager<IdentityUser> _userManager;
+        public AdminController(IAdminService adminService, EmailHelper emailHelper, UserManager<IdentityUser> userManager)
         {
+            _emailHelper = emailHelper;
+            _userManager = userManager;
             _adminService = adminService;
         }
 
-        [HttpPost("agents")]
+        [HttpPost("dashboard/create-agent")]
         public async Task<IActionResult> AddAgentAsync([FromBody] CreateAgentDto dto)
         {
             if (dto == null)
@@ -31,7 +37,7 @@ namespace Customer_Support_Chatbot.Controllers
             return BadRequest(response);
         }
 
-        [HttpDelete("agents/{agentId}")]
+        [HttpDelete("dashoard/delete-agent/{agentId}")]
         public async Task<IActionResult> DeleteAgentAsync(Guid agentId)
         {
             if (agentId == Guid.Empty)
@@ -39,6 +45,21 @@ namespace Customer_Support_Chatbot.Controllers
                 return BadRequest("Agent ID cannot be empty.");
             }
             var response = await _adminService.DeleteAgentAsync(agentId);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+            return NotFound(response);
+        }
+
+        [HttpPut("dashboard/update-agent")]
+        public async Task<IActionResult> UpdateAgentAsync([FromBody] UpdateAgentDto dto)
+        {
+            if (dto == null || dto.AgentId == Guid.Empty)
+            {
+                return BadRequest("Invalid agent data.");
+            }
+            var response = await _adminService.UpdateAgentAsync(dto);
             if (response.Success)
             {
                 return Ok(response);

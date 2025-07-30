@@ -1,29 +1,63 @@
 using Customer_Support_Chatbot.DTOs.Admin;
 using Customer_Support_Chatbot.DTOs.Ticket;
+using Customer_Support_Chatbot.Helpers;
 using Customer_Support_Chatbot.Interfaces.Repositories;
 using Customer_Support_Chatbot.Interfaces.Services;
 using Customer_Support_Chatbot.Wrappers;
+using Microsoft.AspNetCore.Identity;
 
 namespace Customer_Support_Chatbot.Services
 {
     public class AdminService : IAdminService
     {
         private readonly IAdminRepository _adminRepository;
-        public AdminService(IAdminRepository adminRepository)
+        private readonly EmailHelper _emailHelper;
+        private readonly UserManager<IdentityUser> _userManager;
+        public AdminService(IAdminRepository adminRepository, EmailHelper emailHelper, UserManager<IdentityUser> userManager)
         {
+            _emailHelper = emailHelper;
+            _userManager = userManager;
             _adminRepository = adminRepository;
         }
 
         public async Task<ApiResponse<object>> AddAgentAsync(CreateAgentDto dto)
         {
-            var hashedPwd = BCrypt.Net.BCrypt.HashPassword(dto.Password);
-            var user = await _adminRepository.CreateAgentUserAsync(dto.Username, dto.Email, hashedPwd);
-            var agent = await _adminRepository.CreateAgentAsync(user.Id);
-            return ApiResponse<object>.Ok("Agent created successfully.", new
+            try
             {
-                AgentId = agent.Id,
-                Email = user.Email,
-            });
+                var user = new IdentityUser
+                {
+                    UserName = dto.Username,
+                    Email = dto.Email
+                };
+                var result = await _userManager.CreateAsync(user, dto.Password);
+                if (!result.Succeeded)
+                {
+                    return ApiResponse<object>.Fail($"Failed to create user: {string.Join(", ", result.Errors.Select(e => e.Description))}", 400);
+                }
+
+                await _userManager.AddToRoleAsync(user, "Agent");
+                var agent= await _adminRepository.CreateAgentAsync(Guid.Parse(user.Id));
+                var agentUser = await _adminRepository.CreateAgentUserAsync(user.UserName,user.Email,dto.Password);
+                
+                var emailBody = $"<h3>Welcome, {dto.Username}!</h3><p>Your agent account has been created.</p><p><strong>Credentials:</strong><br>Email: {dto.Email}<br>Password: {dto.Password}</p><p>Please log in at <a href='http://localhost:4200/login'>here</a> to access the system.</p>";
+                var emailSent = _emailHelper.SendMail(dto.Email, "Your Agent Account Credentials", emailBody);
+
+                if (!emailSent)
+                {
+                    Console.WriteLine("Email sending failed, but agent created successfully.");
+                }
+
+                return ApiResponse<object>.Ok("Agent created successfully.", new
+                {
+                    AgentId = agent.Id,
+                    Email = user.Email,
+                    Username = user.UserName
+                });
+            }
+            catch (Exception ex)
+            {
+                return ApiResponse<object>.Fail($"Error creating agent: {ex.Message}", 500);
+            }
         }
 
         public async Task<ApiResponse<string>> DeleteAgentAsync(Guid agentId)
@@ -127,5 +161,48 @@ namespace Customer_Support_Chatbot.Services
             }
         }
 
+        public async Task<ApiResponse<object>> UpdateAgentAsync(UpdateAgentDto dto)
+        {
+            try
+            {
+                var agent = await _adminRepository.UpdateAgentAsync(dto.AgentId, dto.Username);
+                if (agent == null)
+                {
+                    return ApiResponse<object>.Fail("Agent not found or could not be updated.", 404);
+                }
+
+                var user = await _userManager.FindByIdAsync(agent.UserId.ToString());
+                if (user == null)
+                {
+                    return ApiResponse<object>.Fail("Associated user not found.", 404);
+                }
+
+                user.UserName = dto.Username;
+                var result = await _userManager.UpdateAsync(user);
+                if (!result.Succeeded)
+                {
+                    return ApiResponse<object>.Fail($"Failed to update user: {string.Join(", ", result.Errors.Select(e => e.Description))}", 400);
+                }
+
+                var emailBody = $"<h3>Account Update Notification</h3><p>Your agent account details have been updated.</p><p><strong>Updated Details:</strong><br>Username: {dto.Username}<br>Email: {dto.Email}</p><p>Please log in at <a href='http://localhost:4200/login'>here</a> to access the system.</p>";
+                var emailSent = _emailHelper.SendMail(dto.Email!, "Your Agent Account Updated", emailBody);
+
+                if (!emailSent)
+                {
+                    Console.WriteLine("Email sending failed, but agent updated successfully.");
+                }
+
+                return ApiResponse<object>.Ok("Agent updated successfully.", new
+                {
+                    AgentId = agent.Id,
+                    Username = agent.User!.Username,
+                    Status = agent.Status
+                });
+            }
+            catch (Exception ex)
+            {
+                return ApiResponse<object>.Fail($"Error updating agent: {ex.Message}", 500);
+            }
+        }
     }
 }

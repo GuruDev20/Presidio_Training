@@ -1,3 +1,4 @@
+using BCrypt.Net;
 using Customer_Support_Chatbot.Contexts;
 using Customer_Support_Chatbot.DTOs.Admin;
 using Customer_Support_Chatbot.DTOs.Ticket;
@@ -33,7 +34,7 @@ namespace Customer_Support_Chatbot.Repositories
             return agent;
         }
 
-        public async Task<User> CreateAgentUserAsync(string username, string email, string hashedPassword)
+        public async Task<User> CreateAgentUserAsync(string username, string email, string password)
         {
             if (string.IsNullOrWhiteSpace(username))
             {
@@ -43,16 +44,16 @@ namespace Customer_Support_Chatbot.Repositories
             {
                 throw new ArgumentException("Email cannot be null or empty.", nameof(email));
             }
-            if (string.IsNullOrWhiteSpace(hashedPassword))
+            if (string.IsNullOrWhiteSpace(password))
             {
-                throw new ArgumentException("Hashed password cannot be null or empty.", nameof(hashedPassword));
+                throw new ArgumentException("Hashed password cannot be null or empty.", nameof(password));
             }
             var user = new User
             {
                 Id = Guid.NewGuid(),
                 Username = username,
                 Email = email,
-                PasswordHash = hashedPassword,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
                 Role = "Agent",
                 CreatedAt = DateTime.UtcNow,
             };
@@ -241,5 +242,27 @@ namespace Customer_Support_Chatbot.Repositories
             }
         }
 
+        public async Task<Agent?> UpdateAgentAsync(Guid agentId, string? username)
+        {
+            if (agentId == Guid.Empty)
+            {
+                throw new ArgumentException("Agent ID cannot be empty.", nameof(agentId));
+            }
+            var agent = await _context.Agents.Include(a => a.User).FirstOrDefaultAsync(a => a.Id == agentId);
+            if (agent == null)
+            {
+                Console.WriteLine($"Agent with ID {agentId} not found.");
+                return null;
+            }
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                Console.WriteLine("Username cannot be null or empty.");
+                return null;
+            }
+            agent.User!.Username = username;
+            agent.UpdatedAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+            return agent;
+        }
     }
 }

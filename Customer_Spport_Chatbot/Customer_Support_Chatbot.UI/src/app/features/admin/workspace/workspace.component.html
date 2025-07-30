@@ -1,1 +1,21 @@
-<p>Admin Workspace</p>
+<div class="flex flex-col md:flex-row h-full overflow-hidden">
+    <section class="w-full md:w-72 text-black h-full border-b md:border-b-0 md:border-r border-[#dee2e6] dark:border-none bg-[#f8f9fa] dark:bg-gradient-to-br dark:from-[#242F40] dark:to-[#3D2645] dark:text-white shadow-lg">
+        <ul class="flex md:flex-col justify-around md:justify-start md:space-y-4 space-x-4 md:space-x-0 p-4">
+            <li routerLinkActive="bg-blue-100 dark:bg-white/10" class="flex-1 md:flex-none flex gap-2 items-center p-2 rounded md:w-full">
+                <lucide-icon name="userRoundPen" class="w-5 h-5"></lucide-icon>
+                <a routerLink="manage-users" class="block w-full">Manage Users</a>
+            </li>
+            <li routerLinkActive="bg-blue-100 dark:bg-white/10" class="flex-1 md:flex-none flex gap-2 items-center p-2 rounded md:w-full">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-hat-glasses-icon lucide-hat-glasses"><path d="M14 18a2 2 0 0 0-4 0"/><path d="m19 11-2.11-6.657a2 2 0 0 0-2.752-1.148l-1.276.61A2 2 0 0 1 12 4H8.5a2 2 0 0 0-1.925 1.456L5 11"/><path d="M2 11h20"/><circle cx="17" cy="18" r="3"/><circle cx="7" cy="18" r="3"/></svg>
+                <a routerLink="manage-agents" class="block w-full">Manage Agents</a>
+            </li>
+        </ul>
+    </section>
+
+    <div class="flex-1">
+        <div *ngIf="isAtBaseTickets" class="text-gray-400 text-center mt-20 p-4">
+            <p class="text-xl">Please select a ticket option</p>
+        </div>
+        <router-outlet *ngIf="!isAtBaseTickets"></router-outlet>
+    </div>
+</div>

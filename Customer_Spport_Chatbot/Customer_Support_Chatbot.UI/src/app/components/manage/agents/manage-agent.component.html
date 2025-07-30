@@ -1,0 +1,142 @@
+<div class="container mx-auto p-6">
+    <div class="grid gap-4">
+        <!-- Add Agent -->
+        <div class="card bg-white shadow-md p-4 rounded cursor-pointer" (click)="toggleDrawer('add')">
+            <div class="flex flex-row justify-between items-center mb-2">
+                <div class="flex items-center">
+                    <lucide-icon name="Plus" class="mr-2"></lucide-icon>
+                    <h2 class="text-lg font-normal">Add Agent</h2>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="isAddDrawerOpen" class="bg-white shadow-md p-4 rounded">
+            <form [formGroup]="addAgentForm" (ngSubmit)="onSubmitAddAgent()">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Username</label>
+                        <input formControlName="username" type="text" class="mt-1 block w-full border border-gray-300 rounded-md p-2" />
+                        <span *ngIf="addAgentForm.get('username')?.invalid && addAgentForm.get('username')?.touched" class="text-red-500 text-xs">
+                            Username is required and must be at least 3 characters.
+                        </span>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Email</label>
+                        <input formControlName="email" type="email" class="mt-1 block w-full border border-gray-300 rounded-md p-2" />
+                        <span *ngIf="addAgentForm.get('email')?.invalid && addAgentForm.get('email')?.touched" class="text-red-500 text-xs">
+                            Valid email is required.
+                        </span>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Password</label>
+                        <input formControlName="password" type="password" class="mt-1 block w-full border border-gray-300 rounded-md p-2" />
+                        <span *ngIf="addAgentForm.get('password')?.invalid && addAgentForm.get('password')?.touched" class="text-red-500 text-xs">
+                            Password is required and must be at least 6 characters.
+                        </span>
+                    </div>
+                    <div *ngIf="errorMessage.add" class="text-red-500 text-sm">{{ errorMessage.add }}</div>
+                    <div *ngIf="successMessage.add" class="text-green-500 text-sm">{{ successMessage.add }}</div>
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" (click)="toggleDrawer('add')" class="px-4 py-2 bg-gray-200 rounded">Cancel</button>
+                        <button type="submit" [disabled]="addAgentForm.invalid" class="px-4 py-2 bg-blue-500 text-white rounded">Add Agent</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- List Agents -->
+        <div class="card bg-white shadow-md p-4 rounded cursor-pointer" (click)="toggleDrawer('list')">
+            <div class="flex flex-row justify-between items-center mb-2">
+                <div class="flex items-center">
+                    <lucide-icon name="List" class="mr-2"></lucide-icon>
+                    <h2 class="text-lg font-normal">View Agent</h2>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="isListDrawerOpen" class="bg-white shadow-md p-4 rounded">
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr>
+                        <th class="text-left p-2">Username</th>
+                        <th class="text-left p-2">Status</th>
+                        <th class="text-right p-2">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let agent of agents" class="border-t">
+                        <td class="p-4">{{ agent.username }}</td>
+                        <td class="p-4">
+                            <span class="text-xs px-2 py-1 rounded-full"
+                                  [ngClass]="{
+                                      'bg-green-100 text-green-800': agent.status === 'Available',
+                                      'bg-red-100 text-red-800': agent.status === 'Offline',
+                                      'bg-yellow-100 text-yellow-800': agent.status === 'Busy'
+                                  }">
+                                {{ agent.status }}
+                            </span>
+                        </td>
+                        <td class="p-4 text-right">
+                            <button (click)="deleteAgent(agent.id)">
+                                <lucide-icon name="trashIcon" class="text-red-500"></lucide-icon>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="!agents.length">
+                        <td colspan="3" class="p-2 text-center text-gray-500">No agents found</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Update Agent -->
+        <div class="card bg-white shadow-md p-4 rounded cursor-pointer" (click)="toggleDrawer('update')">
+            <div class="flex flex-row justify-between items-center mb-2">
+                <div class="flex items-center">
+                    <lucide-icon name="Edit" class="mr-2"></lucide-icon>
+                    <h2 class="text-lg font-normal">Update Agent</h2>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="isUpdateDrawerOpen" class="bg-white shadow-md p-4 rounded">
+            <table class="w-full border-collapse mb-4">
+                <thead>
+                    <tr>
+                        <th class="text-left p-2">Username</th>
+                        <th class="text-right p-2">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let agent of agents" class="border-t">
+                        <td class="p-4">{{ agent.username }}</td>
+                        <td class="p-4 text-right">
+                            <button (click)="selectAgentForUpdate(agent)">
+                                <lucide-icon name="edit" class="text-blue-500"></lucide-icon>
+                            </button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="!agents.length">
+                        <td colspan="2" class="p-2 text-center text-gray-500">No agents found</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div *ngIf="selectedAgent" class="border-t pt-4">
+                <form [formGroup]="updateAgentForm" (ngSubmit)="onSubmitUpdateAgent()">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Username</label>
+                            <input formControlName="username" type="text" class="mt-1 block w-full border border-gray-300 rounded-md p-2" />
+                            <span *ngIf="updateAgentForm.get('username')?.invalid && updateAgentForm.get('username')?.touched" class="text-red-500 text-xs">
+                                Username is required and must be at least 3 characters.
+                            </span>
+                        </div>
+                        <div *ngIf="errorMessage.update" class="text-red-500 text-sm">{{ errorMessage.update }}</div>
+                        <div *ngIf="successMessage.update" class="text-green-500 text-sm">{{ successMessage.update }}</div>
+                        <div class="flex justify-end space-x-2">
+                            <button type="button" (click)="selectedAgent = null" class="px-4 py-2 bg-gray-200 rounded">Cancel</button>
+                            <button type="submit" [disabled]="updateAgentForm.invalid" class="px-4 py-2 bg-blue-500 text-white rounded">Update Agent</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
