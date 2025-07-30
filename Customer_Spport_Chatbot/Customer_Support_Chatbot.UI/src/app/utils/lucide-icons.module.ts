@@ -1,10 +1,11 @@
 import { NgModule } from '@angular/core';
-import { Activity, Bell, ChevronDown, ChevronLeft, ChevronRight, CircleDashed, Clock, Clock10, Edit, LayoutDashboard, Lock, LockOpen, LogInIcon, LucideAngularModule, Menu, MessageCircle, MoreVertical, Plus, Settings, TerminalSquare, Ticket, UserRoundPen, Users, X } from 'lucide-angular';
+import { Activity, Bell, ChevronDown, ChevronLeft, ChevronRight, CircleDashed, Clock, Clock10, Edit, LayoutDashboard, Lock, LockOpen, LogInIcon, LucideAngularModule, Menu, MessageCircle, MoreVertical, Plus, Settings, TerminalSquare, Ticket, UserRoundPen, Users, X, IndianRupee } from 'lucide-angular';
 import { Camera, User, LogIn, LogOut, Sun, Moon } from 'lucide-angular';
 
 @NgModule({
     imports: [
         LucideAngularModule.pick({
+            IndianRupee,
             Camera,
             User,
             LogIn,
