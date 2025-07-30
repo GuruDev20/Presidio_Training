@@ -63,7 +63,11 @@ namespace Customer_Support_Chatbot.Repositories
             {
                 throw new ArgumentException("Email cannot be null or empty.", nameof(email));
             }
-            return await _context.Users.Include(u=>u.RefreshTokens).FirstOrDefaultAsync(u => u.Email == email && !u.IsDeactivated);
+            return await _context.Users
+                .Include(u => u.RefreshTokens)
+                .Include(u => u.Subscriptions)
+                .ThenInclude((System.Linq.Expressions.Expression<System.Func<UserSubscription, SubscriptionPlan?>>)(s => s.Plan))
+                .FirstOrDefaultAsync(u => u.Email == email && !u.IsDeactivated);
         }
 
         public Task RemoveRefreshTokenAsync(RefreshToken token)

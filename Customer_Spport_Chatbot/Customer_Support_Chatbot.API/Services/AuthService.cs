@@ -64,9 +64,35 @@ namespace Customer_Support_Chatbot.Services
                 return ApiResponse<AuthResponseDto>.Fail("User is inactive", 403);
             }
             var activeDevices = await _authRepository.GetActiveDevicesAsync(user.Id);
-            if (activeDevices.Count >= 3)
+            // Determine device limit by subscription plan
+            int deviceLimit = 3; // Default for Basic
+            if (user.Subscriptions != null && user.Subscriptions.Count > 0)
             {
-                return ApiResponse<AuthResponseDto>.Fail("Maximum active devices limit reached", 403);
+                var now = DateTime.UtcNow;
+                var activeSub = user.Subscriptions
+                    .Where(s => s.Status == "Active" && s.StartDate <= now && s.EndDate >= now && s.Plan != null)
+                    .OrderByDescending(s => s.Plan!.Priority)
+                    .FirstOrDefault();
+                if (activeSub != null && activeSub.Plan != null)
+                {
+                    switch (activeSub.Plan.Priority)
+                    {
+                        case 3:
+                            deviceLimit = 20;
+                            break;
+                        case 2:
+                            deviceLimit = 10;
+                            break;
+                        case 1:
+                        default:
+                            deviceLimit = 3;
+                            break;
+                    }
+                }
+            }
+            if (activeDevices.Count >= deviceLimit)
+            {
+                return ApiResponse<AuthResponseDto>.Fail($"Maximum active devices limit reached for your plan ({deviceLimit}).", 403);
             }
             var accessToken = _jwtService.GenerateAccessToken(user);
             var refreshToken = _jwtService.GenerateRefreshToken();
