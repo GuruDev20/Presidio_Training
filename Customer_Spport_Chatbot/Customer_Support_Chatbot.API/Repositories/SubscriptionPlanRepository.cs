@@ -41,6 +41,23 @@ namespace Customer_Support_Chatbot.Repositories
                 Features = plan.Features,
                 DurationInDays = plan.DurationInDays
             };
+
+            switch(plan.Name)
+            {
+                case "Business":
+                    subscriptionPlan.Priority = 3;
+                    break;
+                case "Pro":
+                    subscriptionPlan.Priority = 2;
+                    break;
+                case "Basic":
+                    subscriptionPlan.Priority = 1;
+                    break;
+                default:
+                    subscriptionPlan.Priority = 0;
+                    break;
+            }
+            
             _context.SubscriptionPlans.Add(subscriptionPlan);
             await _context.SaveChangesAsync();
             return subscriptionPlan;

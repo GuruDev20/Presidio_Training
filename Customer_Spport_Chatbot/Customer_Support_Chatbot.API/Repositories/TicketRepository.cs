@@ -36,6 +36,74 @@ namespace Customer_Support_Chatbot.Repositories
                 .OrderBy(a => a.UpdatedAt)
                 .FirstOrDefaultAsync();
         }
+        public async Task<Ticket?> GetNextPriorityTicketAsync()
+        {
+            var now = DateTime.UtcNow;
+
+            // Step 1: Get open, unassigned tickets
+            var openTickets = await _context.Tickets
+                .Where(t => t.Status == "Open" && t.AgentId == null)
+                .Include(t => t.User)
+                    .ThenInclude(u => u.Subscriptions!)
+                        .ThenInclude(s => s.Plan)
+                .ToListAsync();
+
+            Console.WriteLine("=== Open Tickets (Unassigned) ===");
+            foreach (var t in openTickets)
+            {
+                Console.WriteLine($"Ticket ID: {t.Id}, CreatedAt: {t.CreatedAt}, User ID: {t.UserId}");
+            }
+
+            // Step 2: Compute priority for each ticket
+            var ticketsWithPriority = openTickets
+                .Select(t => new
+                {
+                    Ticket = t,
+                    Priority = t.User?.Subscriptions?
+                        .Where(s =>
+                            s.Status == "Active" &&
+                            s.StartDate <= now &&
+                            s.EndDate >= now &&
+                            s.Plan != null
+                        )
+                        .Select(s => s.Plan!.Priority)
+                        .DefaultIfEmpty(0)
+                        .Max() ?? 0
+                })
+                .ToList();
+
+            Console.WriteLine("=== Tickets With Computed Priority ===");
+            foreach (var tp in ticketsWithPriority)
+            {
+                Console.WriteLine($"Ticket ID: {tp.Ticket.Id}, Priority: {tp.Priority}, CreatedAt: {tp.Ticket.CreatedAt}");
+            }
+
+            // Step 3: Order tickets
+            var orderedTickets = ticketsWithPriority
+                .OrderByDescending(tp => tp.Priority)
+                .ThenBy(tp => tp.Ticket.CreatedAt)
+                .ToList();
+
+            Console.WriteLine("=== Ordered Tickets ===");
+            foreach (var ot in orderedTickets)
+            {
+                Console.WriteLine($"Ticket ID: {ot.Ticket.Id}, Priority: {ot.Priority}, CreatedAt: {ot.Ticket.CreatedAt}");
+            }
+
+            // Step 4: Get top ticket
+            var topTicket = orderedTickets.FirstOrDefault()?.Ticket;
+
+            if (topTicket != null)
+            {
+                Console.WriteLine($"=== Selected Ticket ===\nTicket ID: {topTicket.Id}, CreatedAt: {topTicket.CreatedAt}");
+            }
+            else
+            {
+                Console.WriteLine("=== No Ticket Found ===");
+            }
+
+            return topTicket;
+        }
 
         public async Task<Ticket?> GetFullTicketAsync(Guid ticketId)
         {

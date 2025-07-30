@@ -26,15 +26,17 @@ namespace Customer_Support_Chatbot.Services
             _hubContext = hubContext;
         }
 
-        public async Task<ApiResponse<object>> AssignNewAgentAsync(Guid ticketId)
+        public async Task<ApiResponse<object>> AssignNewAgentAsync()
         {
-            var ticket = await _ticketRepository.GetByIdAsync(ticketId);
+            Console.WriteLine("Assigning new agent to the next priority ticket...");
+            var ticket = await _ticketRepository.GetNextPriorityTicketAsync();
             if (ticket == null)
             {
-                return ApiResponse<object>.Fail("Ticket not found.");
+                return ApiResponse<object>.Fail("No open tickets to assign.");
             }
+            Console.WriteLine($"Found ticket {ticket.Id} with priority {ticket}");
             var newAgent = await _ticketRepository.GetAvailableAgentAsync();
-            if (newAgent == null)
+            if (newAgent is null)
             {
                 return ApiResponse<object>.Fail("No available agents at the moment. Please try again later.");
             }
@@ -93,18 +95,13 @@ namespace Customer_Support_Chatbot.Services
             {
                 throw new ArgumentNullException(nameof(dto), "CreateTicketDto cannot be null.");
             }
-            var agent = await _ticketRepository.GetAvailableAgentAsync();
-            if (agent == null)
-            {
-                return ApiResponse<object>.Fail("No available agents at the moment. Please try again later.");
-            }
+            // Create the ticket as open, but do not assign agent yet
             var ticket = new Ticket
             {
                 Id = Guid.NewGuid(),
                 Name = dto.Title,
                 Description = dto.Description,
                 UserId = dto.UserId,
-                AgentId = agent.Id,
                 Status = "Open",
                 CreatedAt = DateTime.UtcNow
             };
@@ -116,29 +113,16 @@ namespace Customer_Support_Chatbot.Services
                 _userRepository.Update(user);
             }
 
-            var agentUser = await _userRepository.GetByIdAsync(agent.UserId);
-            if (agentUser != null)
-            {
-                agentUser.IsActive = false;
-                _userRepository.Update(agentUser);
-            }
-            agent.Status = "Busy";
-            _agentRepository.Update(agent);
+            // Try to assign agent to the highest-priority open ticket (could be this one)
+            await AssignNewAgentAsync();
 
             var responseDto = new TicketResponseDto
             {
                 TicketId = ticket.Id,
-                AssignedAgentId = agent.Id,
+                AssignedAgentId = ticket.AgentId ?? Guid.Empty,
                 Title = ticket.Name!,
                 Description = ticket.Description
             };
-            await _hubContext.Clients
-            .User(agent.UserId.ToString())
-            .SendAsync("ReceiveTicketAssignedNotification", new
-            {
-                TicketId = ticket.Id,
-                Title = ticket.Name
-            });
             return ApiResponse<object>.Ok("Ticket created successfully.", responseDto);
         }
 
