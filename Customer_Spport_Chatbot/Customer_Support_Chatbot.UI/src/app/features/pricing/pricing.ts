@@ -1,8 +1,11 @@
+
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { PaymentFormComponent } from '../payment/payment-form/payment-form';
 import { SubscriptionPlanModel } from '../../models/subscription.model';
 import { SubscriptionPlanService } from '../../services/subscription-plan.service';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-pricing',
@@ -16,7 +19,11 @@ export class Pricing {
   showPaymentDialog = false;
   selectedPlan: SubscriptionPlanModel | null = null;
 
-  constructor(private subscriptionPlanService: SubscriptionPlanService) {
+  constructor(
+    private subscriptionPlanService: SubscriptionPlanService,
+    private router: Router,
+    private toastr: ToastrService
+  ) {
     this.loadSubscriptionPlans();
   }
 
@@ -53,4 +60,15 @@ export class Pricing {
       days > 30 ? 's' : ''
     }`;
   }
+
+  onSubscriptionCreated(event: any) {
+    if (event && event.success) {
+      this.toastr.success('Subscription created successfully!', 'Success');
+      this.closePaymentDialog();
+      this.router.navigate(['user/dashboard/profile']);
+    } else {
+      this.toastr.error('Failed to create subscription.', 'Error');
+    }
+  }
 }
+

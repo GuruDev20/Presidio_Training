@@ -71,42 +71,41 @@
     </div>
 
     <div class="form-group">
-      <label for="startDate">Subscription Start Date</label>
-      <input
-        id="startDate"
-        type="date"
-        formControlName="startDate"
-      />
-      @if(paymentForm.get('startDate')?.invalid && (paymentForm.get('startDate')?.touched || paymentForm.get('startDate')?.dirty)) {
-        <div class="error-message">
-          @if(paymentForm.get('startDate')?.errors?.['required']) {
-            <div>Start date is required.</div>
-          }
-        </div>
-      }
+      <label for="endMonth">Subscription End Month</label>
+      <select
+        id="endMonth"
+        formControlName="endMonth"
+        (change)="onMonthChange()"
+        required
+      >
+        <option value="" disabled selected>Select end month</option>
+        <option *ngFor="let month of monthOptions" [value]="month.value" [disabled]="month.value < minEndMonth">
+          {{ month.label }}
+        </option>
+      </select>
+      <div *ngIf="paymentForm.get('endMonth')?.invalid && paymentForm.get('endMonth')?.touched" class="error-message">
+        End month is required and cannot be before current month.
+      </div>
+    </div>
+    <div *ngIf="endMonth" class="form-group">
+      <label>Calculated Start Date:</label>
+      <span>{{ getStartDate() }}</span>
+    </div>
+    <div *ngIf="endMonth" class="form-group">
+      <label>Calculated End Date:</label>
+      <span>{{ getEndDate() }}</span>
+    </div>
+    <div *ngIf="endMonth" class="form-group">
+      <label>Total Amount:</label>
+      <span>₹{{ calculatedAmount }}</span>
     </div>
 
-    <div class="form-group">
-      <label for="endDate">Subscription End Date</label>
-      <input
-        id="endDate"
-        type="date"
-        formControlName="endDate"
-      />
-      @if(paymentForm.get('endDate')?.invalid && (paymentForm.get('endDate')?.touched || paymentForm.get('endDate')?.dirty)) {
-        <div class="error-message">
-          @if(paymentForm.get('endDate')?.errors?.['required']) {
-            <div>End date is required.</div>
-          }
-        </div>
-      }
-    </div>
-
-    <button type="submit" class="submit-btn" [disabled]="isLoading || paymentForm.invalid">
-      {{ isLoading ? 'Processing...' : 'Pay ₹' + this.subscriptionPlan.price }}
+    <button type="submit" class="submit-btn" [disabled]="isLoading || paymentForm.invalid || !endMonth">
+      {{ isLoading ? 'Processing...' : 'Pay ₹' + calculatedAmount }}
     </button>
   </form>
 </ng-container>
 <ng-container *ngIf="!subscriptionPlan">
   <div class="text-red-500 text-center p-4">No subscription plan selected.</div>
 </ng-container>
+

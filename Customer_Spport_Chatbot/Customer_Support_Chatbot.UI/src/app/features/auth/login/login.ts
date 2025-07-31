@@ -53,6 +53,7 @@ export class Login implements OnInit{
                 }
             },
             error:(err)=>{
+                alert('Login failed: ' + err.error.message);
                 console.error('Login failed:', err);
             }
         })

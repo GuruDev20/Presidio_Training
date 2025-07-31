@@ -65,7 +65,7 @@ namespace Customer_Support_Chatbot.Services
             }
             var activeDevices = await _authRepository.GetActiveDevicesAsync(user.Id);
             // Determine device limit by subscription plan
-            int deviceLimit = 3; // Default for Basic
+            int deviceLimit = 2; // Default for Basic
             if (user.Subscriptions != null && user.Subscriptions.Count > 0)
             {
                 var now = DateTime.UtcNow;
@@ -78,19 +78,20 @@ namespace Customer_Support_Chatbot.Services
                     switch (activeSub.Plan.Priority)
                     {
                         case 3:
-                            deviceLimit = 20;
+                            deviceLimit = 5;
                             break;
                         case 2:
-                            deviceLimit = 10;
+                            deviceLimit = 3;
                             break;
                         case 1:
                         default:
-                            deviceLimit = 3;
+                            deviceLimit = 2;
                             break;
                     }
                 }
             }
-            if (activeDevices.Count >= deviceLimit)
+
+            if (activeDevices.Count >= deviceLimit && user.Role != "Admin")
             {
                 return ApiResponse<AuthResponseDto>.Fail($"Maximum active devices limit reached for your plan ({deviceLimit}).", 403);
             }
