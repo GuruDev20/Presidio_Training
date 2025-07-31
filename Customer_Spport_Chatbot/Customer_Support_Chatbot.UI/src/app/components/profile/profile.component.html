@@ -98,8 +98,8 @@
     </div>
   </div>
 
-  <div class="flex gap-6">
-    <div class="bg-white shadow-lg rounded-lg p-6 mb-6 flex-1">
+  <div class="flex gap-6" >
+    <div class="bg-white shadow-lg rounded-lg p-6 mb-6 flex-1" *ngIf="!isAdminOrAgent">
       <h3 class="text-xl font-semibold mb-4">Subscription Details</h3>
       <ng-container
         *ngIf="subscriptions && subscriptions.length > 0; else noSubscription"
@@ -256,6 +256,14 @@
 
     <div class="bg-white shadow-lg rounded-lg p-6 flex-1">
       <h3 class="text-xl font-semibold mb-4">Logged-in Devices</h3>
+      <div *ngIf="!isAdminOrAgent">
+        <p>Device Limit: {{ devices.length }} / {{ getDeviceLimit() }}</p>
+        <!-- create warning to logout -->
+        <p *ngIf="devices.length >= getDeviceLimit()" class="text-red-500">
+          You have reached the device limit. Please logout from another device to add a new one.
+        </p>
+      </div>
+
       <div *ngIf="devices.length > 0; else noDevices" class="overflow-y-scroll">
         <div
           *ngFor="let device of devices"

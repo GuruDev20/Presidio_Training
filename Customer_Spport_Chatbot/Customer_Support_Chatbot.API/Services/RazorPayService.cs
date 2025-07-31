@@ -6,8 +6,8 @@ namespace Customer_Support_Chatbot.Services
 {
     public class RazorpayService : IRazorpayService
     {
-        private const string key = "rzp_test_4m79LmejWoUq7j";
-        private const string secret = "5eJxb1NBMaqrEpqnC92ihD9O";
+        private const string key = "rzp_test_gFjcpJyALvQmt1";
+        private const string secret = "ahgsC2mDxQ8VMwNYMLY7QXmC";
 
         public Order CreateOrder(int amountInPaise)
         {

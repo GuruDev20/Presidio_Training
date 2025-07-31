@@ -45,12 +45,14 @@ export class ChatComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
   private agentJoinedProcessed = new Set<string>();
   private lastAgentJoinedTime: number = 0;
+  private charLimitWarned = false;
 
   @ViewChild('chatContainer') chatContainer!: ElementRef;
   showFileTypeDialog = false;
   fileTypeOptions: { label: string; accept: string }[] = [];
   allowedFileTypes: string = 'image/*';
   userPlan: string = 'Basic';
+  maxChars: number = 0;
 
   openFileTypeDialog() {
     this.showFileTypeDialog = true;
@@ -101,8 +103,26 @@ export class ChatComponent implements OnInit, OnDestroy {
         }
         this.userPlan = plan;
 
+        switch (plan) {
+          case 'Basic':
+            this.maxChars = 100; // Basic plan allows 100 characters
+            break;
+          case 'Pro':
+            this.maxChars = 150; // Pro plan allows 150 characters
+            break;
+          case 'Business':
+            this.maxChars = 0; // Business plan allows unlimited characters
+            break;
+          default:
+            this.maxChars = 500; // Default plan allows 500 characters
+            break;
+        }
+
         console.log('[Chat] User plan:', this.userPlan);
-        if (plan === 'Business') {
+
+        //agent should also be able to send all files
+        
+        if (plan === 'Business' || this.isAgent) {
           this.fileTypeOptions = [
             { label: 'Image', accept: 'image/*' },
             { label: 'Audio', accept: 'audio/*' },
@@ -383,7 +403,6 @@ export class ChatComponent implements OnInit, OnDestroy {
               );
               this.scrollToBottom();
               this.cdr.detectChanges();
-              setTimeout(() => this.leaveChat(), 2000);
             } else {
               console.error(
                 '[Chat] this.messages is not an array:',
@@ -748,6 +767,11 @@ export class ChatComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (this.maxChars > 0 && msg.length > this.maxChars) {
+      this.toastr.warning(`Your plan allows max ${this.maxChars} characters per message.`, 'Character Limit');
+      return;
+    }
+
     if (!msg.trim()) return;
 
     const messageData = {
@@ -823,6 +847,26 @@ export class ChatComponent implements OnInit, OnDestroy {
       );
       return;
     }
+   
+    let maxFileSize = 0;
+    if (this.userPlan === 'Basic') {
+      maxFileSize = 5 * 1024 * 1024; // 5 MB
+    } else if (this.userPlan === 'Pro') {
+      maxFileSize = 10 * 1024 * 1024; // 10 MB
+    } else if (this.userPlan === 'Business') {
+      maxFileSize = 50 * 1024 * 1024; // 50 MB
+    }
+
+    if (file.size > maxFileSize) {
+      console.warn('[Chat] File size exceeds limit:', file.size, 'bytes');
+      this.toastr.error(
+        `File size exceeds the limit of ${maxFileSize / (1024 * 1024)} MB.`,
+        'File Size Limit Exceeded'
+      );
+      return;
+    }
+
+
 
     this.chatService.uploadFile(file, this.ticketId).subscribe({
       next: (res) => {
@@ -927,6 +971,19 @@ export class ChatComponent implements OnInit, OnDestroy {
       });
     } else {
       this.toastr.warning('Only agents can end the chat.', 'Warning');
+    }
+  }
+
+  onInputChange(event: any) {
+    if (this.maxChars > 0) {
+      if (this.userInput.length >= this.maxChars) {
+        if (!this.charLimitWarned) {
+          this.toastr.warning(`Your plan allows max ${this.maxChars} characters per message.`, 'Character Limit');
+          this.charLimitWarned = true;
+        }
+      } else {
+        this.charLimitWarned = false;
+      }
     }
   }
 }

@@ -275,4 +275,17 @@ export class Profile implements OnInit, OnDestroy {
     );
     return `${durationInDays} days`;
   }
+
+  getDeviceLimit(): number {
+    if (!this.activeSubscription) return 2; // Default for Basic plan
+    switch (this.activeSubscription.plan.name) {
+      case "Business":
+        return 5; // Business plan
+      case "Pro":
+        return 3; // Pro plan
+      case "Basic":
+      default:
+        return 2; // Basic plan
+    }
+  }
 }

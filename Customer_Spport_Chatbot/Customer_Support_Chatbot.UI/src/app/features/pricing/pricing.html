@@ -45,6 +45,7 @@
       <app-payment-form
         [subscriptionPlan]="selectedPlan"
         (close)="closePaymentDialog()"
+        (subscriptionCreated)="onSubscriptionCreated($event)"
       ></app-payment-form>
     </div>
   </div>
