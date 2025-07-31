@@ -96,6 +96,7 @@ export class ManageAgentComponent implements OnInit,OnDestroy{
         const sub = this.adminService.createAgent(agentData).subscribe({
             next:(response)=>{
                 if(response.success){
+                    alert('Agent created successfully');
                     this.successMessage.add = 'Agent created successfully.Email sent to agent.';
                     this.errorMessage.add = '';
                     this.addAgentForm.reset();
@@ -117,12 +118,14 @@ export class ManageAgentComponent implements OnInit,OnDestroy{
     }
 
     deleteAgent(agentId:string){
+        console.log('Deleting agent with ID:', agentId);
         if(!confirm('Are you sure you want to delete this agent?')){
             return;
         }
         const sub = this.adminService.deleteAgent(agentId).subscribe({
             next: (response) => {
                 if(response.success){
+                    alert('Agent deleted successfully');
                     this.successMessage.update = 'Agent deleted successfully.';
                     this.errorMessage.update = '';
                     this.fetchAgents();
@@ -144,7 +147,6 @@ export class ManageAgentComponent implements OnInit,OnDestroy{
     selectAgentForUpdate(agent:any){
         this.selectedAgent = agent;
         this.updateAgentForm.patchValue({
-            id: agent.id,
             username: agent.username,
         });
     }
@@ -155,12 +157,13 @@ export class ManageAgentComponent implements OnInit,OnDestroy{
             return;
         }
         const agentData = {
-            id: this.selectedAgent.id,
-            username: this.updateAgentForm.value.username,
+            AgentId: this.selectedAgent.id,
+            Username: this.updateAgentForm.value.username,
         };
         const sub = this.adminService.updateAgent(agentData).subscribe({
             next: (response) => {
                 if(response.success){
+                    alert('Agent updated successfully');
                     this.successMessage.update = 'Agent updated successfully.';
                     this.errorMessage.update = '';
                     this.toggleDrawer('update');

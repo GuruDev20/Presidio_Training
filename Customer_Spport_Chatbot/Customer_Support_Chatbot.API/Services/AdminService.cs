@@ -3,8 +3,8 @@ using Customer_Support_Chatbot.DTOs.Ticket;
 using Customer_Support_Chatbot.Helpers;
 using Customer_Support_Chatbot.Interfaces.Repositories;
 using Customer_Support_Chatbot.Interfaces.Services;
+using Customer_Support_Chatbot.Models;
 using Customer_Support_Chatbot.Wrappers;
-using Microsoft.AspNetCore.Identity;
 
 namespace Customer_Support_Chatbot.Services
 {
@@ -12,11 +12,9 @@ namespace Customer_Support_Chatbot.Services
     {
         private readonly IAdminRepository _adminRepository;
         private readonly EmailHelper _emailHelper;
-        private readonly UserManager<IdentityUser> _userManager;
-        public AdminService(IAdminRepository adminRepository, EmailHelper emailHelper, UserManager<IdentityUser> userManager)
+        public AdminService(IAdminRepository adminRepository, EmailHelper emailHelper)
         {
             _emailHelper = emailHelper;
-            _userManager = userManager;
             _adminRepository = adminRepository;
         }
 
@@ -24,20 +22,23 @@ namespace Customer_Support_Chatbot.Services
         {
             try
             {
-                var user = new IdentityUser
+                if (dto == null)
                 {
-                    UserName = dto.Username,
-                    Email = dto.Email
-                };
-                var result = await _userManager.CreateAsync(user, dto.Password);
-                if (!result.Succeeded)
-                {
-                    return ApiResponse<object>.Fail($"Failed to create user: {string.Join(", ", result.Errors.Select(e => e.Description))}", 400);
+                    return ApiResponse<object>.Fail("Invalid agent data provided.", 400);
                 }
-
-                await _userManager.AddToRoleAsync(user, "Agent");
-                var agent= await _adminRepository.CreateAgentAsync(Guid.Parse(user.Id));
-                var agentUser = await _adminRepository.CreateAgentUserAsync(user.UserName,user.Email,dto.Password);
+                if (dto.Email == null || dto.Password == null || dto.Username == null)
+                {
+                    return ApiResponse<object>.Fail("Email, password, and username are required.", 400);
+                }
+                var createdUser=await _adminRepository.CreateAgentUserAsync(dto.Username, dto.Email, dto.Password);
+                var agent = new Agent
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = createdUser.Id,
+                    Status = "Active",
+                    UpdatedAt = DateTime.UtcNow,
+                };
+                var createdAgent = await _adminRepository.CreateAgentAsync(agent.UserId);
                 
                 var emailBody = $"<h3>Welcome, {dto.Username}!</h3><p>Your agent account has been created.</p><p><strong>Credentials:</strong><br>Email: {dto.Email}<br>Password: {dto.Password}</p><p>Please log in at <a href='http://localhost:4200/login'>here</a> to access the system.</p>";
                 var emailSent = _emailHelper.SendMail(dto.Email, "Your Agent Account Credentials", emailBody);
@@ -50,8 +51,8 @@ namespace Customer_Support_Chatbot.Services
                 return ApiResponse<object>.Ok("Agent created successfully.", new
                 {
                     AgentId = agent.Id,
-                    Email = user.Email,
-                    Username = user.UserName
+                    Username = createdUser.Username,
+                    Email = createdUser.Email,
                 });
             }
             catch (Exception ex)
@@ -62,6 +63,7 @@ namespace Customer_Support_Chatbot.Services
 
         public async Task<ApiResponse<string>> DeleteAgentAsync(Guid agentId)
         {
+            Console.WriteLine($"Received request to delete agent with ID: {agentId}");
             if (agentId == Guid.Empty)
             {
                 throw new ArgumentException("Agent ID cannot be empty.", nameof(agentId));
@@ -165,39 +167,22 @@ namespace Customer_Support_Chatbot.Services
         {
             try
             {
-                var agent = await _adminRepository.UpdateAgentAsync(dto.AgentId, dto.Username);
-                if (agent == null)
+                if (dto == null)
+                {
+                    return ApiResponse<object>.Fail("Invalid agent data provided.", 400);
+                }
+
+                var updatedAgent = await _adminRepository.UpdateAgentAsync(dto.AgentId, dto.Username);
+                if (updatedAgent == null)
                 {
                     return ApiResponse<object>.Fail("Agent not found or could not be updated.", 404);
                 }
-
-                var user = await _userManager.FindByIdAsync(agent.UserId.ToString());
-                if (user == null)
-                {
-                    return ApiResponse<object>.Fail("Associated user not found.", 404);
-                }
-
-                user.UserName = dto.Username;
-                var result = await _userManager.UpdateAsync(user);
-                if (!result.Succeeded)
-                {
-                    return ApiResponse<object>.Fail($"Failed to update user: {string.Join(", ", result.Errors.Select(e => e.Description))}", 400);
-                }
-
-                var emailBody = $"<h3>Account Update Notification</h3><p>Your agent account details have been updated.</p><p><strong>Updated Details:</strong><br>Username: {dto.Username}<br>Email: {dto.Email}</p><p>Please log in at <a href='http://localhost:4200/login'>here</a> to access the system.</p>";
-                var emailSent = _emailHelper.SendMail(dto.Email!, "Your Agent Account Updated", emailBody);
-
-                if (!emailSent)
-                {
-                    Console.WriteLine("Email sending failed, but agent updated successfully.");
-                }
-
+    
                 return ApiResponse<object>.Ok("Agent updated successfully.", new
                 {
-                    AgentId = agent.Id,
-                    Username = agent.User!.Username,
-                    Status = agent.Status
+                    AgentId = updatedAgent.Id,
                 });
+
             }
             catch (Exception ex)
             {

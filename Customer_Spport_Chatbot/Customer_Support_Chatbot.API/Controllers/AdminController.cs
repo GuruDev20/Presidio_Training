@@ -37,9 +37,10 @@ namespace Customer_Support_Chatbot.Controllers
             return BadRequest(response);
         }
 
-        [HttpDelete("dashoard/delete-agent/{agentId}")]
+        [HttpDelete("dashboard/delete-agent/{agentId}")]
         public async Task<IActionResult> DeleteAgentAsync(Guid agentId)
         {
+            Console.WriteLine($"Received request to delete agent with ID: {agentId}");
             if (agentId == Guid.Empty)
             {
                 return BadRequest("Agent ID cannot be empty.");
@@ -55,10 +56,12 @@ namespace Customer_Support_Chatbot.Controllers
         [HttpPut("dashboard/update-agent")]
         public async Task<IActionResult> UpdateAgentAsync([FromBody] UpdateAgentDto dto)
         {
-            if (dto == null || dto.AgentId == Guid.Empty)
+            Console.WriteLine($"Received UpdateAgentDto: AgentId={dto.AgentId}, Username={dto.Username}");
+            if (dto == null)
             {
                 return BadRequest("Invalid agent data.");
             }
+            Console.WriteLine($"Updating agent with ID: {dto.AgentId}, Username: {dto.Username}");
             var response = await _adminService.UpdateAgentAsync(dto);
             if (response.Success)
             {

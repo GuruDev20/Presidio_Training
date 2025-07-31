@@ -68,19 +68,20 @@ namespace Customer_Support_Chatbot.Repositories
             {
                 throw new ArgumentException("Agent ID cannot be empty.", nameof(agentId));
             }
-            var agent = await _context.Agents.Include(a => a.User).FirstOrDefaultAsync(a => a.UserId == agentId);
+            var agent = await _context.Agents.FindAsync(agentId);
             if (agent == null)
             {
                 Console.WriteLine($"Agent with ID {agentId} not found.");
                 return false;
             }
-            if (agent.User == null)
+            var user = await _context.Users.FindAsync(agent.UserId);
+            if (user == null)
             {
-                Console.WriteLine(" Agent found, but User is null.");
+                Console.WriteLine($"User with ID {agent.UserId} not found for agent {agentId}.");
+                return false;
             }
-
-            _context.Users.Remove(agent.User!);
-            _context.Agents.Remove(agent);
+            _context.Users.Remove(user);
+            // _context.Agents.Remove(agent);
             await _context.SaveChangesAsync();
             return true;
         }
@@ -262,6 +263,8 @@ namespace Customer_Support_Chatbot.Repositories
             agent.User!.Username = username;
             agent.UpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
+            Console.WriteLine($"Agent with ID {agentId} updated successfully.");
+            Console.WriteLine($"New Username: {agent.User.Username}");
             return agent;
         }
     }
