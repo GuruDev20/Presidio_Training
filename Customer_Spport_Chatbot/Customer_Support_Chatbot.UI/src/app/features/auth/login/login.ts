@@ -8,7 +8,8 @@ import { CommonModule } from '@angular/common';
     selector: 'app-login',
     imports: [CommonModule,ReactiveFormsModule,RouterModule],
     templateUrl: './login.html',
-    styleUrl: './login.css'
+    styleUrl: './login.css',
+    standalone: true
 })
 export class Login implements OnInit{
 

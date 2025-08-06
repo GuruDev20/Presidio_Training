@@ -1,9 +1,9 @@
-import { CommonModule } from "@angular/common";
-import { Component, OnDestroy, OnInit } from "@angular/core";
-import { Subscription } from "rxjs";
-import { SignalRService } from "../../services/signalr.service";
-import { Router } from "@angular/router";
-import { ToastrService } from "ngx-toastr";
+import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { SignalRService } from '../../services/signalr.service';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
     selector: 'app-active-workspace',
@@ -13,7 +13,7 @@ import { ToastrService } from "ngx-toastr";
 })
 export class ActiveWorkspaceComponent implements OnInit, OnDestroy {
     tickets: { ticketId: string, title: string }[] = [];
-    private signalrSub!: Subscription;
+    private subscriptions: Subscription[] = [];
 
     constructor(
         private signalRService: SignalRService,
@@ -22,41 +22,69 @@ export class ActiveWorkspaceComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit(): void {
-        this.signalRService.startConnection();
+        this.registerSignalRListeners();
+    }
 
-        this.signalrSub = this.signalRService.ticketNotification$.subscribe(data => {
+    private registerSignalRListeners(): void {
+        this.subscriptions.push(
+        this.signalRService.ticketNotification$.subscribe(data => {
             if (data && data.ticketId && data.title) {
-                console.log('Received ticket notification:', data);
-
+                console.log('[ActiveWorkspace] Received ticket notification:', data);
                 const alreadyExists = this.tickets.some(ticket => ticket.ticketId === data.ticketId);
                 if (!alreadyExists) {
-                    const newTicket = {
-                        ticketId: data.ticketId,
-                        title: data.title
-                    };
-                    this.tickets.push(newTicket);
+                    this.tickets.push({ ticketId: data.ticketId, title: data.title });
                     this.toastr.success(`New ticket assigned: ${data.title}`, 'Ticket Notification');
                 } else {
-                    console.warn('Duplicate ticket ignored:', data.ticketId);
+                    console.warn('[ActiveWorkspace] Duplicate ticket ignored:', data.ticketId);
                 }
+            } else {
+                console.error('[ActiveWorkspace] Invalid ticket notification data:', data);
             }
-        });
+        })
+    );
+
+        this.subscriptions.push(
+            this.signalRService.chatEnded$.subscribe(data => {
+                if (data && data.ticketId) {
+                    console.log('[ActiveWorkspace] Received chat ended notification for ticket:', data.ticketId);
+                    this.tickets = this.tickets.filter(ticket => ticket.ticketId !== data.ticketId);
+                    this.toastr.info(`Ticket ${data.ticketId} has been closed.`, 'Ticket Closed');
+                }
+            })
+        );
+
+        this.subscriptions.push(
+            this.signalRService.userLeftChat$.subscribe(data => {
+                if (data && data.ticketId) {
+                    console.log('[ActiveWorkspace] Received user left chat notification for ticket:', data.ticketId);
+                    this.tickets = this.tickets.filter(ticket => ticket.ticketId !== data.ticketId);
+                    this.toastr.info(`Ticket ${data.ticketId} removed as user left the chat.`, 'User Left');
+                }
+            })
+        );
+
+        this.subscriptions.push(
+            this.signalRService.leaveChat$.subscribe(data => {
+                if (data && data.ticketId) {
+                    console.log('[ActiveWorkspace] Received leave chat notification for ticket:', data.ticketId);
+                    this.tickets = this.tickets.filter(ticket => ticket.ticketId !== data.ticketId);
+                    this.toastr.info(`Ticket ${data.ticketId} removed as chat was left.`, 'Chat Left');
+                }
+            })
+        );
     }
 
     ngOnDestroy(): void {
-        if (this.signalrSub) {
-            this.signalrSub.unsubscribe();
-        }
-        this.signalRService.stopConnection();
+        this.subscriptions.forEach(sub => sub.unsubscribe());
     }
 
     joinChat(ticketId: string | null | undefined) {
         if (!ticketId) {
-            console.error('No ticketId provided to joinChat');
+            console.error('[ActiveWorkspace] No ticketId provided to joinChat');
             this.toastr.error('Invalid ticket ID. Please try again.', 'Error');
             return;
         }
-        console.log('Joining chat for ticket:', ticketId);
+        console.log('[ActiveWorkspace] Joining chat for ticket:', ticketId);
 
         this.signalRService.joinChat(ticketId)
             .then(() => {
@@ -66,8 +94,12 @@ export class ActiveWorkspaceComponent implements OnInit, OnDestroy {
                 });
             })
             .catch(err => {
-                console.error('Error joining chat:', err);
+                console.error('[ActiveWorkspace] Error joining chat:', err);
                 this.toastr.error('Failed to join chat. Please try again.', 'Error');
             });
+    }
+
+    trackByTicket(index: number, ticket: { ticketId: string, title: string }): string {
+        return ticket.ticketId;
     }
 }

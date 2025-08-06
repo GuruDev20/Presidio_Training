@@ -111,6 +111,7 @@ namespace Customer_Support_Chatbot.Repositories
                 .Select(dr => new DeactivationRequestDto
                 {
                     Id = dr.Id,
+                    UserId = dr.UserId,
                     Username = dr.User.Username,
                     Reason = dr.Reason,
                     Status = dr.Status,

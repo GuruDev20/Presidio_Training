@@ -13,5 +13,6 @@ namespace Customer_Support_Chatbot.Interfaces.Services
         Task<ApiResponse<List<DeactivationRequestDto>>> GetDeactivationRequestsAsync();
         Task<ApiResponse<List<AgentDto>>> GetAgentDetailsAsync();
         Task<ApiResponse<PagedTicketResponseDto>> GetTicketDetailsAsync(int page, int pageSize);
+        Task<ApiResponse<string>> UpdateDeactivationRequestStatusAsync(Guid userId, string status);
     }
 }

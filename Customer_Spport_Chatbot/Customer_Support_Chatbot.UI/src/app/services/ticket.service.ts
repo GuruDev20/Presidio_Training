@@ -24,11 +24,15 @@ export class TicketService{
         return this.http.get(`${this.baseUrl}/tickets/agent/${agentId}/availability`);
     }
 
-    assignNewAgent(): Observable<any> {
-        return this.http.post(`${this.baseUrl}/tickets/assign-agent`, {});
+    assignNewAgent(ticketId: string): Observable<any> {
+        return this.http.post(`${this.baseUrl}/tickets/assign-agent`, {ticketId});
     }
 
     leaveChat(ticketId: string, userId: string, isAgent: boolean): Observable<any> {
         return this.http.post(`${this.baseUrl}/tickets/leave-chat`, {ticketId,userId,isAgent,});
+    }
+
+    getTicket(ticketId: string): Observable<any> {
+        return this.http.get(`${this.baseUrl}/tickets/${ticketId}/chat-session`);
     }
 }

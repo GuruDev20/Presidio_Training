@@ -238,7 +238,7 @@ namespace Customer_Support_Chatbot.Hubs
         //     });
         // }
 
-        public async Task LeaveChat(string ticketId)
+        public async Task LeaveChat(string ticketId, string senderId, bool isAgent)
         {
             if (!Guid.TryParse(ticketId, out var parsedTicketId))
             {
@@ -249,6 +249,7 @@ namespace Customer_Support_Chatbot.Hubs
             var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "Anonymous";
             _logger.LogInformation("Client {ConnectionId} (User: {UserId}) leaving group {TicketId}", Context.ConnectionId, userId, ticketId);
             await Groups.RemoveFromGroupAsync(Context.ConnectionId, ticketId);
+            await Clients.Group(ticketId).SendAsync("LeaveChat", new { ticketId, senderId, isAgent, text = $"{(isAgent ? "Agent" : "User")} has left the chat.", timestamp = DateTime.UtcNow.ToString("o") });
             if (_ticketAgents.TryGetValue(ticketId, out var agents) && agents.Remove(userId) && agents.Count == 0)
             {
                 _ticketAgents.TryRemove(ticketId, out _);

@@ -1,6 +1,7 @@
 using Customer_Support_Chatbot.DTOs.Admin;
 using Customer_Support_Chatbot.Helpers;
 using Customer_Support_Chatbot.Interfaces.Services;
+using Customer_Support_Chatbot.Wrappers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -107,6 +108,30 @@ namespace Customer_Support_Chatbot.Controllers
         {
             var response = await _adminService.GetTicketDetailsAsync(page, pageSize);
             return response.Success ? Ok(response) : BadRequest(response);
+        }
+
+        [HttpPut("dashboard/deactivation-request/{userId}")]
+        public async Task<IActionResult> UpdateDeactivationRequestStatus(Guid userId, [FromBody] string status)
+        {
+            Console.WriteLine($"Received request to update deactivation request status for user ID: {userId}, Status: {status}");
+            if (userId == Guid.Empty)
+            {
+                return BadRequest(ApiResponse<string>.Fail("User ID cannot be empty.", 400));
+            }
+            if (string.IsNullOrWhiteSpace(status))
+            {
+                return BadRequest(ApiResponse<string>.Fail("Status cannot be empty.", 400));
+            }
+
+            try
+            {
+                var response = await _adminService.UpdateDeactivationRequestStatusAsync(userId, status);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ApiResponse<string>.Fail($"Error updating deactivation request status: {ex.Message}", 500));
+            }
         }
     }
 }

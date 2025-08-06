@@ -1,3 +1,4 @@
+using Customer_Support_Chatbot.Contexts;
 using Customer_Support_Chatbot.DTOs.Admin;
 using Customer_Support_Chatbot.DTOs.Ticket;
 using Customer_Support_Chatbot.Helpers;
@@ -5,6 +6,7 @@ using Customer_Support_Chatbot.Interfaces.Repositories;
 using Customer_Support_Chatbot.Interfaces.Services;
 using Customer_Support_Chatbot.Models;
 using Customer_Support_Chatbot.Wrappers;
+using Microsoft.EntityFrameworkCore;
 
 namespace Customer_Support_Chatbot.Services
 {
@@ -12,10 +14,14 @@ namespace Customer_Support_Chatbot.Services
     {
         private readonly IAdminRepository _adminRepository;
         private readonly EmailHelper _emailHelper;
-        public AdminService(IAdminRepository adminRepository, EmailHelper emailHelper)
+        private readonly IUserRepository _userRepository;
+        private readonly AppDbContext _context;
+        public AdminService(IAdminRepository adminRepository, EmailHelper emailHelper, IUserRepository userRepository, AppDbContext context)
         {
-            _emailHelper = emailHelper;
+            _context = context;
+            _userRepository = userRepository;
             _adminRepository = adminRepository;
+            _emailHelper = emailHelper;
         }
 
         public async Task<ApiResponse<object>> AddAgentAsync(CreateAgentDto dto)
@@ -40,7 +46,7 @@ namespace Customer_Support_Chatbot.Services
                 };
                 var createdAgent = await _adminRepository.CreateAgentAsync(agent.UserId);
                 
-                var emailBody = $"<h3>Welcome, {dto.Username}!</h3><p>Your agent account has been created.</p><p><strong>Credentials:</strong><br>Email: {dto.Email}<br>Password: {dto.Password}</p><p>Please log in at <a href='http://localhost:4200/login'>here</a> to access the system.</p>";
+                var emailBody = $"<h3>Welcome, {dto.Username}!</h3><p>Your agent account has been created.</p><p><strong>Credentials:</strong><br>Email: {dto.Email}<br>Password: {dto.Password}</p><p>Please log in at <a href='http://localhost:4200/auth/login'>here</a> to access the system.</p>";
                 var emailSent = _emailHelper.SendMail(dto.Email, "Your Agent Account Credentials", emailBody);
 
                 if (!emailSent)
@@ -188,6 +194,52 @@ namespace Customer_Support_Chatbot.Services
             {
                 return ApiResponse<object>.Fail($"Error updating agent: {ex.Message}", 500);
             }
+        }
+
+        public async Task<ApiResponse<string>> UpdateDeactivationRequestStatusAsync(Guid userId, string status)
+        {
+            if (!IsValidStatus(status))
+            {
+                return ApiResponse<string>.Fail("Invalid status. Allowed values: Pending, Approved, Deleted.", 400);
+            }
+
+            try
+            {
+                var request = await _context.DeactivationRequests
+                    .FirstOrDefaultAsync(r => r.UserId == userId && r.Status == "Pending");
+
+                if (request == null)
+                {
+                    return ApiResponse<string>.Fail("No pending deactivation request found for this user.", 404);
+                }
+
+                request.Status = status;
+                _context.DeactivationRequests.Update(request);
+
+                if (status == "Deleted")
+                {
+                    var user = await _userRepository.GetByIdAsync(userId);
+                    if (user != null)
+                    {
+                        user.IsActive = false;
+                        user.IsDeactivated = true;
+                        user.DeactivationRequestedAt = DateTime.UtcNow;
+                        _userRepository.Update(user);
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                return ApiResponse<string>.Ok($"Deactivation request status updated to {status}.");
+            }
+            catch (Exception ex)
+            {
+                return ApiResponse<string>.Fail($"Error updating deactivation request status: {ex.Message}", 500);
+            }
+        }
+
+        private bool IsValidStatus(string status)
+        {
+            return status == "Pending" || status == "Deleted";
         }
     }
 }

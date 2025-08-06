@@ -1,6 +1,5 @@
 <div class="min-w-screen min-h-screen overflow-y-auto">
     <section class="p-6 w-full">
-        <h3 class="text-2xl font-bold mb-4">Overview</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             <app-card *ngFor="let card of cards"
                 [title]="card.title"
@@ -62,7 +61,7 @@
                 <h4 class="text-lg font-semibold text-black dark:text-white">Deactivation Requests</h4>
                 <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm font-medium" (click)="viewAllDeactivationRequests()">View All</button>
             </div>
-            <div class="space-y-2 max-h-64 overflow-y-auto flex flex-col items-center justify-center min-h-[200px]">
+            <div class="space-y-2 max-h-64 overflow-y-auto flex flex-col items-center min-h-[200px]">
                 <div *ngFor="let request of deactivationRequests" class="p-2 border-b border-gray-200 dark:border-gray-600 w-full">
                     <div class="flex justify-between items-center">
                         <span class="text-sm font-medium text-black dark:text-white">{{ request.username }}</span>

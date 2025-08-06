@@ -9,6 +9,8 @@ import { ApiResponse } from "../models/api.model";
 export class AuthService {
     private baseUrl = environment.apiUrl;
     private _users$ = new BehaviorSubject<AuthResponse | null>(null);
+    private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
+    isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
     users$ = this._users$.asObservable();
     username: string | null = null;
 
@@ -29,6 +31,7 @@ export class AuthService {
                 localStorage.setItem('userRole', user.role);
                 localStorage.setItem('accessTokenExpiry', new Date(user.expiresMinutes).toISOString());
                 localStorage.setItem('deviceId', user.deviceId);
+                this.isAuthenticatedSubject.next(true);
             })
         );
     }
@@ -45,6 +48,7 @@ export class AuthService {
         localStorage.removeItem('userRole');
         localStorage.removeItem('accessTokenExpiry');
         localStorage.removeItem('deviceId');
+        this.isAuthenticatedSubject.next(false);
     }
 
     getToken() {

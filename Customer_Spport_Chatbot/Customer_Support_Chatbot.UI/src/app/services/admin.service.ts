@@ -41,4 +41,12 @@ export class AdminService {
     deleteAgent(agentId: string): Observable<any> {
         return this.http.delete(`${this.baseUrl}/admin/dashboard/delete-agent/${agentId}`);
     }
+    
+    updateDeactivationRequestStatus(userId: string, status: string): Observable<ApiResponse<any>> {
+        return this.http.put<ApiResponse<any>>(
+            `${this.baseUrl}/admin/dashboard/deactivation-request/${userId}`,
+            `"${status}"`,
+            { headers: { 'Content-Type': 'application/json' } }
+        );
+    }
 }

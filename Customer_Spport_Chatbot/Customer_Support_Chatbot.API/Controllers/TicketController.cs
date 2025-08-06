@@ -105,14 +105,15 @@ namespace Customer_Support_Chatbot.Contexts
 
         [Authorize]
         [HttpPost("assign-agent")]
-        public async Task<IActionResult> AssignNewAgent()
+        public async Task<IActionResult> AssignNewAgent([FromBody] AssignAgentDto dto)
         {
-            var response = await _ticketService.AssignNewAgentAsync();
-            if (response.Success)
+            if (dto == null || dto.TicketId == Guid.Empty)
             {
-                return Ok(response);
+                return BadRequest("Valid ticket ID is required.");
             }
-            return BadRequest(response.Message);
+
+            var response = await _ticketService.AssignNewAgentAsync(dto.TicketId);
+            return response.Success ? Ok(response) : BadRequest(response.Message);
         }
 
         [Authorize]

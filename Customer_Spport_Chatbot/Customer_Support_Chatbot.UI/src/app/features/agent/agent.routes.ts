@@ -22,7 +22,7 @@ export const Agent_Routes:Routes=[
                 children:[
                     {path:'',redirectTo:'active',pathMatch:'full'},
                     {path:'active',loadComponent:()=>import('../../components/workspace/active.component').then(m=>m.ActiveWorkspaceComponent)},
-                    {path:'pending',loadComponent:()=>import('../../components/workspace/pending.component').then(m=>m.PendingWorkspaceComponent)},
+                    // {path:'pending',loadComponent:()=>import('../../components/workspace/pending.component').then(m=>m.PendingWorkspaceComponent)},
                     {path:'chat',loadComponent:()=>import('../../components/chat/chat.component').then(m=>m.ChatComponent)},
                 ]
             },

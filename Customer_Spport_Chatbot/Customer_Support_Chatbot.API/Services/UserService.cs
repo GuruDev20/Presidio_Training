@@ -60,9 +60,6 @@ namespace Customer_Support_Chatbot.Services
             {
                 return ApiResponse<string>.Fail("User not found.");
             }
-            user.IsActive = false;
-            user.IsDeactivated = true;
-            user.DeactivationRequestedAt = DateTime.UtcNow;
             var deactivationRequest = new DeactivationRequest
             {
                 Id = Guid.NewGuid(),
@@ -122,12 +119,42 @@ namespace Customer_Support_Chatbot.Services
             var existingUser = await _userRepository.GetByEmailAsync(dto.Email);
             if (existingUser != null)
             {
-                return ApiResponse<string>.Fail("Email already registered.");
+                var deactivationRequests = await _context.DeactivationRequests
+                    .Where(r => r.UserId == existingUser.Id && r.Status == "Pending")
+                    .ToListAsync();
+
+                if (deactivationRequests.Any())
+                {
+                    // Remove all pending deactivation requests
+                    _context.DeactivationRequests.RemoveRange(deactivationRequests);
+                    await _context.SaveChangesAsync();
+
+                    // Update user status
+                    existingUser.IsActive = true;
+                    existingUser.IsDeactivated = false;
+                    existingUser.DeactivationRequestedAt = null;
+                    _userRepository.Update(existingUser);
+                    await _userRepository.SaveChangesAsync();
+
+                    return ApiResponse<string>.Ok("User reactivated successfully.");
+                }
+                else
+                {
+                    existingUser.IsActive = true;
+                    existingUser.IsDeactivated = false;
+                    existingUser.DeactivationRequestedAt = null;
+                    _userRepository.Update(existingUser);
+                    await _userRepository.SaveChangesAsync();
+
+                    return ApiResponse<string>.Ok("User reactivated successfully.");
+                }
             }
+
             if (dto.Password != dto.ConfirmPassword)
             {
                 return ApiResponse<string>.Fail("Passwords do not match.");
             }
+
             var user = new User
             {
                 Id = Guid.NewGuid(),
@@ -140,6 +167,7 @@ namespace Customer_Support_Chatbot.Services
                 CreatedAt = DateTime.UtcNow
             };
             await _userRepository.AddAsync(user);
+            await _userRepository.SaveChangesAsync();
             return ApiResponse<string>.Ok("User registered successfully.");
         }
 

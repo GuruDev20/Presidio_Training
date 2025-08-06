@@ -6,5 +6,5 @@ export const User_Sidebar_Constants = [
   },
   { label: 'Tickets', path: '/user/dashboard/tickets', icon: 'ticket' },
   { label: 'History', path: '/user/dashboard/history', icon: 'clock' },
-  { label: 'Pricing', path: '/user/dashboard/pricing', icon: 'indian-rupee' },
+  // { label: 'Pricing', path: '/user/dashboard/pricing', icon: 'indian-rupee' },
 ];

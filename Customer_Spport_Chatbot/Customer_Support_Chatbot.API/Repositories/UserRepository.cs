@@ -62,6 +62,9 @@ namespace Customer_Support_Chatbot.Repositories
                 {
                     return;
                 }
+                user.IsActive = false;
+                user.IsDeactivated = true;
+                user.DeactivationRequestedAt = DateTime.UtcNow;
                 var messages = await _context.Messages
                     .Where(m => m.SenderId == userId)
                     .ToListAsync();
